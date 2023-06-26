@@ -1,0 +1,9 @@
+﻿@model QLBH_WebManage.DTO.MEDIUM
+
+@{
+    Layout = null;
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/media/";
+
+}
+
+<img src="@media@Model.image" style="width:100px;height: 100px"/>

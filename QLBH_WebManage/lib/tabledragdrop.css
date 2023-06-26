@@ -1,0 +1,36 @@
+table th{
+	cursor: pointer;
+}
+
+table th.noDrag{
+	cursor: not-allowed;
+}
+
+.drag_freeze { /* замороженный (исходный перетаскиваемый) столбец или ряд */
+	background: #bbb;
+	color: #888;
+}
+
+.ghost { /* стили плавающей таблицы */
+	background: #cdfff8;
+	position: absolute;
+	z-index: 10000;
+}
+
+.arrow_down {
+	display: block;
+	position: absolute;
+	z-index: 10000;
+	width: 16px;
+	height: 16px;
+	background: url('arrow-down.png') no-repeat bottom center;
+}
+
+.arrow_right {
+	display: block;
+	position: absolute;
+	z-index: 10000;
+	width: 16px;
+	height: 16px;
+	background: url('arrow-right.png') no-repeat center right;
+}

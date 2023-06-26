@@ -1,0 +1,229 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-8 col-sm-6">
+            <button type="button" class="btn btn-primary fs-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Thêm
+            </button>
+
+        </div>
+        <div class="col-4 col-sm-6 text-end">
+            <div class="d-flex">
+                <input class="form-control" type="text" placeholder="Tìm thương hiệu ..." aria-label="Search" id="txtSearch">
+                <button class="btn btn-outline-warning" onclick="Search()">Tìm</button>
+                <button class="btn btn-outline-success" onclick="getDsThuongHieu()">Làm mới</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm thương hiệu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="txtMaKH" class="form-label">Mã thương hiệu</label>
+                    <input type="text" class="form-control" id="txtMaTH" placeholder="Để trống ..." disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="txtTenKH" class="form-label">Tên thương hiệu</label>
+                    <input type="text" class="form-control" id="txtTenTH">
+                </div>
+                <div class="mb-3">
+                    <label for="txtTenKH" class="form-label">Xuất xứ</label>
+                    <input type="text" class="form-control" id="txtXuatXu">
+                </div>
+
+                <div class="mb-3">
+                    <label>Chọn ảnh</label>
+                    <input type="file" class="form-control" id="uploadImage" />
+                    <div>
+                        <img id="imagePreview" />
+                        <button class="btn btn-danger" onclick="RemoveProductImage()">Hủy ảnh</button>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="Insert()">Lưu</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="dsThuongHieu" width="100%">
+
+</div>
+
+<script>
+    jQuery(document).ready(function ($) {
+        getDsThuongHieu();
+
+        $('#uploadImage').on('change', function () {
+            var statusEditImg = 0;
+            if (typeof (FileReader) != "undefined") {
+                var dvPreview = $("#dvPreview");
+                dvPreview.html("");
+                var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+                var index = 0;
+                $($(this)[0].files).each(function () {
+                    var file = $(this);
+                    if (regex.test(file[0].name.toLowerCase())) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+
+                            /*Upload one image*/
+                            $("#imagePreview").attr("style", "height:250px;width: 250px");
+                            $("#imagePreview").attr("src", e.target.result);
+                            statusEditImg = 1;
+
+                            //Upload multi image
+                            //var img = $("<img class='img_" + index + "'/> <span id='span_img_" + index + "'><a onclick='RemoveProductImage(" + index + ")' href='#'>Xóa</a></span> <br/>");
+                            //img.attr("style", "height:250px;width: 250px");
+                            //img.attr("src", e.target.result);
+                            //console.log(e.target.result);
+                            //dvPreview.append(img);
+                            //index++;
+
+                        }
+                        reader.readAsDataURL(file[0]);
+                    } else {
+                        alert(file[0].name + " is not a valid image file.");
+                        dvPreview.html("");
+                        return false;
+                    }
+
+                });
+            } else {
+                alert("This browser does not support HTML5 FileReader.");
+            }
+        });
+    });
+
+    var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+
+    function RemoveProductImage() {
+        $("#imagePreview").removeAttr("src");
+    }
+
+
+    function Insert() {
+        var math = $("#txtMaTH").val();
+        var tenth = $("#txtTenTH").val();
+        var xuatxu = $("#txtXuatXu").val();
+
+        var imageBase64 = "";
+        if (typeof ($("#imagePreview").attr("src")) === 'undefined') {
+            imageBase64 = "";
+        }
+        else {
+            imageBase64 = $("#imagePreview").attr("src");
+            imageBase64 = imageBase64.split(',')[1];
+        }
+
+        //var imageBase64 = $("#imagePreview").attr("src");
+        //if (imageBase64 != null || imageBase64 != "") {
+        //    // Cắt bỏ đi data:image/jpeg;base64,
+        //    imageBase64 = imageBase64.split(',')[1];
+        //}
+
+
+        var inputData = {
+            maTh: null,
+            tenTh: tenth,
+            xuatXu: xuatxu,
+            anhTh: imageBase64
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/ThuongHieu/ThuongHieuInsert",
+            data: inputData,
+            success: function (data) {
+                var result = data.ResponseCode;
+                if (result > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    });
+                    getDsThuongHieu();
+                    $(".modal-backdrop").remove();
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "warning",
+                        button: "OK!",
+                    });
+                    getDsThuongHieu();
+                    $(".modal-backdrop").remove();
+                }
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+        });
+    }
+
+    function getDsThuongHieu() {
+        var inputData = {
+            TenTh : "",
+            token: cookieToken.token
+        };
+
+        
+        $.ajax({
+            type: 'POST',
+            url: "/ThuongHieu/PartialIndex",
+            data: inputData,
+            success: function (data) {
+                $('#dsThuongHieu').html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+
+    function Search() {
+        var tenth = $("#txtSearch").val();
+        tenth = tenth.trim();
+        var searchData = {
+            TenTh: tenth
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/ThuongHieu/PartialIndex",
+            data: searchData,
+            success: function (data) {
+                $("#dsThuongHieu").html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+        });
+    }
+
+</script>

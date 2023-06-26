@@ -1,0 +1,135 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="bannerSlide" class="container-fluid" data-aos="fade-up">
+
+</div>
+
+<div class="site-section site-section-sm site-blocks-1">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-lg-4 d-lg-flex mb-4 mb-lg-0 pl-4" data-aos="fade-up" data-aos-delay="">
+                <div class="icon mr-4 align-self-start">
+                    <span class="icon-truck"></span>
+                </div>
+                <div class="text">
+                    <h2 class="text-uppercase">Miễn phí giao hàng</h2>
+                    <p>Chúng tôi miễn phí giao hàng trọng phạm vi 5km.</p>
+                    <p>Nhận hàng thanh toán.</p>
+                    <p>Được đồng kiểm.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 d-lg-flex mb-4 mb-lg-0 pl-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="icon mr-4 align-self-start">
+                    <span class="icon-refresh2"></span>
+                </div>
+                <div class="text">
+                    <h2 class="text-uppercase">Miễn phí đổi trả</h2>
+                    <p>Khách hàng được đổi-trả trong thời gian 5 - 7 ngày tùy sản phẩm.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 d-lg-flex mb-4 mb-lg-0 pl-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="icon mr-4 align-self-start">
+                    <span class="icon-help"></span>
+                </div>
+                <div class="text">
+                    <h2 class="text-uppercase">Trợ giúp</h2>
+                    <p>Bạn có thắc mắc ?</p>
+                    <p>Hãy liên hệ ngay với chúng tôi qua phần CSKH, chúng tôi sẽ phản hồi cho bạn sớm nhất.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="loaiSP" class="container-fluid" data-aos="fade-up">
+
+</div>
+
+<div id="topSP" >
+
+</div>
+
+<div id="blogSaleNews">
+
+</div>
+
+<script>
+    jQuery(document).ready(function ($) {
+        getBanner();
+        getLoaiSP(); 
+        getTopSP();
+        blogSaleNews();
+    });
+
+    function getBanner() {
+
+        $.ajax({
+            type: 'POST',
+            url: "/TrangChu/PartialBanner",
+            data: {},
+            success: function (data) {
+                $('#bannerSlide').html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+    function getLoaiSP() {
+
+        $.ajax({
+            type: 'POST',
+            url: "/TrangChu/PartialLoaiSP",
+            data: {},
+            success: function (data) {
+                $('#loaiSP').html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+    function getTopSP() {
+
+        $.ajax({
+            type: 'POST',
+            url: "/TrangChu/PartialTopSP",
+            data: {},
+            success: function (data) {
+                $('#topSP').html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+    function blogSaleNews() {
+
+        $.ajax({
+            type: 'POST',
+            url: "/TrangChu/PartialBlogSaleNew",
+            data: {},
+            success: function (data) {
+                $('#blogSaleNews').html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+</script>

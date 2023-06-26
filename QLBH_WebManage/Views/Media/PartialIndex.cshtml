@@ -1,0 +1,137 @@
+﻿@model List<QLBH_WebManage.DTO.MEDIUM>
+@{
+    Layout = null;
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/media/";
+
+}
+
+<br />
+<br />
+
+<div class="container">
+    <table id="dsThuongHieu" class="table table-sm table-hover table-striped table-bordered">
+        <thead class="table-primary">
+            <tr>
+                <th>Mã ảnh</th>
+                <th>Loại</th>
+                <th>Hình ảnh</th>
+                <th>Trạng thái</th>
+                <th></th>
+                <th></th>
+
+            </tr>
+        </thead>
+
+
+        <tbody>
+            @if (Model != null && Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+
+                    <tr>
+                        <td>@item.mediaId</td>
+                        <td>@item.mediaType.mediaTypeName</td>
+                        <td>
+                            <img src="@media@item.image" style="width: 100px;height: 100px" />
+                        </td>
+                        <td>
+                            @{
+                                if (item.isActive == true)
+                                {
+                                    <div class="text-success">Sử dụng</div>
+                                }
+                                else
+                                {
+                                    <div class="text-warning">Không sử dụng</div>
+                                }
+                            }
+                        </td>
+
+                        <td><a href="/Media/Detail?MediaId=@item.mediaId" class="btn btn-info">Chi tiết</a></td>
+
+                        <td>
+                            <input type="button" onclick="deleteMedia('@item.mediaId')" id="btnDelete" value="Xóa" class="btn btn-danger" />
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+
+    });
+
+    var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+
+    function deleteMedia(mediaid) {
+        var result = confirm("Bạn có chắc chắn muốn xóa");
+
+        if (result) {
+            var deleteData = {
+                MediaId: mediaid
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "/Media/Delete",
+                data: deleteData,
+                success: function (data) {
+                    var code = data.ResponseCode;
+                    if (code > 0) {
+                        swal({
+                            text: data.Description,
+                            icon: "success",
+                            button: "OK!",
+                        });
+                        getDs();
+                    }
+                    else {
+                        swal({
+                            text: data.Description,
+                            icon: "warning",
+                            button: "OK!",
+                        });
+                        getDs();
+                        $(".modal-backdrop").remove();
+                    }
+                },
+                error: function (data) {
+                    console.log("error:" + JSON.stringify(data));
+                }
+            });
+        }
+
+    }
+
+
+    function getDs() {
+
+        var inputData = {
+            token: cookieToken.token
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/Media/PartialIndex",
+            data: inputData,
+            success: function (data) {
+                $('#dsMedia').html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+
+</script>
+

@@ -1,0 +1,149 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-8 col-sm-6">
+            <button type="button" class="btn btn-primary fs-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Thêm
+            </button>
+
+        </div>
+        <div class="col-4 col-sm-6 text-end">
+            <div class="d-flex">
+                <input class="form-control" type="text" placeholder="Tìm danh mục tin ..." aria-label="Search" id="txtSearch">
+                <button class="btn btn-outline-warning" onclick="Search()">Tìm</button>
+                <button class="btn btn-outline-success" onclick="getDsBlogType()">Làm mới</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm danh mục tin</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="txtMaKH" class="form-label">Mã danh mục tin</label>
+                    <input type="text" class="form-control" id="txtMaDM" placeholder="Để trống ..." disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="txtTenKH" class="form-label">Tên danh mục tin</label>
+                    <input type="text" class="form-control" id="txtTenDM">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="Insert()">Lưu</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="dsBlogType" width="100%">
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        getDsBlogType();
+    });
+
+    var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+
+    function getDsBlogType() {
+
+        var inputData = {
+            TenDm: "",
+            token: cookieToken.token
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/BlogType/PartialIndex",
+            data: inputData,
+            success: function (data) {
+                $('#dsBlogType').html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+    function Search() {
+        var tendm = $("#txtSearch").val();
+        tendm = tendm.trim();
+        var searchData = {
+            TenDm: tendm,
+            token: cookieToken.token
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/BlogType/PartialIndex",
+            data: searchData,
+            success: function (data) {
+                $("#dsBlogType").html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+        });
+    }
+
+    function Insert() {
+        var madm = $("#txtMaDM").val();
+        var tendm = $("#txtTenDM").val();
+
+        var inputData = {
+            maD: madm,
+            tenDm: tendm
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/BlogType/BlogTypeInsert",
+            data: inputData,
+            success: function (data) {
+                var result = data.ResponseCode;
+                if (result > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    });
+                    getDsBlogType();
+                    $(".modal-backdrop").remove();
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "warning",
+                        button: "OK!",
+                    });
+                    $(".modal-backdrop").remove();
+                }
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+        });
+    }
+
+</script>

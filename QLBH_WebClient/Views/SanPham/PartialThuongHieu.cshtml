@@ -1,0 +1,23 @@
+﻿@model List<QLBH_WebClient.DTO.THUONGHIEU>
+
+@{
+    Layout = null;
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/thuonghieu/";
+
+}
+
+<div class="mb-4">
+    <h3 class="mb-3 h6 text-uppercase text-black d-block">THƯƠNG HIỆU</h3>
+    @{
+        if (Model != null && Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+        <a href="#" class="d-flex color-item align-items-center">
+            <img src="@media@item.anhTh" style="width: 50px;height: 50px" class="rounded" /> &nbsp;&nbsp;&nbsp;  <span class="text-end"><strong>@item.tenTh</strong></span>
+        </a>
+            }
+        }
+    }
+
+</div>

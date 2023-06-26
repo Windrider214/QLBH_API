@@ -1,0 +1,168 @@
+﻿@model QLBH_WebClient.DTO.SANPHAM
+
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/";
+    string media_seo = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/seoIMG/";
+
+    var imageString = "";
+    string[] imageList = null;
+
+    if (Model.image != null)
+    {
+        imageString = Model.image.TrimEnd(',');
+        imageList = imageString.Split(',');
+    }
+}
+
+<div class="bg-light py-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mb-0"><a href="/TrangChu/Index">Trang Chủ</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">@Model.tenSp</strong></div>
+        </div>
+    </div>
+</div>
+
+<div class="site-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="column">
+                    <img id=featured src="@media_seo@Model.seoImage" width="100%" height="100%">
+                    <div id="slide-wrapper">
+                        <img id="slideLeft" class="arrow" src="~/Content/arrow-left.png">
+
+                        <div id="slider">
+                            @{
+                                if (imageList != null)
+                                {
+                                    foreach (string image in imageList)
+                                    {
+                                        <img src="@media@image" style="width:200px;height:200px" class="thumbnail active" />
+                                    }
+                                }
+
+                            }
+                        </div>
+                        <img id="slideRight" class="arrow" src="~/Content/arrow-right.png">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h2 class="text-black">@Model.tenSp</h2>
+                <h3 class="text-black">Thương hiệu : @Model.maThNavigation.tenTh</h3>
+                <h4 class="text-black">Loại : @Model.maLoaiNavigation.tenLoaiSp</h4>
+                <p class="mb-4">@Model.moTa</p>
+                <p><strong class="text-primary h4">@string.Format("{0:c0}", Model.donGia)</strong></p>
+                <div class="mb-5">
+                    <div class="input-group mb-3" style="max-width: 120px;">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
+                        </div>
+                        <input type="text" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-primary js-btn-plus" type="button" onclick="inCrease()">&plus;</button>
+                        </div>
+                    </div>
+                </div>
+                @*<p><button type="button" class="buy-now btn btn-sm btn-primary" onclick="addtoCart('@Model.maSp')">Thêm vào giỏ hàng</button></p>*@
+                <p><button type="button" class="buy-now btn btn-sm btn-primary" data-productid="@Model.maSp" data-productname="@Model.tenSp" data-price="@Model.donGia" data-image="@Model.seoImage" onclick="AddItemToCart(this)"><i class="fa fa-shopping-cart"></i></button></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="site-section block-3 site-blocks-2 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7 site-section-heading text-center pt-4">
+                <h2>Giới thiệu sản phẩm</h2>
+            </div>
+        </div>
+        <div class="row  justify-content-center">
+            <div class="col-md-12">
+                <div>
+                    @Html.Raw(Model.chiTietSp)
+                </div> 
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/js/jquery-3.3.1.min.js"></script>
+
+
+<script type="text/javascript">
+    let thumbnails = document.getElementsByClassName('thumbnail')
+
+    let activeImages = document.getElementsByClassName('active')
+
+    for (var i = 0; i < thumbnails.length; i++) {
+
+        thumbnails[i].addEventListener('mouseover', function () {
+            console.log(activeImages)
+
+            if (activeImages.length > 0) {
+                activeImages[0].classList.remove('active')
+            }
+
+
+            this.classList.add('active')
+            document.getElementById('featured').src = this.src
+        })
+    }
+
+
+    let buttonRight = document.getElementById('slideRight');
+    let buttonLeft = document.getElementById('slideLeft');
+
+    buttonLeft.addEventListener('click', function () {
+        document.getElementById('slider').scrollLeft -= 180
+    })
+
+    buttonRight.addEventListener('click', function () {
+        document.getElementById('slider').scrollLeft += 180
+    })
+
+    function inCrease() {
+        var e = window.event;
+        e.preventDefault();
+        $(this).closest('.input-group').find('.form-control').val(parseInt($(this).closest('.input-group').find('.form-control').val()) + 1);
+    }
+</script>
+
+<script>
+    function addtoCart(id) {
+
+        var inputData = {
+            masp: id,
+            SoLuong: 1,
+            type: "ajax"
+        }
+
+        $.ajax({
+            url: "/Cart/AddToCart",
+            data: inputData,
+            success: function (data) {
+                swal({
+                    text: "Thêm giỏ hàng thành công !!!",
+                    icon: "success",
+                    button: "OK!",
+                });
+                console.log(data.SoLuong);
+                $("#slh").html(data.SoLuong);
+            },
+            error: function () {
+                swal({
+                    text: data.Description,
+                    icon: "Thêm giỏ hàng thất bại !!!",
+                    button: "warning!",
+                });
+            }
+        });
+    }
+</script>
+
+
+

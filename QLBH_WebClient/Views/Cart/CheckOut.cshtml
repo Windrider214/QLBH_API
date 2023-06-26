@@ -1,0 +1,485 @@
+﻿
+@model List<QLBH_WebClient.Models.Cart>
+
+@{
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/";
+    string media_seo = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/seoIMG/";
+    int total = 0;
+
+}
+
+
+<div class="bg-light py-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mb-0"><a href="index.html">Trang Chủ</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Giỏ hàng</strong></div>
+        </div>
+    </div>
+</div>
+
+
+<div class="site-section">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-md-12">
+                <div class="site-blocks-table">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="product-thumbnail"></th>
+                                <th class="product-name">Sản Phẩm</th>
+                                <th class="product-price">Đơn Giá</th>
+                                <th class="product-quantity">Số Lượng</th>
+                                <th class="product-total">Thành Tiền</th>
+                                <th class="product-remove">Xóa</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                var totalAmount = item.donGia * item.soLuong;
+                                <tr>
+                                    <td class="product-thumbnail">
+                                        <img src="@media_seo@item.seoImage" alt="@item.tenSp" class="img-fluid">
+                                    </td>
+                                    <td class="product-name">
+                                        <h2 class="h5 text-black">@item.tenSp</h2>
+                                    </td>
+                                    <td class="font-weight-bold">@string.Format("{0:c0}", item.donGia)</td>
+                                    <td>
+                                        <div class="input-group mb-3 text-center" style="max-width: 120px;">
+                                            <div class="input-group-prepend">
+                                                <button class="btn btn-outline-primary js-btn-minus" type="button" data-productid="@item.maSp" data-type="1" onclick="UpdateItemToCart(this)">&minus;</button>
+                                            </div>
+                                            <input type="text" class="form-control text-center" id="txtSoLuong_@item.maSp" value="@item.soLuong" data-productid="@item.maSp" onchange="UpdateItemToCart(this)">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-primary js-btn-plus" type="button" data-productid="@item.maSp" data-type="2" onclick="UpdateItemToCart(this)">&plus;</button>
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                    <td class="font-weight-bold">@string.Format("{0:c0}", totalAmount)</td>
+                                    @*<td><button type="button" class="btn btn-primary btn-sm" onclick="removeItem('@item.maSp')"><i class="fa fa-trash"></i></button></td>*@
+                                    <td><a class="btn btn-danger" data-productid="@item.maSp" data-productname="@item.tenSp" onclick="RemoveItemFromCart(this)"><i class="fa fa-trash"></i></a></td>
+
+                                </tr>
+                                total += totalAmount;
+                            }
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="row mb-5">
+                                <div class="col-md-6 mb-3 mb-md-0">
+                                    <button class="btn btn-primary btn-sm btn-block">Update Cart</button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button class="btn btn-outline-primary btn-sm btn-block">Continue Shopping</button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="txtHoTen" class="text-black font-weight-bold">Họ Tên </label>
+                                    <input type="text" class="form-control" id="txtHoTen">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="txtSDT" class="text-black font-weight-bold">Số Điện Thoại </label>
+                                    <input type="text" class="form-control" id="txtSDT">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="txtDiaChi" class="text-black font-weight-bold">Địa Chỉ ( chỉ điền số nhà )</label>
+                                    <input type="text" class="form-control" id="txtDiaChi">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="txtEmail" class="text-black font-weight-bold">Email</label>
+                                    <input type="text" class="form-control" id="txtEmail">
+                                </div>
+                            </div>
+                            <label class="text-black font-weight-bold">Địa chỉ</label>
+                            <div class="row">
+                                <div class="col-4">
+                                    <select class="form-control" id="lstProvince">
+                                        <option value="0" selected="selected">Chọn tỉnh / thành</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <select class="form-control" id="lstDistrict">
+                                        <option value="0" selected="selected">Chọn quận / huyện</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <select class="form-control" id="lstWard">
+                                        <option value="0" selected="selected">Chọn phường / xã</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="txtGhiChu" class="text-black font-weight-bold">Ghi chú đơn hàng</label>
+                                    <textarea name="c_order_notes" id="txtGhiChu" cols="30" rows="5" class="form-control" placeholder="Ghi chú ..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 pl-5">
+                            <div class="row justify-content-end">
+                                <div class="col-md-7">
+                                    <div class="row">
+                                        <div class="col-md-12 text-right border-bottom mb-5">
+                                            <h3 class="text-black"><i class="fa fa-money"></i> Thanh Toán</h3>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-5">
+                                        <div class="col-md-6">
+                                            <span class="text-black font-weight-bold">Phí ship</span>
+                                        </div>
+                                        <div class="col-md-6 text-right">
+                                            <div class="text-black font-weight-bold" id="shippingFee"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-5">
+                                        <div class="col-md-6">
+                                            <span class="text-black font-weight-light font-italic">Thời gian giao hàng dự kiến </span>
+                                        </div>
+                                        <div class="col-md-6 font-weight-light font-italic text-right">
+                                            <div class="text-black " id="tggh"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-5">
+                                        <div class="col-md-6">
+                                            <span class="text-black font-weight-bold">Tiền hàng</span>
+                                        </div>
+                                        <div class="col-md-6 text-right">
+                                            <div class="text-black font-weight-bold" id="total">@string.Format("{0:c0}", total)</div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-5">
+                                        <div class="col-md-6">
+                                            <span class="text-black font-weight-bold">TỔNG TIỀN</span>
+                                        </div>
+                                        <div class="col-md-6 text-right">
+                                            <div class="text-black font-weight-bold" id="totalOrderAmount"></div>
+                                        </div>
+                                    </div>
+                                    <br />
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label class="text-black font-weight-bold">Phương thức thanh toán ( vui lòng chọn dưới đây )</label>
+                                        </div>
+                                        <div class="border p-3 mb-3">
+                                            <h3 class="h6 mb-0"><a class="d-block" data-toggle="collapse" href="#collapsebank" role="button" aria-expanded="false" aria-controls="collapsebank"><i class="fa fa-truck"></i> Thanh toán khi nhận hàng ( COD )</a></h3>
+                                            <div class="collapse" id="collapsebank">
+                                                <div class="py-2">
+                                                    <p class="mb-0">Thanh toán ngay khi bạn nhận và hài lòng với sản phẩm đã mua.</p>
+                                                    <button class="btn btn-outline-primary btn-sm py-3 btn-block" id="checkoutCOD">Xác Nhận</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="border p-3 mb-3">
+                                            <h3 class="h6 mb-0"><a class="d-block" data-toggle="collapse" href="#collapsecheque" role="button" aria-expanded="false" aria-controls="collapsecheque"><i class="fa fa-truck"></i> Thanh toán trước ( VNPAY )</a></h3>
+
+                                            <div class="collapse" id="collapsecheque">
+                                                <div class="py-2">
+                                                    <p class="mb-0">Thanh toán trước an toàn với đối tác VNPAY của chúng tôi .</p>
+                                                    <button class="btn btn-outline-primary btn-sm py-3 btn-block" onclick="checkoutVNPAY()">Xác Nhận</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var order_code = "";
+
+    $(document).ready(function () {
+
+        $('#checkoutCOD').click(function () {
+            var total_price = $("#totalOrderAmount").text();
+            total_price = total_price.replace("₫", "").replace(".", "");
+            checkoutCOD(total_price);
+        });
+
+        getListProvince();
+
+        $('#lstProvince').on('change', function () {
+            var id = $("#lstProvince").val();
+            getListDistrict(id);
+        });
+
+        $('#lstDistrict').on('change', function () {
+            var id = $("#lstDistrict").val();
+            getListWard(id);
+        });
+
+        $('#lstWard').on('change', function () {
+            var total_amount = @total;
+            var distric_id = $("#lstDistrict").val();
+            var province_id = $("#lstProvince").val();
+            var ward_id = $("#lstWard").val();
+            if (ward_id == "" || ward_id == null) {
+                return;
+            }
+            getShippingFee(distric_id, province_id, ward_id, total_amount);
+            getDeliverDate(distric_id, ward_id);
+        });
+
+
+  
+
+    });
+
+    function FormatMoney(value) {
+        return parseFloat(value).toLocaleString('vi-VN', { style: 'currency', currency: 'vnd' });
+    }
+
+
+    function getListProvince() {
+
+        $.ajax({
+            type: 'GET',
+            url: "/Cart/GetListProvince",
+            data: {},
+            success: function (response) {
+                var html = "";
+                var jsonResponse = JSON.parse(response);
+                var result = jsonResponse.data;
+                if (result != null) {
+                    $.each(result, function (index, data) {
+                        html += "<option value=\"" + data.ProvinceID + "\">" + data.ProvinceName + "</option>"
+                    })
+                };
+                $("#lstProvince").append(html);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        })
+    }
+
+    function getListDistrict(id) {
+        var inputData = {
+            provinceID: id
+        }
+        $.ajax({
+            type: 'GET',
+            url: "/Cart/GetListDistrict",
+            data: inputData,
+            success: function (response) {
+                var html = "";
+                var jsonResponse = JSON.parse(response);
+                var result = jsonResponse.data;
+                if (result != null) {
+                    $.each(result, function (index, data) {
+                        html += "<option value=\"" + data.DistrictID + "\">" + data.DistrictName + "</option>"
+                    })
+                };
+                $("#lstDistrict").html(html);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        })
+    }
+
+    function getListWard(id) {
+        var inputData = {
+            districtID: id
+        }
+        $.ajax({
+            type: 'GET',
+            url: "/Cart/GetListWard",
+            data: inputData,
+            success: function (response) {
+                var html = "";
+                var jsonResponse = JSON.parse(response);
+                var result = jsonResponse.data;
+                if (result != null) {
+                    $.each(result, function (index, data) {
+                        html += "<option value=\"" + data.WardCode + "\">" + data.WardName + "</option>"
+                    })
+                };
+                $("#lstWard").html(html);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        })
+    }
+
+    function getShippingFee(distric_id, province_id, ward_id, total_amount) {
+        var inputData = {
+            districtID: distric_id,
+            provinceID: province_id,
+            wardID: ward_id,
+            TotalAmount: total_amount
+        }
+        $.ajax({
+            type: 'GET',
+            url: "/Cart/GetShippingFee",
+            data: inputData,
+            success: function (response) {
+                var jsonResponse = JSON.parse(response);
+                var result = jsonResponse.data;
+                var shipping_fee = result.total;
+                $("#shippingFee").text(FormatMoney(shipping_fee));
+                var total_order_amount = parseInt(shipping_fee, 10) + parseInt(total_amount,10);
+                $("#totalOrderAmount").html(FormatMoney(total_order_amount));
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+            }
+
+        })
+    }
+
+    function getDeliverDate(to_district_id, to_ward_code) {
+        var inputData = {
+            to_district_id: to_district_id,
+            to_ward_code: to_ward_code
+        }
+        $.ajax({
+            type: 'GET',
+            url: "/Cart/GetDeliverDate",
+            data: inputData,
+            success: function (response) {
+                var html = "";
+                var jsonResponse = JSON.parse(response);
+                var result = jsonResponse.data;
+                var deliverDate = new Date(parseInt(result.leadtime * 1000));
+                $("#tggh").html(moment(deliverDate).format('DD/MM/YYYY'));
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+        })
+    }
+
+    function checkoutVNPAY() {
+        var total_price = $("#totalOrderAmount").text();
+        total_price = total_price.replace("₫", "").replace(".", "");
+
+        var inputData = {
+            thanhtien: total_price
+        }
+        $.ajax({
+            type: 'GET',
+            url: "/Cart/Payment",
+            data: inputData,
+            success: function (response) {
+                checkoutCOD(0);
+                setTimeout("window.location.href = '" + response + "'", 3000);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        })
+    }
+
+    function checkoutCOD(total_amount) {
+        var total_price = $("#totalOrderAmount").text();
+        total_price = total_price.replace("₫", "").replace(".", "");
+
+        var inputData = {
+            note: $("#txtGhiChu").val(),
+            to_name: $("#txtHoTen").val(),
+            to_phone: $("#txtSDT").val(),
+            to_address: $("#txtDiaChi").val(),
+            to_ward_code: $("#lstWard").val(),
+            to_district_id: $("#lstDistrict").val(),
+            to_province_id: $("#lstProvince").val(),
+            cod_amount: total_amount,
+            insurance_value: total_price
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: "/Cart/PaymentCOD",
+            data: inputData,
+            success: function (data) {
+                CreateOrder('Thanh toán khi nhận hàng');
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+            }
+        });
+   
+    }
+
+    function CreateOrder(loaithanhtoan) {
+
+        var total_price = $("#totalOrderAmount").text();
+        total_price = total_price.replace("₫", "").replace(".", "");
+
+        var shippingFee = $("#shippingFee").text();
+        shippingFee = shippingFee.replace("₫", "").replace(".", "");
+
+        var deliverDate = $("#tggh").text();
+
+        var dc = $("#txtDiaChi").val() + ", " + $("#lstWard option:selected").text() + ", " + $("#lstDistrict option:selected").text() + ", " + $("#lstProvince option:selected").text();
+
+        var inputData = {
+            hoTenKh: $("#txtHoTen").val(),
+            sdtKh: $("#txtSDT").val(),
+            diaChiKh: dc,
+            emailKh: $("#txtEmail").val(),
+            ngayDat: moment().format('YYYY-MM-DD HH:mm:ss'),
+            ngayGiao: deliverDate,
+            loaiThanhToan: loaithanhtoan,
+            maVanDon: '',
+            phiVanChuyen: shippingFee,
+            tongTien: total_price,
+            trangThai: 0,
+            ghiChu: $("#txtGhiChu").val()
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: "/Cart/CreateOrder",
+            data: inputData,
+            success: function (data) {
+                var result = data.ResponseCode;
+                if (result > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    });
+                }
+                setTimeout("window.location.href = 'http://localhost:57368/Cart/PaymentConfirm'", 1000);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            },
+        })
+    }
+    
+</script>

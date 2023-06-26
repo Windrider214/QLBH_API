@@ -1,0 +1,238 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-8 col-sm-6">
+            <button type="button" class="btn btn-primary fs-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Thêm
+            </button>
+
+        </div>
+        <div class="col-4 col-sm-6 text-end">
+            <div class="d-flex">
+                <button class="btn btn-outline-success" onclick="getDsMedia()">Làm mới</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm ảnh</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="txtMediaID" class="form-label">Mã </label>
+                    <input type="text" class="form-control" id="txtMediaID" placeholder="Để trống ..." disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="ddlMaLoai" class="form-label">Loại</label>
+                    <select class="form-select" id="ddlMaLoai"></select>
+                </div>
+                <div class="mb-3">
+                    <label for="txtSDT" class="form-label">Tình trạng : <input type="checkbox" id="chkTrangThai"></label>
+                </div>
+                <div class="mb-3">
+                    <label>Chọn ảnh</label>
+                    <input type="file" class="form-control" id="uploadImage" />
+                    <div>
+                        <img id="imagePreview" />
+                        <button class="btn btn-danger" onclick="RemoveProductImage()">Hủy ảnh</button>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="Insert()">Lưu</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="dsMedia" width="100%">
+
+</div>
+
+<script>
+    jQuery(document).ready(function ($) {
+        getDsMedia();
+
+        getMediaType();
+
+        $('#uploadImage').on('change', function () {
+            var statusEditImg = 0;
+            if (typeof (FileReader) != "undefined") {
+                var dvPreview = $("#dvPreview");
+                dvPreview.html("");
+                var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+                var index = 0;
+                $($(this)[0].files).each(function () {
+                    var file = $(this);
+                    if (regex.test(file[0].name.toLowerCase())) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+
+                            /*Upload one image*/
+                            $("#imagePreview").attr("style", "height:250px;width: 250px");
+                            $("#imagePreview").attr("src", e.target.result);
+                            statusEditImg = 1;
+
+                            //Upload multi image
+                            //var img = $("<img class='img_" + index + "'/> <span id='span_img_" + index + "'><a onclick='RemoveProductImage(" + index + ")' href='#'>Xóa</a></span> <br/>");
+                            //img.attr("style", "height:250px;width: 250px");
+                            //img.attr("src", e.target.result);
+                            //console.log(e.target.result);
+                            //dvPreview.append(img);
+                            //index++;
+
+                        }
+                        reader.readAsDataURL(file[0]);
+                    } else {
+                        alert(file[0].name + " is not a valid image file.");
+                        dvPreview.html("");
+                        return false;
+                    }
+
+                });
+            } else {
+                alert("This browser does not support HTML5 FileReader.");
+            }
+        });
+    });
+
+    var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+
+    function RemoveProductImage() {
+        $("#imagePreview").removeAttr("src");
+    }
+
+
+    function Insert() {
+        var mediaid = $("#txtMaTH").val();
+        var mediatypeID = $("#ddlMaLoai").val();
+
+        var trangthai = true;
+        if ($("#chkTrangThai").is(":checked")) {
+            trangthai = true;
+        }
+        else {
+            trangthai = false;
+        }
+
+        var imageBase64 = "";
+        if (typeof ($("#imagePreview").attr("src")) === 'undefined') {
+            imageBase64 = "";
+        }
+        else {
+            imageBase64 = $("#imagePreview").attr("src");
+            imageBase64 = imageBase64.split(',')[1];
+        }
+
+        //var imageBase64 = $("#imagePreview").attr("src");
+        //if (imageBase64 != null || imageBase64 != "") {
+        //    // Cắt bỏ đi data:image/jpeg;base64,
+        //    imageBase64 = imageBase64.split(',')[1];
+        //}
+
+
+        var inputData = {
+            mediaId: mediaid,
+            image: imageBase64,
+            mediaTypeId: mediatypeID,
+            isActive: trangthai
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/Media/MediaInsert",
+            data: inputData,
+            success: function (data) {
+                var result = data.ResponseCode;
+                if (result > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    });
+                    getDsMedia();
+                    $(".modal-backdrop").remove();
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "warning",
+                        button: "OK!",
+                    });
+                    getDsMedia();
+                    $(".modal-backdrop").remove();
+                }
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+        });
+    }
+
+    //Get media type
+    function getMediaType() {
+        var inputData = {
+            token: cookieToken.token
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/Media/GetMediaType",
+            data: inputData,
+            success: function (data) {
+                var html = "";
+                var loaisp = data.result;
+                if (data != null) {
+                    $.each(data, function (index, mediatype) {
+                        html += "<option value=\"" + mediatype.mediaTypeId + "\">" + mediatype.mediaTypeName + "</option>"
+
+                    })
+                };
+                $("#ddlMaLoai").append(html);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+    function getDsMedia() {
+        var inputData = {
+            token: cookieToken.token
+        };
+
+
+        $.ajax({
+            type: 'POST',
+            url: "/Media/PartialIndex",
+            data: inputData,
+            success: function (data) {
+                $('#dsMedia').html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+</script>

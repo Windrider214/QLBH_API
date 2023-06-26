@@ -1,0 +1,154 @@
+﻿@model QLBH_WebManage.DTO.THUONGHIEU
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/thuonghieu/";
+}
+
+<div>
+    <h4>Chi tiết thương hiệu "@Model.tenTh"</h4>
+    <hr />
+    <div>
+        <div class="mb-3">
+            <label for="txtMaKH" class="form-label">Mã thương hiệu</label>
+            <input type="text" class="form-control" id="txtMaTH" placeholder="Để trống ..." value="@Model.maTh" disabled>
+        </div>
+        <div class="mb-3">
+            <label for="txtTenKH" class="form-label">Tên thương hiệu</label>
+            <input type="text" class="form-control" id="txtTenTH" value="@Model.tenTh">
+        </div>
+        <div class="mb-3">
+            <label for="txtTenKH" class="form-label">Xuất xứ</label>
+            <input type="text" class="form-control" id="txtXuatXu" value="@Model.xuatXu">
+        </div>
+        <div class="mb-3">
+            <label for="txtTenKH" class="form-label">Ảnh thương hiệu</label>
+            <img src="@media@Model.anhTh" style="width: 100px;height: 100px" />
+        </div>
+
+        <div class="mb-3">
+            <label>Chọn ảnh</label>
+            <input type="file" class="form-control" id="uploadImage" />
+            <div><img id="imagePreview" />
+                 <button class="btn btn-danger" onclick="RemoveProductImage()">Hủy ảnh</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<p>
+    <button class="btn btn-success" onclick="Update()">Cập nhật</button> | @Html.ActionLink("Quay lại", "Index")
+
+</p>
+
+<script>
+    jQuery(document).ready(function ($) {
+        $('#uploadImage').on('change', function () {
+            var statusEditImg = 0;
+            if (typeof (FileReader) != "undefined") {
+                var dvPreview = $("#dvPreview");
+                dvPreview.html("");
+                var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+                var index = 0;
+                $($(this)[0].files).each(function () {
+                    var file = $(this);
+                    if (regex.test(file[0].name.toLowerCase())) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+
+                            /*Upload one image*/
+                            $("#imagePreview").attr("style", "height:250px;width: 250px");
+                            $("#imagePreview").attr("src", e.target.result);
+                            statusEditImg = 1;
+
+                            //Upload multi image
+                            //var img = $("<img class='img_" + index + "'/> <span id='span_img_" + index + "'><a onclick='RemoveProductImage(" + index + ")' href='#'>Xóa</a></span> <br/>");
+                            //img.attr("style", "height:250px;width: 250px");
+                            //img.attr("src", e.target.result);
+                            //console.log(e.target.result);
+                            //dvPreview.append(img);
+                            //index++;
+
+                        }
+                        reader.readAsDataURL(file[0]);
+                    } else {
+                        alert(file[0].name + " is not a valid image file.");
+                        dvPreview.html("");
+                        return false;
+                    }
+
+                });
+            } else {
+                alert("This browser does not support HTML5 FileReader.");
+            }
+        });
+    });
+
+    function RemoveProductImage() {
+        $("#imagePreview").removeAttr("src");
+    }
+
+    function Update() {
+        var math = $("#txtMaTH").val();
+        var tenth = $("#txtTenTH").val();
+        var xuatxu = $("#txtXuatXu").val();
+       
+        var imageBase64 = "";
+
+        if (typeof($("#imagePreview").attr("src"))  === 'undefined') {
+            imageBase64 = '@Model.anhTh';
+        }
+        else {
+            imageBase64 = $("#imagePreview").attr("src");
+            imageBase64 = imageBase64.split(',')[1];
+        }
+        
+        //var imageBase64 = $("#imagePreview").attr("src");
+        //if (imageBase64 != null || imageBase64 != "") {
+        //    // Cắt bỏ đi data:image/jpeg;base64,
+        //    imageBase64 = imageBase64.split(',')[1];
+        //}
+     
+
+        var inputData = {
+            maTh: math,
+            tenTh: tenth,
+            xuatXu: xuatxu,
+            anhTh: imageBase64
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/ThuongHieu/ThuongHieuUpdate",
+            data: inputData,
+            success: function (data) {
+                var result = data.ResponseCode;
+                if (result > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    });
+                    location.reload(true);
+                    $(".modal-backdrop").remove();
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "warning",
+                        button: "OK!",
+                    });
+                    $(".modal-backdrop").remove();
+                }
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+        });
+    }
+</script>
+

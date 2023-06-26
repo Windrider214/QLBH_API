@@ -1,0 +1,320 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-8 col-sm-6">
+            <button type="button" class="btn btn-primary fs-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Thêm
+            </button>
+
+        </div>
+        <div class="col-4 col-sm-6 text-end">
+            <div class="d-flex">
+                <input class="form-control" type="text" placeholder="Tìm thương hiệu ..." aria-label="Search" id="txtSearch">
+                <button class="btn btn-outline-warning" onclick="Search()">Tìm</button>
+                <button class="btn btn-outline-success" onclick="getDsBlog()">Làm mới</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Đăng bài viết</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-3">
+                        <div class="mb-3">
+                            <label for="txtMaKH" class="form-label">Mã blog</label>
+                            <input type="text" class="form-control" id="txtMaBlog" placeholder="Để trống ..." disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="txtTenKH" class="form-label">Tiêu đề</label>
+                            <input type="text" class="form-control" id="txtTieuDe">
+                        </div>
+                        <div class="mb-3">
+                            <label for="txtTenKH" class="form-label">Mô tả</label>
+                            <input type="text" class="form-control" id="txtMoTa">
+                        </div>
+                        <div class="mb-3">
+                            <label for="ddlBlogType" class="form-label">Loại</label>
+                            <select class="form-select" id="ddlBlogType"></select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ddlUser" class="form-label">Người đăng</label>
+                            <select class="form-select" id="ddlUser"></select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Chọn ảnh</label>
+                            <input type="file" class="form-control" id="uploadImage" />
+                            <div>
+                                <img id="imagePreview" />
+                                <button class="btn btn-danger" onclick="RemoveProductImage()">Hủy ảnh</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-9">
+                        <div class="mb-3">
+                            <label for="txtNoiDung" class="form-label">Nội dung: <textarea id="txtNoiDung" class="form-control"></textarea></label>
+                            <script>CKEDITOR.replace("txtNoiDung");</script>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="Insert()">Lưu</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="dsBlog" width="100%">
+
+</div>
+
+<div class="d-flex justify-content-center">
+    <ul id="pagination-demo" class="pagination-x"></ul>
+</div>
+
+<script>
+  jQuery(document).ready(function ($) {
+      getDsUser();
+      getDsBlogType();
+      getDsBlogPaging();
+      $('#uploadImage').on('change', function () {
+          var statusEditImg = 0;
+          if (typeof (FileReader) != "undefined") {
+              var dvPreview = $("#dvPreview");
+              dvPreview.html("");
+              var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+              var index = 0;
+              $($(this)[0].files).each(function () {
+                  var file = $(this);
+                  if (regex.test(file[0].name.toLowerCase())) {
+                      var reader = new FileReader();
+                      reader.onload = function (e) {
+
+                          /*Upload one image*/
+                          $("#imagePreview").attr("style", "height:250px;width: 250px");
+                          $("#imagePreview").attr("src", e.target.result);
+                          statusEditImg = 1;
+
+                          //Upload multi image
+                          //var img = $("<img class='img_" + index + "'/> <span id='span_img_" + index + "'><a onclick='RemoveProductImage(" + index + ")' href='#'>Xóa</a></span> <br/>");
+                          //img.attr("style", "height:250px;width: 250px");
+                          //img.attr("src", e.target.result);
+                          //console.log(e.target.result);
+                          //dvPreview.append(img);
+                          //index++;
+
+                      }
+                      reader.readAsDataURL(file[0]);
+                  } else {
+                      alert(file[0].name + " is not a valid image file.");
+                      dvPreview.html("");
+                      return false;
+                  }
+
+              });
+          } else {
+              alert("This browser does not support HTML5 FileReader.");
+          }
+      });
+  });
+
+  var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+
+    function RemoveProductImage() {
+        $("#imagePreview").removeAttr("src");
+    }
+
+    function getDsBlogType() {
+
+        var inputData = {
+            token: cookieToken.token
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/Blog/GetBlogType",
+            data: inputData,
+            success: function (data) {
+                var html = "";
+                var blogtype = data.result;
+                if (data != null) {
+                    $.each(data, function (index, blogtype) {
+                        html += "<option value=\"" + blogtype.maDm + "\">" + blogtype.tenDm + "</option>"
+
+                    })
+                };
+                $("#ddlBlogType").append(html);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+    function getDsUser() {
+
+        var inputData = {
+            token: cookieToken.token
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/Blog/GetUser",
+            data: inputData,
+            success: function (data) {
+                var html = "";
+                var user = data.result;
+                if (data != null) {
+                    $.each(data, function (index, user) {
+                        html += "<option value=\"" + user.id + "\">" + user.userName + "</option>"
+
+                    })
+                };
+                $("#ddlUser").append(html);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+    var pageSize = 5;
+    var pageIndex = 1;
+
+    function getDsBlogPaging() {
+        var inputData = {
+            MaTinTuc: "",
+            token: cookieToken.token,
+            page: pageIndex,
+            pageSize: pageSize
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/Blog/PartialIndex",
+            data: inputData,
+            success: function (data) {
+                $('#dsBlog').html(data);
+               dataPaging('@ViewBag.TotalRow', function () {
+                   getDsBlogPaging();
+                });
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+    //Phân trang
+    function dataPaging(totalRow, callback) {
+
+        var totalPage = Math.ceil(totalRow / pageSize);
+        $('#pagination-demo').twbsPagination({
+            totalPages: totalPage,
+            visiblePages: 5,
+            first: "Đầu",
+            next: "Tiếp",
+            last: "Cuối",
+            prev: "Trước",
+            onPageClick: function (event, page) {
+                pageIndex = page;
+                setTimeout(callback, 200);
+            }
+        });
+    }
+
+    function Insert() {
+        var mablog = $("#txtMaBlog").val();
+        var tieude = $("#txtTieuDe").val();
+        var mota = $("#txtMoTa").val();
+        var noidung = CKEDITOR.instances['txtNoiDung'].getData();
+        var maloai = $("#ddlBlogType").val();
+        var user = $("#ddlUser").val();
+        var ngaydang = moment().format('YYYY-MM-DD HH:mm:ss');
+        var luotxem = 0;
+
+        var imageBase64 = "";
+        if (typeof ($("#imagePreview").attr("src")) === 'undefined') {
+            imageBase64 = "";
+        }
+        else {
+            imageBase64 = $("#imagePreview").attr("src");
+            imageBase64 = imageBase64.split(',')[1];
+        }
+
+        //var imageBase64 = $("#imagePreview").attr("src");
+        //if (imageBase64 != null || imageBase64 != "") {
+        //    // Cắt bỏ đi data:image/jpeg;base64,
+        //    imageBase64 = imageBase64.split(',')[1];
+        //}
+
+
+        var inputData = {
+            maTinTuc: null,
+            tieuDe: tieude,
+            anhTt: imageBase64,
+            moTa: mota,
+            noiDung: noidung,
+            ngayDang: ngaydang,
+            luotXem: luotxem,
+            maDm: maloai,
+            userId: user
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/Blog/BlogInsert",
+            data: inputData,
+            success: function (data) {
+                var result = data.ResponseCode;
+                if (result > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    });
+                    getDsBlogPaging();
+                    $(".modal-backdrop").remove();
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "warning",
+                        button: "OK!",
+                    });
+                    getDsThuongHieu();
+                    $(".modal-backdrop").remove();
+                }
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+        });
+    }
+</script>

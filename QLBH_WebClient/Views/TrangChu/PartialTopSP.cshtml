@@ -1,0 +1,63 @@
+﻿@model List<QLBH_WebClient.DTO.SANPHAM>
+
+@{
+    Layout = null;
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/";
+    string media_seo = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/seoIMG/";
+
+}
+
+<div class="site-section block-3 site-blocks-2 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7 site-section-heading text-center pt-4">
+                <h2>Sản Phẩm Mới</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="nonloop-block-3 owl-carousel">
+
+                    @{
+                        if (Model != null && Model.Count > 0)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <div class="item" style="margin-right: 20px">
+                                    <div class="block-4 text-center">
+                                        <figure class="block-4-image">
+                                            <img src="@media_seo@item.seoImage" alt="Image placeholder" class="img-fluid" style="width: 480px;height: 360px">
+                                        </figure>
+                                        <div class="block-4-text p-4">
+                                            <h3><a href="/SanPham/Detail?MaSP=@item.maSp">@item.tenSp</a></h3>
+                                            <p class="mb-0">Thương hiệu: @item.maThNavigation.tenTh</p>
+                                            <p class="text-primary font-weight-bold">@string.Format("{0:c0}", item.donGia)</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/js/owl.carousel.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".owl-carousel").owlCarousel({
+            loop: true,
+            margin: 0,
+            smartSpeed: 300,
+            nav: true,
+            dots: false,
+            navText: ['<span aria-label="Trước">‹</span>', '<span aria-label="Sau">›</span>'],
+            lazyLoad: true,
+
+        });
+    });
+
+</script>

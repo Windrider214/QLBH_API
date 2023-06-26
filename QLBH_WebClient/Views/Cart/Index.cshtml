@@ -1,0 +1,37 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<div id="shoppingCart">
+
+</div>
+
+
+
+<script>
+    jQuery(document).ready(function ($) {
+        getCart();
+    });
+
+    function getCart() {
+
+        $.ajax({
+            type: 'POST',
+            url: "/Cart/CheckOut",
+            data: {},
+            success: function (data) {
+                $('#shoppingCart').html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+
+
+</script>

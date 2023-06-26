@@ -1,0 +1,157 @@
+﻿@model List<QLBH_WebManage.DTO.SANPHAM>
+
+
+@{
+    Layout = null;
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/";
+    string media_seo = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/seoIMG/";
+
+}
+
+<br />
+<br />
+
+<div class="container-fluid">
+    <table id="dsLoaiSP" class="table table-sm table-hover table-striped table-bordered">
+        <thead class="table-primary">
+            <tr>
+                <th>Mã Sản phẩm</th>
+                <th>Tên sản phẩm</th>
+                <th>Đơn vị tính</th>
+                <th>Đơn giá</th>
+                <th>Mã loại</th>
+                <th>Mã thương hiệu</th>
+                <th>SeoImage</th>
+                <th>Số lần xem</th>
+                <th>Giảm giá</th>
+                <th>Số lượng</th>
+                <th>Tình trạng</th>
+                <th></th>
+                <th></th>
+
+            </tr>
+        </thead>
+
+
+        <tbody>
+            @if (Model != null && Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+
+                    <tr>
+                        <th>@item.maSp</th>
+                        <th>@item.tenSp</th>
+                        <th>@item.donViTinh</th>
+                        <th>@string.Format("{0:c0}", @item.donGia)</th>
+                        <th>@item.maLoaiNavigation.tenLoaiSp</th>
+                        <th>@item.maThNavigation.tenTh</th>
+                        <th>
+                            <img src="@media_seo@item.seoImage" style="width: 100px;height: 100px" />
+                        </th>
+                        <th>@item.soLanXem</th>
+                        <th>@item.giamGia</th>
+                        <th>@item.soLuong</th>
+                        <th>
+                            @{
+                                if (item.tinhTrang == true)
+                                {
+                                    <div class="text-success">Còn hàng</div>
+                                }
+                                else
+                                {
+                                    <div class="text-warning">Hết hàng</div>
+                                }
+                            }
+                        </th>
+                        <td><a href="/SanPham/Detail?MaSP=@item.maSp" class="btn btn-info"><i class="fa fa-pencil"></i></a></td>
+
+                        <td>
+                            <button onclick="deleteSanPham('@item.maSp')" id="btnDelete" class="btn btn-danger">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+    });
+
+    var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+    var pageSize = 5
+    var pageIndex = 1;
+
+    function deleteSanPham(masp) {
+        var result = confirm("Bạn có chắc chắn muốn xóa");
+
+        if (result) {
+            var deleteData = {
+                maSp: masp
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "/SanPham/Delete",
+                data: deleteData,
+                success: function (data) {
+                    var code = data.ResponseCode;
+                    if (code > 0) {
+                        swal({
+                            text: data.Description,
+                            icon: "success",
+                            button: "OK!",
+                        });
+                        getDs();
+                    }
+                    else {
+                        swal({
+                            text: data.Description,
+                            icon: "warning",
+                            button: "OK!",
+                        });
+                        getDs();
+                        $(".modal-backdrop").remove();
+                    }
+                },
+                error: function (data) {
+                    console.log("error:" + JSON.stringify(data));
+                }
+            });
+        }
+
+    }
+
+    function getDs() {
+        var inputData = {
+            TenSp: "",
+            token: cookieToken.token,
+            page: pageIndex,
+            pageSize: pageSize
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/SanPham/PartialIndex",
+            data: inputData,
+            success: function (data) {
+                $('#dsSanPham').html(data);
+
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+
+</script>

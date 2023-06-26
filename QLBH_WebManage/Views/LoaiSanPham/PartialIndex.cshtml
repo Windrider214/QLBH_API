@@ -1,0 +1,125 @@
+﻿@model List<QLBH_WebManage.DTO.LOAISP>
+
+@{
+    ViewBag.Title = "ParitalIndex";
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/categories/";
+
+}
+
+<br />
+<br />
+
+<div class="container">
+    <table id="dsLoaiSP" class="table table-sm table-hover table-striped table-bordered">
+        <thead class="table-primary">
+            <tr>
+                <th>Mã loại sản phẩm</th>
+                <th>Tên loại sản phẩm</th>
+                <th>Ảnh</th>
+                <th></th>
+                <th></th>
+
+            </tr>
+        </thead>
+
+
+        <tbody>
+            @if (Model != null && Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+
+                    <tr>
+                        <td>@item.maLoai</td>
+                        <td>@item.tenLoaiSp</td>
+                        <td>
+                            <img src="@media@item.image" style="width: 150px;height: 150px" />
+                        </td>
+                        <td><a href="/LoaiSanPham/Detail?MaLoai=@item.maLoai" class="btn btn-info">Chi tiết</a></td>
+                        <td>
+                            <input type="button" onclick="deleteLoaiSP('@item.maLoai')" id="btnDelete" value="Xóa" class="btn btn-danger" />
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+
+    });
+
+    var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+
+
+    function deleteLoaiSP(maLoai) {
+        var result = confirm("Bạn có chắc chắn muốn xóa");
+
+        if (result) {
+            var deleteData = {
+                MaLoai: maLoai
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "/LoaiSanPham/Delete",
+                data: deleteData,
+                success: function (data) {
+                    var code = data.ResponseCode;
+                    if (code > 0) {
+                        swal({
+                            text: data.Description,
+                            icon: "success",
+                            button: "OK!",
+                        });
+                        getDs();
+                        $(".modal-backdrop").remove();
+                    }
+                    else {
+                        swal({
+                            text: data.Description,
+                            icon: "warning",
+                            button: "OK!",
+                        });
+                        getDs();
+                        $(".modal-backdrop").remove();
+                    }
+                },
+                error: function (data) {
+                    console.log("error:" + JSON.stringify(data));
+                }
+            });
+        }
+       
+    }
+
+
+    function getDs() {
+
+        var inputData = {
+            TenLoaiSP: "",
+            token: cookieToken.token
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/LoaiSanPham/PartialIndex",
+            data: inputData,
+            success: function (data) {
+                $('#dsLoaiSP').html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+
+    </script>

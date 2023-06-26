@@ -1,0 +1,637 @@
+﻿@model QLBH_WebManage.DTO.SANPHAM
+
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/";
+    string media_seo = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/seoIMG/";
+
+    var imageString = "";
+    string[] imageList = null;
+
+    if (Model.image != null)
+    {
+        imageString = Model.image.TrimEnd(',');
+        imageList = imageString.Split(',');
+    }
+
+}
+
+
+<h1>Chi tiết sản phẩm @Model.tenSp</h1>
+<hr />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-4">
+            <div class="mb-3">
+                <label for="txtNgayThem" class="form-label">Ngày đăng</label>
+                <input type="text" class="form-control" id="txtNgayThem" value="@Model.ngayThem" disabled>
+            </div>
+            <div class="mb-3">
+                <label for="txtMaKH" class="form-label">Mã sản phẩm</label>
+                <input type="text" class="form-control" id="txtMaSP" placeholder="Để trống ..." value="@Model.maSp" disabled>
+            </div>
+            <div class="mb-3">
+                <label for="txtTenKH" class="form-label">Tên sản phẩm</label>
+                <input type="text" class="form-control" id="txtTenSP" value="@Model.tenSp">
+            </div>
+            <div class="mb-3">
+                <label for="txtTenKH" class="form-label">Đơn vị tính</label>
+                <input type="text" class="form-control" id="txtDVT" value="@Model.donViTinh">
+            </div>
+            <div class="mb-3">
+                <label for="txtTenKH" class="form-label">Đơn giá</label>
+                <input type="text" class="form-control" id="txtDonGia" value="@Model.donGia">
+            </div>
+            <div class="mb-3">
+                <label for="ddlMaLoai" class="form-label">Loại</label>
+                <select class="form-select" id="ddlMaLoai"></select>
+            </div>
+            <div class="mb-3">
+                <label for="ddlThuongHieu" class="form-label">Thương hiệu</label>
+                <select class="form-select" id="ddlThuongHieu"></select>
+            </div>
+            <div class="mb-3">
+                <button type="button" class="btn btn-outline-warning fs-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Xem ảnh sản phẩm
+                </button>
+
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Danh sách ảnh sản phẩm</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <table class="table table-sm table-striped table-bordered" border="1" style="width: 100%;" id="dataTables_Active" role="grid">
+                                        <thead>
+                                            <tr>
+                                                Kéo thả vị trí các ảnh để thiết lập vị trí, sau đó bấm lưu !!!
+                                            </tr>
+                                        </thead>
+                                        <tbody class="row_drag">
+                                            @{
+                                                if (imageList != null)
+                                                {
+                                                    foreach (string image in imageList)
+                                                    {
+                                                        <tr>
+                                                            <th id="li_@image">
+                                                                <div id="img_@image.Split('.')[0]" class="col-3">
+                                                                    <img src="@media@image" style="width:200px;height:200px" />
+                                                                    <a onclick="RemoveImage('@image');" style="cursor:auto" class="btn btn-danger">Xoa</a>
+                                                                </div>
+                                                            </th>
+                                                        </tr>
+                                                    }
+                                                }
+
+                                            }
+                                        </tbody>
+                                    </table>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button class="btn btn-primary" onclick="btnAcceptUpdatePosionImage()">Cập nhật vị trí ảnh</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="mb-3">
+                <label for="txtSLX" class="form-label">Số lần xem</label>
+                <input type="text" class="form-control" id="txtSLX" value="@Model.soLanXem" disable>
+            </div>
+            <div class="mb-3">
+                <label for="txtKhuyenMai" class="form-label">Khuyến mãi</label>
+                <input type="text" class="form-control" id="txtKhuyenMai" value="@Model.giamGia">
+            </div>
+            <div class="mb-3">
+                <label for="txtSL" class="form-label">Số lượng</label>
+                <input type="text" class="form-control" id="txtSL" value="@Model.soLuong">
+            </div>
+
+            <div class="mb-3">
+                <label for="txtSDT" class="form-label">Tình trạng : <input type="checkbox" id="chkTrangThai"></label>
+            </div>
+            <div class="mb-3">
+                <label for="txtImage" class="form-label">Hình ảnh SEO : </label>
+                <img src="@media_seo@Model.seoImage" id="txtImage" style="width:200px;height:200px" />
+            </div>
+            <div class="mb-3">
+                <label for="txtMoTa" class="form-label">Mô tả</label>
+                <input type="text" class="form-control" id="txtMoTa" value="@Model.moTa">
+            </div>
+            <div class="mb-3">
+                <label for="txtMoTaCT" class="form-label">Chi tiết SP: <textarea id="txtMoTaCT" class="form-control"> @Html.DisplayFor(modelItem => Model.chiTietSp)</textarea></label>
+                <script>CKEDITOR.replace("txtMoTaCT");</script>
+            </div>
+        </div>
+        <div class="col-4">
+            <p class="fs-3">CẬP NHẬT ẢNH TẠI ĐÂY</p>
+            <div class="mb-3">
+                <label>Chọn ảnh SEO</label>
+                <input type="file" class="form-control" id="uploadImageSEO" />
+                <div>
+                    <img id="imageSeoPreview" />
+                    <button class="btn btn-danger" onclick="RemoveProductImageSEO()">Hủy ảnh SEO</button>
+
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label>Chọn ảnh chi tiết</label>
+                <input type="file" class="form-control" id="uploadImage" multiple="multiple" />
+                <div class="mb-3">
+                    <div id="dvPreview">
+                    </div>
+                    <div class="image-upload">
+                        <label for="fileaddMore"><i class="fa fa-plus"></i></label>
+                        <input type="file" class="form-control" id="fileaddMore" multiple="multiple" hidden />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p class="text-end">
+    <button class="btn btn-success" onclick="Update()">Cập nhật</button> | @Html.ActionLink("Quay lại", "Index")
+
+</p>
+
+<script>
+    jQuery(document).ready(function ($) {
+        getDsThuongHieu();
+        getDsLoaiSP();
+        setActive();
+
+        //Upload SEO image
+        $('#uploadImageSEO').on('change', function () {
+            var statusEditImg = 0;
+            if (typeof (FileReader) != "undefined") {
+                var dvPreview = $("#dvPreview");
+                dvPreview.html("");
+                var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+                var index = 0;
+                $($(this)[0].files).each(function () {
+                    var file = $(this);
+                    if (regex.test(file[0].name.toLowerCase())) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+
+                            /*Upload one image*/
+                            $("#imageSeoPreview").attr("style", "height:250px;width: 250px");
+                            $("#imageSeoPreview").attr("src", e.target.result);
+                            statusEditImg = 1;
+
+                            //Upload multi image
+                            //var img = $("<img class='img_" + index + "'/> <span id='span_img_" + index + "'><a onclick='RemoveProductImage(" + index + ")' href='#'>Xóa</a></span> <br/>");
+                            //img.attr("style", "height:250px;width: 250px");
+                            //img.attr("src", e.target.result);
+                            //console.log(e.target.result);
+                            //dvPreview.append(img);
+                            //index++;
+
+                        }
+                        reader.readAsDataURL(file[0]);
+                    } else {
+                        alert(file[0].name + " is not a valid image file.");
+                        dvPreview.html("");
+                        return false;
+                    }
+
+                });
+            } else {
+                alert("This browser does not support HTML5 FileReader.");
+            }
+        });
+
+        //Upload detail image
+        $('#uploadImage').on('change', function () {
+            var statusEditImg = 0;
+            if (typeof (FileReader) != "undefined") {
+                var dvPreview = $("#dvPreview");
+                dvPreview.html("");
+                var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+                var index = 0;
+                $($(this)[0].files).each(function () {
+                    var file = $(this);
+                    if (regex.test(file[0].name.toLowerCase())) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+
+                            /*Upload one image*/
+                            //$("#imagePreview").attr("src", e.target.result);
+                            //statusEditImg = 1;
+
+                            //Upload multi image
+                            var img = $("<img class='img_" + index + "'/> <span id='span_img_" + index + "'><a onclick='RemoveProductImage(" + index + ")' href='#'>Xóa</a></span> <br/>");
+                            img.attr("style", "height:250px;width: 250px");
+                            img.attr("src", e.target.result);
+                            console.log(e.target.result);
+                            dvPreview.append(img);
+                            index++;
+
+                        }
+                        reader.readAsDataURL(file[0]);
+                    } else {
+                        alert(file[0].name + " is not a valid image file.");
+                        dvPreview.html("");
+                        return false;
+                    }
+
+                });
+            } else {
+                alert("This browser does not support HTML5 FileReader.");
+            }
+        });
+
+        $('#fileaddMore').on('change', function () {
+            var dvPreview = $("#dvPreview");
+            if (typeof (FileReader) != "undefined") {
+                var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+                $($(this)[0].files).each(function () {
+                    var file = $(this);
+
+                    if (regex.test(file[0].name.toLowerCase())) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+
+                            var count = $("#dvPreview img").length;
+                            if (count != null && count != "") {
+                                count = parseInt(count, 10) - 1;
+                            }
+
+                            var img = $("<img class='img_" + (parseInt(count, 10) + 1) + "'/> <span id='span_img_" + (parseInt(count, 10) + 1) + "'><a onclick='RemoveProductImage(" + (parseInt(count, 10) + 1) + ")' href='#'>Xóa</a></span> <br/>");
+                            img.attr("style", "height:250px;width: 250px");
+                            img.attr("src", e.target.result);
+                            //  console.log(e.target.result);
+                            dvPreview.append(img);
+                            // $('#imgPreview').attr("src", e.target.result);
+
+                        };
+                        reader.readAsDataURL(file[0]);
+                    } else {
+                        alert(file[0].name + " không phải là file ảnh.");
+                        dvPreview.html("");
+                        return false;
+                    }
+                    return false;
+                });
+            } else {
+                alert("This browser does not support HTML5 FileReader.");
+            }
+        });
+
+        $('#dataTables_Active').tabledragdrop({ "selector": "#dataTables_Active" });
+
+    });
+
+    function RemoveProductImageSEO() {
+        $("#imageSeoPreview").removeAttr("src");
+    }
+
+    var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+
+
+    //Lấy thương hiệu
+    function getDsThuongHieu() {
+
+        var inputData = {
+            token: cookieToken.token
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/SanPham/GetThuongHieu",
+            data: inputData,
+            success: function (data) {
+                var html = "";
+                var thuonghieu = data.result;
+                if (data != null) {
+                    $.each(data, function (index, thuonghieu) {
+                        html += "<option value=\"" + thuonghieu.maTh + "\">" + thuonghieu.tenTh + "</option>"
+
+                    })
+                };
+                $("#ddlThuongHieu").append(html);
+                $('#ddlThuongHieu').val('@Model.maTh').attr("selected", "selected");
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+    //Lấy loại sp
+    function getDsLoaiSP() {
+        var inputData = {
+            token: cookieToken.token
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/SanPham/GetLoaiSP",
+            data: inputData,
+            success: function (data) {
+                var html = "";
+                var loaisp = data.result;
+                if (data != null) {
+                    $.each(data, function (index, loaisp) {
+                        html += "<option value=\"" + loaisp.maLoai + "\">" + loaisp.tenLoaiSp + "</option>"
+
+                    })
+                };
+                $("#ddlMaLoai").append(html);
+                $('#ddlMaLoai').val('@Model.maLoai').attr("selected", "selected");
+
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+    function setActive() {
+        var tt = '@Model.tinhTrang';
+        if (tt == "True") {
+            $("#chkTrangThai").prop('checked', true);
+        }
+        else {
+            $("#chkTrangThai").prop('checked', false);
+        }
+    }
+
+    function rmvDiv(imgName) {
+        $("#img_" + imgName).remove();
+    }
+
+    function RemoveProductImage(index) {
+        $("#dvPreview .img_" + index).remove();
+        $("#dvPreview #span_img_" + index).remove();
+    }
+
+    function Update() {
+        var masp = $("#txtMaSP").val();
+        var tensp = $("#txtTenSP").val();
+        var dvt = $("#txtDVT").val();
+        var dongia = $("#txtDonGia").val();
+        var km = $("#txtKhuyenMai").val();
+        var mota = $("#txtMoTa").val();
+        var sl = $("#txtSL").val();
+        var motact = CKEDITOR.instances['txtMoTaCT'].getData();
+        var ngaythem = $("#txtNgayThem").val();
+
+        var trangthai = true;
+        if ($("#chkTrangThai").is(":checked")) {
+            trangthai = true;
+        }
+        else {
+            trangthai = false;
+        }
+
+        var maloai = $("#ddlMaLoai").val();
+        var math = $("#ddlThuongHieu").val();
+
+        //Upload seo img
+        var imageBase64Seo = "";
+        if (typeof ($("#imageSeoPreview").attr("src")) === 'undefined') {
+            imageBase64Seo = "";
+        }
+        else {
+            imageBase64Seo = $("#imageSeoPreview").attr("src");
+            imageBase64Seo = imageBase64Seo.split(',')[1];
+        }
+
+
+        //Upload detail img
+        var lstImageSrc = "";
+        // Lấy tất cả cả thẻ img trong thẻ div có id là dvPreview
+
+        $("#dvPreview img").each(function (index, item) {
+            //lấy src của từng ảnh trong thẻ Div dvPreview
+            var imageBase64 = item.src;
+            if (imageBase64 != null || imageBase64 != "") {
+                // Cắt bỏ đi data:image/jpeg;base64,
+                imageBase64 = imageBase64.split(',')[1];
+                lstImageSrc += imageBase64 + "_";
+            }
+            console.log(imageBase64);
+        });
+        // Cắt bỏ ký tự "_" ở cuối cùng
+
+        console.log("lstImageSrc:" + lstImageSrc);
+
+        if (lstImageSrc != null && lstImageSrc.length > 0) {
+            lstImageSrc = lstImageSrc.substring(0, lstImageSrc.length - 1);
+        }
+        else {
+            lstImageSrc = '@Model.image'
+        }
+
+
+        var inputData = {
+            maSp: masp,
+            tenSp: tensp,
+            donViTinh: dvt,
+            donGia: dongia,
+            maLoai: maloai,
+            maTh: math,
+            seoImage: imageBase64Seo,
+            image: lstImageSrc,
+            moTa: mota,
+            chiTietSp: motact,
+            soLanXem: motact,
+            giamGia: km,
+            soLuong: sl,
+            tinhTrang: trangthai,
+            ngayThem: ngaythem
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/SanPham/SanPhamUpdate",
+            data: inputData,
+            success: function (data) {
+                var result = data.ResponseCode;
+                if (result > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    });
+                    location.reload(true);
+                    $(".modal-backdrop").remove();
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "warning",
+                        button: "OK!",
+                    });
+                    $(".modal-backdrop").remove();
+                }
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+        });
+    }
+
+    function RemoveImage(imgName) {
+        var des = "Bạn chắc chắn muốn xóa ảnh này?";
+        if (confirm(des)) {
+            var masp = $("#txtMaSP").val();
+            var tensp = $("#txtTenSP").val();
+            var dvt = $("#txtDVT").val();
+            var dongia = $("#txtDonGia").val();
+            var km = $("#txtKhuyenMai").val();
+            var mota = $("#txtMoTa").val();
+            var sl = $("#txtSL").val();
+            var motact = CKEDITOR.instances['txtMoTaCT'].getData();
+            var delImage = imgName;
+            var ngaythem = $("#txtNgayThem").val();
+
+
+            var trangthai = true;
+            if ($("#chkTrangThai").is(":checked")) {
+                trangthai = true;
+            }
+            else {
+                trangthai = false;
+            }
+
+            var maloai = $("#ddlMaLoai").val();
+            var math = $("#ddlThuongHieu").val();
+
+
+        var inputData = {
+            maSp: masp,
+            tenSp: tensp,
+            donViTinh: dvt,
+            donGia: dongia,
+            maLoai: maloai,
+            maTh: math,
+            seoImage: '@Model.seoImage',
+            image: '@Model.image',
+            moTa: mota,
+            chiTietSp: motact,
+            soLanXem: motact,
+            giamGia: km,
+            soLuong: sl,
+            tinhTrang: trangthai,
+            ngayThem: ngaythem,
+            delImage: imgName
+        };
+
+            $.ajax({
+                type: 'POST',
+                url: "/SanPham/DeleteSingleImg",
+                data: inputData,
+                success: function (data) {
+                    var result = data.ResponseCode;
+                    if (result > 0) {
+                        rmvDiv(imgName.split('.')[0]);
+                        swal({
+                            text: data.Description,
+                            icon: "success",
+                            button: "OK!",
+                        });
+                    }
+                },
+                error: function (data) {
+                    console.log("error:" + JSON.stringify(data));
+
+                }
+            });
+        }
+    }
+
+    function btnAcceptUpdatePosionImage() {
+        var des = "Cập nhật lại vị trí ?";
+        if (confirm(des)) {
+            var lstImagePos = "";
+            $(".row_drag img").each(function (key, item) {
+                var url = '@media';
+                lstImagePos += item.src != null && item.src != "undefined" ? item.src.replace(url, "") + "," : "";
+            });
+
+            lstImagePos = lstImagePos != null && lstImagePos != "" ? lstImagePos.substr(0, lstImagePos.length - 1) : "";
+
+
+            var masp = $("#txtMaSP").val();
+            var tensp = $("#txtTenSP").val();
+            var dvt = $("#txtDVT").val();
+            var dongia = $("#txtDonGia").val();
+            var km = $("#txtKhuyenMai").val();
+            var mota = $("#txtMoTa").val();
+            var sl = $("#txtSL").val();
+            var motact = CKEDITOR.instances['txtMoTaCT'].getData();
+            var ngaythem = $("#txtNgayThem").val();
+
+
+            var trangthai = true;
+            if ($("#chkTrangThai").is(":checked")) {
+                trangthai = true;
+            }
+            else {
+                trangthai = false;
+            }
+
+            var maloai = $("#ddlMaLoai").val();
+            var math = $("#ddlThuongHieu").val();
+
+
+            var inputData = {
+                maSp: masp,
+                tenSp: tensp,
+                donViTinh: dvt,
+                donGia: dongia,
+                maLoai: maloai,
+                maTh: math,
+                seoImage: '@Model.seoImage',
+                image: lstImagePos,
+                moTa: mota,
+                chiTietSp: motact,
+                soLanXem: motact,
+                giamGia: km,
+                soLuong: sl,
+                tinhTrang: trangthai,
+                ngayThem: ngaythem
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: "/SanPham/btnAcceptUpdate_PosionImage",
+                data: inputData,
+                success: function (data) {
+                    var result = data.ResponseCode;
+                    if (result > 0) {
+                        swal({
+                            text: data.Description,
+                            icon: "success",
+                            button: "OK!",
+                        });
+                    }
+                },
+                error: function (data) {
+                    console.log("error:" + JSON.stringify(data));
+                }
+            });
+        }
+    }
+
+</script>

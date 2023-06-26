@@ -1,0 +1,82 @@
+﻿@model QLBH_WebManage.DTO.BLOGTYPE
+
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div>
+    <h4>Chi tiết danh mục tin</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            <label for="txtMaDM">Mã danh mục tin</label>
+        </dt>
+
+        <dd>
+            <input type="text" class="form-control" id="txtMaDM" value="@Model.maDm" disabled />
+        </dd>
+
+        <dt>
+            <label for="txtTenDM">Tên danh mục tin</label>
+        </dt>
+
+        <dd>
+            <input type="text" class="form-control" id="txtTenDM" value="@Model.tenDm" />
+        </dd>
+
+    </dl>
+</div>
+
+<p>
+    <button class="btn btn-success" onclick="Update()">Cập nhật</button> | @Html.ActionLink("Quay lại", "Index")
+
+</p>
+
+<script>
+    jQuery(document).ready(function ($) {
+      
+    });
+
+
+    function Update() {
+        var madm = $("#txtMaDM").val();
+        var tendm = $("#txtTenDM").val();
+
+        var inputData = {
+            maDm: madm,
+            tenDm: tendm
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/BlogType/BlogTypeUpdate",
+            data: inputData,
+            success: function (data) {
+                var result = data.ResponseCode;
+                if (result > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    });
+                    location.reload(true);
+                    $(".modal-backdrop").remove();
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "warning",
+                        button: "OK!",
+                    });
+                    $(".modal-backdrop").remove();
+                }
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+        });
+    }
+</script>
+

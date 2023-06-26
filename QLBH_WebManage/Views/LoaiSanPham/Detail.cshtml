@@ -1,0 +1,162 @@
+﻿@model QLBH_WebManage.DTO.LOAISP
+
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/categories/";
+
+}
+
+
+<div>
+    <h4>Chi tiết loại sản phẩm</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            <label for="txtMaLoaiSP">Mã loại sản phẩm</label>
+        </dt>
+
+        <dd>
+            <input type="text" class="form-control" id="txtMaLoaiSP" value="@Model.maLoai" disabled />
+        </dd>
+
+
+        <dt>
+            <label for="txtTenLoaiSP">Tên loại sản phẩm</label>
+        </dt>
+
+        <dd>
+            <input type="text" class="form-control" id="txtTenLoaiSP" value="@Model.tenLoaiSp" />
+        </dd>
+
+        <dt>
+
+        </dt>
+        <label for="txtTenKH" class="form-label">Ảnh loại sản phẩm</label>
+
+        <dd>
+            <img src="@media@Model.image" style="width: 100px;height: 100px" />
+        </dd>
+
+        <dt>
+            <label>Chọn ảnh</label>
+        </dt>
+
+        <dd>
+            <input type="file" class="form-control" id="uploadImage" />
+            <div>
+                <img id="imagePreview" />
+                <button class="btn btn-danger" onclick="RemoveProductImage()">Hủy ảnh</button>
+            </div>
+        </dd>
+
+
+    </dl>
+</div>
+
+<p>
+    <button class="btn btn-success" onclick="UpdateLoaiSP()">Cập nhật</button> | @Html.ActionLink("Quay lại", "Index")
+
+</p>
+
+<script>
+    jQuery(document).ready(function ($) {
+        $('#uploadImage').on('change', function () {
+            var statusEditImg = 0;
+            if (typeof (FileReader) != "undefined") {
+                var dvPreview = $("#dvPreview");
+                dvPreview.html("");
+                var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+                var index = 0;
+                $($(this)[0].files).each(function () {
+                    var file = $(this);
+                    if (regex.test(file[0].name.toLowerCase())) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+
+                            /*Upload one image*/
+                            $("#imagePreview").attr("style", "height:250px;width: 250px");
+                            $("#imagePreview").attr("src", e.target.result);
+                            statusEditImg = 1;
+
+                            //Upload multi image
+                            //var img = $("<img class='img_" + index + "'/> <span id='span_img_" + index + "'><a onclick='RemoveProductImage(" + index + ")' href='#'>Xóa</a></span> <br/>");
+                            //img.attr("style", "height:250px;width: 250px");
+                            //img.attr("src", e.target.result);
+                            //console.log(e.target.result);
+                            //dvPreview.append(img);
+                            //index++;
+
+                        }
+                        reader.readAsDataURL(file[0]);
+                    } else {
+                        alert(file[0].name + " is not a valid image file.");
+                        dvPreview.html("");
+                        return false;
+                    }
+
+                });
+            } else {
+                alert("This browser does not support HTML5 FileReader.");
+            }
+        });
+    });
+
+    function RemoveProductImage() {
+        $("#imagePreview").removeAttr("src");
+    }
+
+
+    function UpdateLoaiSP() {
+        var maloaisp = $("#txtMaLoaiSP").val();
+        var tenloaisp = $("#txtTenLoaiSP").val();
+
+        var imageBase64 = "";
+
+        if (typeof ($("#imagePreview").attr("src")) === 'undefined') {
+            imageBase64 = '@Model.image';
+        }
+        else {
+            imageBase64 = $("#imagePreview").attr("src");
+            imageBase64 = imageBase64.split(',')[1];
+        }
+
+
+        var inputData = {
+            maLoai: maloaisp,
+            tenLoaiSp: tenloaisp,
+            image: imageBase64
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/LoaiSanPham/LoaiSanPhamUpdate",
+            data: inputData,
+            success: function (data) {
+                var result = data.ResponseCode;
+                if (result > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    });
+                    location.reload(true);
+                    $(".modal-backdrop").remove();
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "warning",
+                        button: "OK!",
+                    });
+                    $(".modal-backdrop").remove();
+                }
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+        });
+    }
+</script>
+

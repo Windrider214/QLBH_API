@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33530.505
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QLBH_API", "QLBH_API\QLBH_API.csproj", "{2748A061-0B09-433D-A970-3896FE460D3D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QLBH_DataAccess", "QLBH_DataAccess\QLBH_DataAccess.csproj", "{ABE1F01D-9673-401A-881C-289A1FDBE7F5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QLBH_Services", "QLBH_Services\QLBH_Services.csproj", "{77C470D3-CFC2-4133-97EE-94D9BF3D0ECB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QLBH_WebManage", "QLBH_WebManage\QLBH_WebManage.csproj", "{4D21F9D6-00D9-4AAD-99F2-95969F283B16}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MEDIA_SERVER", "MEDIA_SERVER\MEDIA_SERVER.csproj", "{6682BB7B-65A7-4B4A-8A86-7E2A45159639}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QLBH_WebClient", "QLBH_WebClient\QLBH_WebClient.csproj", "{698C77CF-18F0-483A-B22C-78BEFA5A6467}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2748A061-0B09-433D-A970-3896FE460D3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2748A061-0B09-433D-A970-3896FE460D3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2748A061-0B09-433D-A970-3896FE460D3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2748A061-0B09-433D-A970-3896FE460D3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABE1F01D-9673-401A-881C-289A1FDBE7F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABE1F01D-9673-401A-881C-289A1FDBE7F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABE1F01D-9673-401A-881C-289A1FDBE7F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABE1F01D-9673-401A-881C-289A1FDBE7F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77C470D3-CFC2-4133-97EE-94D9BF3D0ECB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77C470D3-CFC2-4133-97EE-94D9BF3D0ECB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77C470D3-CFC2-4133-97EE-94D9BF3D0ECB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77C470D3-CFC2-4133-97EE-94D9BF3D0ECB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D21F9D6-00D9-4AAD-99F2-95969F283B16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D21F9D6-00D9-4AAD-99F2-95969F283B16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D21F9D6-00D9-4AAD-99F2-95969F283B16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D21F9D6-00D9-4AAD-99F2-95969F283B16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6682BB7B-65A7-4B4A-8A86-7E2A45159639}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6682BB7B-65A7-4B4A-8A86-7E2A45159639}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6682BB7B-65A7-4B4A-8A86-7E2A45159639}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6682BB7B-65A7-4B4A-8A86-7E2A45159639}.Release|Any CPU.Build.0 = Release|Any CPU
+		{698C77CF-18F0-483A-B22C-78BEFA5A6467}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{698C77CF-18F0-483A-B22C-78BEFA5A6467}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{698C77CF-18F0-483A-B22C-78BEFA5A6467}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{698C77CF-18F0-483A-B22C-78BEFA5A6467}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5B970D80-1187-4F58-8B47-65FA7520A473}
+	EndGlobalSection
+EndGlobal

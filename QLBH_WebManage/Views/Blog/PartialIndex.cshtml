@@ -1,0 +1,138 @@
+﻿@model List<QLBH_WebManage.DTO.BLOG>
+
+@{
+    Layout = null;
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/blogs/";
+
+}
+
+<br />
+<br />
+
+<div class="container">
+    <table id="dsThuongHieu" class="table table-sm table-hover table-striped table-bordered">
+        <thead class="table-primary">
+            <tr>
+                <th>Mã blog</th>
+                <th>Tiêu đề</th>
+                <th>Ảnh</th>
+                <th>Ngày đăng</th>
+                <th>Lượt xem</th>
+                <th>Danh mục</th>
+                <th>Người đăng</th>
+
+                <th></th>
+                <th></th>
+
+            </tr>
+        </thead>
+
+
+        <tbody>
+            @if (Model != null && Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+
+                    <tr>
+                        <td>@item.maTinTuc</td>
+                        <td>@item.tieuDe</td>
+                        <td>
+                            <img src="@media@item.anhTt" style="width: 100px;height: 100px" />
+                        </td>
+                        <td>@item.ngayDang.ToString()</td>
+                        <td>@item.luotXem</td>
+                        <td>@item.maDmNavigation.tenDm</td>
+                        <td>@item.user.userName</td>
+
+                        <td><a href="/Blog/Detail?MaTinTuc=@item.maTinTuc" class="btn btn-info">Chi tiết</a></td>
+
+                        <td>
+                            <input type="button" onclick="deleteBlog('@item.maTinTuc')" id="btnDelete" value="Xóa" class="btn btn-danger" />
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+    });
+
+    var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+    var pageSize = 5
+    var pageIndex = 1;
+
+    function deleteBlog(matt) {
+        var result = confirm("Bạn có chắc chắn muốn xóa");
+
+        if (result) {
+            var deleteData = {
+                maTinTuc: matt
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "/Blog/Delete",
+                data: deleteData,
+                success: function (data) {
+                    var code = data.ResponseCode;
+                    if (code > 0) {
+                        swal({
+                            text: data.Description,
+                            icon: "success",
+                            button: "OK!",
+                        });
+                        getDs();
+                    }
+                    else {
+                        swal({
+                            text: data.Description,
+                            icon: "warning",
+                            button: "OK!",
+                        });
+                        getDs();
+                        $(".modal-backdrop").remove();
+                    }
+                },
+                error: function (data) {
+                    console.log("error:" + JSON.stringify(data));
+                }
+            });
+        }
+
+    }
+
+
+    function getDs() {
+        var inputData = {
+            MaTinTuc: "",
+            token: cookieToken.token,
+            page: pageIndex,
+            pageSize: pageSize
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/Blog/PartialIndex",
+            data: inputData,
+            success: function (data) {
+                $('#dsBlog').html(data);
+               dataPaging('@ViewBag.TotalRow', function () {
+                   getDsBlogPaging();
+                });
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+
+</script>

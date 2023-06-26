@@ -1,0 +1,115 @@
+﻿@model List<QLBH_WebManage.DTO.BLOGTYPE>
+
+<br />
+<br />
+
+<div class="container">
+    <table id="dsLoaiSP" class="table table-sm table-hover table-striped table-bordered">
+        <thead class="table-primary">
+            <tr>
+                <th>Mã danh mục tin</th>
+                <th>Tên loại danh mục tin</th>
+                <th></th>
+                <th></th>
+
+            </tr>
+        </thead>
+
+
+        <tbody>
+            @if (Model != null && Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+
+                    <tr>
+                        <td>@item.maDm</td>
+                        <td>@item.tenDm</td>
+                        <td><a href="/BlogType/Detail?MaDM=@item.maDm" class="btn btn-info">Chi tiết</a></td>
+                        <td>
+                            <input type="button" onclick="deleteBlogType('@item.maDm')" id="btnDelete" value="Xóa" class="btn btn-danger" />
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+
+    });
+
+    var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+
+
+    function deleteBlogType(maDM) {
+        var result = confirm("Bạn có chắc chắn muốn xóa");
+
+        if (result) {
+            var deleteData = {
+                MaDM: maDM
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "/BlogType/Delete",
+                data: deleteData,
+                success: function (data) {
+                    var code = data.ResponseCode;
+                    if (code > 0) {
+                        swal({
+                            text: data.Description,
+                            icon: "success",
+                            button: "OK!",
+                        });
+                        getDs();
+                        $(".modal-backdrop").remove();
+                    }
+                    else {
+                        swal({
+                            text: data.Description,
+                            icon: "warning",
+                            button: "OK!",
+                        });
+                        getDs();
+                        $(".modal-backdrop").remove();
+                    }
+                },
+                error: function (data) {
+                    console.log("error:" + JSON.stringify(data));
+                }
+            });
+        }
+
+    }
+
+
+    function getDs() {
+
+        var inputData = {
+            TenDm: "",
+            token: cookieToken.token
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/BlogType/PartialIndex",
+            data: inputData,
+            success: function (data) {
+                $('#dsBlogType').html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+
+</script>
