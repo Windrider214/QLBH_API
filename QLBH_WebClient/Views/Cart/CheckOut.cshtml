@@ -188,7 +188,7 @@
                                             <div class="collapse" id="collapsecheque">
                                                 <div class="py-2">
                                                     <p class="mb-0">Thanh toán trước an toàn với đối tác VNPAY của chúng tôi .</p>
-                                                    <button class="btn btn-outline-primary btn-sm py-3 btn-block" onclick="checkoutVNPAY()">Xác Nhận</button>
+                                                    <button class="btn btn-outline-primary btn-sm py-3 btn-block" id="checkoutVNPAY" >Xác Nhận</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -208,7 +208,7 @@
 </div>
 
 <script>
-    var order_code = "";
+    var vnpayReponse = "";
 
     $(document).ready(function () {
 
@@ -216,6 +216,12 @@
             var total_price = $("#totalOrderAmount").text();
             total_price = total_price.replace("₫", "").replace(".", "");
             checkoutCOD(total_price);
+            CreateOrder('Thanh toán khi nhận hàng');
+        });
+
+        $('#checkoutVNPAY').click(function () {
+            checkoutCOD(0);
+            CreateVNPAYOrder('Thanh toán trước VNPAY');
         });
 
         getListProvince();
@@ -392,8 +398,8 @@
             url: "/Cart/Payment",
             data: inputData,
             success: function (response) {
-                checkoutCOD(0);
                 setTimeout("window.location.href = '" + response + "'", 3000);
+
             },
             error: function (data) {
                 console.log("error:" + JSON.stringify(data));
@@ -424,7 +430,6 @@
             url: "/Cart/PaymentCOD",
             data: inputData,
             success: function (data) {
-                CreateOrder('Thanh toán khi nhận hàng');
             },
             error: function (data) {
                 console.log("error:" + JSON.stringify(data));
@@ -474,6 +479,47 @@
                     });
                 }
                 setTimeout("window.location.href = 'http://localhost:57368/Cart/PaymentConfirm'", 1000);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            },
+        })
+    }
+
+    function CreateVNPAYOrder(loaithanhtoan) {
+
+        var total_price = $("#totalOrderAmount").text();
+        total_price = total_price.replace("₫", "").replace(".", "");
+
+        var shippingFee = $("#shippingFee").text();
+        shippingFee = shippingFee.replace("₫", "").replace(".", "");
+
+        var deliverDate = $("#tggh").text();
+
+        var dc = $("#txtDiaChi").val() + ", " + $("#lstWard option:selected").text() + ", " + $("#lstDistrict option:selected").text() + ", " + $("#lstProvince option:selected").text();
+
+        var inputData = {
+            hoTenKh: $("#txtHoTen").val(),
+            sdtKh: $("#txtSDT").val(),
+            diaChiKh: dc,
+            emailKh: $("#txtEmail").val(),
+            ngayDat: moment().format('YYYY-MM-DD HH:mm:ss'),
+            ngayGiao: deliverDate,
+            loaiThanhToan: loaithanhtoan,
+            maVanDon: '',
+            phiVanChuyen: shippingFee,
+            tongTien: total_price,
+            trangThai: 0,
+            ghiChu: $("#txtGhiChu").val()
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: "/Cart/CreateVNPAYOrder",
+            data: inputData,
+            success: function (data) {
+                checkoutVNPAY();
             },
             error: function (data) {
                 console.log("error:" + JSON.stringify(data));

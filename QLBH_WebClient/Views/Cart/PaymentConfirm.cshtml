@@ -18,10 +18,49 @@
             <div class="col-md-12 text-center">
                 <span class="icon-check_circle display-3 text-success"></span>
                 <h2 class="display-3 text-black">Cảm ơn bạn !</h2>
-                <p class="lead mb-5">Đơn hàng của bạn đã được xác nhận, hãy chờ chúng tôi giao hàng nhé !</p>
-                <p><a href="/SanPham/Index" class="btn btn-sm btn-primary">Tiếp tục mua hàng</a></p>
+                <div id="orderNote" class="lead mb-5"></div>
+                <p><a href="/SanPham/Index" class="btn btn-sm btn-primary">Quay về .</a></p>
             </div>
         </div>
     </div>
 </div>
 
+
+<script>
+    jQuery(document).ready(function ($) {
+        ConfirmOrder();
+    });
+
+    function ConfirmOrder() {
+
+        $.ajax({
+            type: 'GET',
+            url: "/Cart/PaymentConfirmVNPAY",
+            data: inputData,
+            success: function (data) {
+                var result = data.ResponseCode;
+                if (result > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    });
+                    $('#orderNote').text("Đơn hàng của bạn đã được xác nhận, hãy chờ chúng tôi giao hàng nhé !");
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "error",
+                        button: "OK!",
+                    });
+                    $('#orderNote').text("Có lỗi xảy ra trong quá trình đặt hàng, xin vui lòng thử lại !!");
+                }
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            },
+        })
+    }
+
+</script>

@@ -26,6 +26,7 @@ namespace QLBH_WebClient.Controllers
         private static int slh = 0;
         private static int total = 0;
         private static string deliverCode = "";
+        private static OrderEditModel VNPAYorder = new OrderEditModel();
 
         public List<Cart> Carts
         {
@@ -393,11 +394,101 @@ namespace QLBH_WebClient.Controllers
             return Json(paymentUrl, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult PaymentConfirm()
+        public ActionResult PaymentConfirmVNPAY()
         {
-            return View();
+            var returnData = new ReturnData();
+
+            if (Request.QueryString.Count > 0)
+            {
+                string hashSecret = ConfigurationManager.AppSettings["HashSecret"]; //Chuỗi bí mật
+                var vnpayData = Request.QueryString;
+                PayLib pay = new PayLib();
+
+                //lấy toàn bộ dữ liệu được trả về
+                foreach (string s in vnpayData)
+                {
+                    if (!string.IsNullOrEmpty(s) && s.StartsWith("vnp_"))
+                    {
+                        pay.AddResponseData(s, vnpayData[s]);
+                    }
+                }
+
+                long orderId = Convert.ToInt64(pay.GetResponseData("vnp_TxnRef")); //mã hóa đơn
+                long vnpayTranId = Convert.ToInt64(pay.GetResponseData("vnp_TransactionNo")); //mã giao dịch tại hệ thống VNPAY
+                string vnp_ResponseCode = pay.GetResponseData("vnp_ResponseCode"); //response code: 00 - thành công, khác 00 - xem thêm https://sandbox.vnpayment.vn/apis/docs/bang-ma-loi/
+                string vnp_SecureHash = Request.QueryString["vnp_SecureHash"]; //hash của dữ liệu trả về
+
+                bool checkSignature = pay.ValidateSignature(vnp_SecureHash, hashSecret); //check chữ ký đúng hay không?
+
+                if (checkSignature)
+                {
+                    if (vnp_ResponseCode == "00")
+                    {
+                        //Thanh toán thành công
+                        #region CreateOrder
+
+                        //Create order
+                        VNPAYorder.maVanDon = deliverCode;
+                        VNPAYorder.maHd = Guid.NewGuid().ToString();
+                        VNPAYorder.maKh = "7ddc1b90-2c81-4c40-ad2c-7894dd2c2d8f";
+
+                            //Create order detail
+                            var list = new List<Cart>();
+                            var cookie = Request.Cookies["ShoppingCart"] != null ? Request.Cookies["ShoppingCart"].Value : string.Empty;
+                            if (cookie != null && !string.IsNullOrEmpty(cookie))
+                            {
+                                list = JsonConvert.DeserializeObject<List<Cart>>(HttpUtility.UrlDecode(cookie));
+                            }
+
+                            List<HOADONCT> items = new List<HOADONCT>();
+                            foreach (var proc in list)
+                            {
+                                HOADONCT item = new HOADONCT();
+                                item.maSp = proc.maSp;
+                                item.soLuong = proc.soLuong;
+                                item.donGiaBan = proc.donGia;
+                                item.maHd = VNPAYorder.maHd;
+                                items.Add(item);
+                            }
+                            VNPAYorder.OrderDetail = items;
+
+                            var request_url = "/api/Order/InsertOrders";
+                            var jsonData = JsonConvert.SerializeObject(VNPAYorder);
+                            var result = API_Interact.InsertData(url_api, request_url, jsonData, "");
+                            if (result.IsSuccessStatusCode)
+                            {
+                                returnData.ResponseCode = 600;
+                                returnData.Description = "Thanh toán thành công hóa đơn " + orderId + " | Mã giao dịch: " + vnpayTranId;
+
+                            // Send email confirm
+                            ClientConfirmEmail email = new ClientConfirmEmail();
+                                email.userEmail = VNPAYorder.emailKh;
+                                email.deliverCode = VNPAYorder.maVanDon;
+                                SendEmailConfirmOrder(email);
+                            }
+                             return Json(returnData, JsonRequestBehavior.AllowGet);
+                               
+                            #endregion
+                    }
+                    else
+                    {
+                        //Thanh toán không thành công. Mã lỗi: vnp_ResponseCode
+
+                        returnData.ResponseCode = -600;
+                        returnData.Description = "Có lỗi xảy ra trong quá trình xử lý hóa đơn " + orderId + " | Mã giao dịch: " + vnpayTranId + " | Mã lỗi: " + vnp_ResponseCode;
+                        return Json(returnData, JsonRequestBehavior.AllowGet);
+                    }
+                }
+                else
+                {
+                    returnData.ResponseCode = -900;
+                    returnData.Description = "Có lỗi xảy ra trong quá trình xử lý";
+                    return Json(returnData, JsonRequestBehavior.AllowGet);
+                }
+            }
+            return Json(true);
         }
-        
+
         public ActionResult CreateOrder(OrderEditModel order)
         {
             var returnData = new ReturnData();
@@ -458,6 +549,44 @@ namespace QLBH_WebClient.Controllers
             }
         }
 
+        public ActionResult CreateVNPAYOrder(OrderEditModel order)
+        {
+            var returnData = new ReturnData();
+            try
+            {
+                //Create order
+                order.maVanDon = deliverCode;
+                order.maHd = Guid.NewGuid().ToString();
+                order.maKh = "7ddc1b90-2c81-4c40-ad2c-7894dd2c2d8f";
+
+                //Create order detail
+                var list = new List<Cart>();
+                var cookie = Request.Cookies["ShoppingCart"] != null ? Request.Cookies["ShoppingCart"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    list = JsonConvert.DeserializeObject<List<Cart>>(HttpUtility.UrlDecode(cookie));
+                }
+
+                List<HOADONCT> items = new List<HOADONCT>();
+                foreach (var proc in list)
+                {
+                    HOADONCT item = new HOADONCT();
+                    item.maSp = proc.maSp;
+                    item.soLuong = proc.soLuong;
+                    item.donGiaBan = proc.donGia;
+                    item.maHd = order.maHd;
+                    items.Add(item);
+                }
+                order.OrderDetail = items;
+                VNPAYorder = order;
+                return new HttpStatusCodeResult(HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public void SendEmailConfirmOrder(ClientConfirmEmail email)
         {
             var returnData = new ReturnData();
@@ -478,5 +607,7 @@ namespace QLBH_WebClient.Controllers
                 throw;
             }
         }
+
+
     }
 }
