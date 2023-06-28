@@ -51,7 +51,7 @@
                                             <div class="input-group-prepend">
                                                 <button class="btn btn-outline-primary js-btn-minus" type="button" data-productid="@item.maSp" data-type="1" onclick="UpdateItemToCart(this)">&minus;</button>
                                             </div>
-                                            <input type="text" class="form-control text-center" id="txtSoLuong_@item.maSp" value="@item.soLuong" data-productid="@item.maSp" onchange="UpdateItemToCart(this)">
+                                            <input type="text" class="form-control text-center" id="txtSoLuong_@item.maSp" value="@item.soLuong" data-productid="@item.maSp" onchange="UpdateItemToCart(this)" disabled>
                                             <div class="input-group-append">
                                                 <button class="btn btn-outline-primary js-btn-plus" type="button" data-productid="@item.maSp" data-type="2" onclick="UpdateItemToCart(this)">&plus;</button>
                                             </div>
@@ -210,18 +210,16 @@
 <script>
     var vnpayReponse = "";
 
-    $(document).ready(function () {
+    jQuery(document).ready(function ($) {
 
         $('#checkoutCOD').click(function () {
             var total_price = $("#totalOrderAmount").text();
             total_price = total_price.replace("₫", "").replace(".", "");
             checkoutCOD(total_price);
-            CreateOrder('Thanh toán khi nhận hàng');
         });
 
         $('#checkoutVNPAY').click(function () {
-            checkoutCOD(0);
-            CreateVNPAYOrder('Thanh toán trước VNPAY');
+            checkoutCODVNPAY(0);
         });
 
         getListProvince();
@@ -248,15 +246,11 @@
             getDeliverDate(distric_id, ward_id);
         });
 
-
-  
-
     });
 
     function FormatMoney(value) {
         return parseFloat(value).toLocaleString('vi-VN', { style: 'currency', currency: 'vnd' });
     }
-
 
     function getListProvince() {
 
@@ -386,29 +380,6 @@
         })
     }
 
-    function checkoutVNPAY() {
-        var total_price = $("#totalOrderAmount").text();
-        total_price = total_price.replace("₫", "").replace(".", "");
-
-        var inputData = {
-            thanhtien: total_price
-        }
-        $.ajax({
-            type: 'GET',
-            url: "/Cart/Payment",
-            data: inputData,
-            success: function (response) {
-                setTimeout("window.location.href = '" + response + "'", 3000);
-
-            },
-            error: function (data) {
-                console.log("error:" + JSON.stringify(data));
-
-            }
-
-        })
-    }
-
     function checkoutCOD(total_amount) {
         var total_price = $("#totalOrderAmount").text();
         total_price = total_price.replace("₫", "").replace(".", "");
@@ -434,6 +405,8 @@
             error: function (data) {
                 console.log("error:" + JSON.stringify(data));
             }
+        }).done(function () {
+            CreateOrder('Thanh toán khi nhận hàng');
         });
    
     }
@@ -472,19 +445,68 @@
             success: function (data) {
                 var result = data.ResponseCode;
                 if (result > 0) {
-                    swal({
-                        text: data.Description,
-                        icon: "success",
-                        button: "OK!",
-                    });
+                    SetCookie('OrderInform', data);
+                    window.location.href = "http://localhost:57368/Cart/OrderConfirm";
                 }
-                setTimeout("window.location.href = 'http://localhost:57368/Cart/PaymentConfirm'", 1000);
             },
             error: function (data) {
                 console.log("error:" + JSON.stringify(data));
 
-            },
+            }
         })
+    }
+
+    function checkoutVNPAY() {
+        var total_price = $("#totalOrderAmount").text();
+        total_price = total_price.replace("₫", "").replace(".", "");
+
+        var inputData = {
+            thanhtien: total_price
+        }
+        $.ajax({
+            type: 'GET',
+            url: "/Cart/Payment",
+            data: inputData,
+            success: function (response) {
+                setTimeout("window.location.href = '" + response + "'", 1000);
+
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        })
+    }
+
+    function checkoutCODVNPAY(total_amount) {
+        var total_price = $("#totalOrderAmount").text();
+        total_price = total_price.replace("₫", "").replace(".", "");
+
+        var inputData = {
+            note: $("#txtGhiChu").val(),
+            to_name: $("#txtHoTen").val(),
+            to_phone: $("#txtSDT").val(),
+            to_address: $("#txtDiaChi").val(),
+            to_ward_code: $("#lstWard").val(),
+            to_district_id: $("#lstDistrict").val(),
+            to_province_id: $("#lstProvince").val(),
+            cod_amount: total_amount,
+            insurance_value: total_price
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: "/Cart/PaymentCODVNPAY",
+            data: inputData,
+            success: function (data) {
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+            }
+        }).done(function () {
+            CreateVNPAYOrder('Thanh toán trước VNPAY');
+        });
     }
 
     function CreateVNPAYOrder(loaithanhtoan) {
@@ -519,13 +541,14 @@
             url: "/Cart/CreateVNPAYOrder",
             data: inputData,
             success: function (data) {
-                checkoutVNPAY();
             },
             error: function (data) {
                 console.log("error:" + JSON.stringify(data));
 
-            },
-        })
+            }
+        }).done(function () {
+            checkoutVNPAY();
+        });
     }
     
 </script>

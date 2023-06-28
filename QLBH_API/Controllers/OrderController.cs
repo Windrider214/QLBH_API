@@ -62,14 +62,24 @@ namespace QLBH_API.Controllers
         public async Task<IActionResult> SendEmailConfirmOrder(ClientConfirmEmail confirmMessage)
         {
             await Task.Yield();
-            string body = @" <div>Đơn hàng <strong>'" + confirmMessage.deliverCode + "'</strong> đã được đặt thàng công. </div>" + "</br>" +
-                           " <div>Quý khách có thể tra cứu đơn hàng <strong>'" + confirmMessage.deliverCode + "'</strong> tại https://tracking.ghn.dev/ <div>" + "</br>" +
-                           " <div><i>Cảm ơn đã quý khách đã ủng hộ !!!</i></div> ";
-            var message = new Message(new string[] { confirmMessage.userEmail }, "Thông báo đặt hàng thành công", body!);
-            _emailService.SendEmail(message);
+            if(confirmMessage.isCreatedOrder == true)
+            {
+                string body = @" <div>Đơn hàng <strong>'" + confirmMessage.deliverCode + "'</strong> đã được đặt thàng công. </div>" + "</br>" +
+               " <div>Quý khách có thể tra cứu đơn hàng <strong>'" + confirmMessage.deliverCode + "'</strong> tại https://tracking.ghn.dev/ <div>" + "</br>" +
+               " <div><i>Cảm ơn đã quý khách đã ủng hộ !!!</i></div> ";
+                var message = new Message(new string[] { confirmMessage.userEmail }, "Thông báo đặt hàng thành công", body!);
+                _emailService.SendEmail(message);
+            }
+            else
+            {
+                string body = @" <div>Có lỗi xảy ra trong quá trình tạo mã vận đơn </div>" + "</br>" +
+              " <div>Vui lòng liên hệ với chúng tôi để nhận được mã vận đơn của quý khách !!! <div>" + "</br>" +
+               " <div>Mã đơn hàng của quý khách là <strong>'"+ confirmMessage.deliverCode +"'</strong> <div>" + "</br>" +
+              " <div><i>Cảm ơn đã quý khách đã ủng hộ !!!</i></div> ";
+                var message = new Message(new string[] { confirmMessage.userEmail }, "Thông báo đặt hàng thành công", body!);
+                _emailService.SendEmail(message);
+            }    
             return StatusCode(StatusCodes.Status200OK, new ReturnData { ResponseCode = 900, Description = "Gửi email xác nhận thành công" });
-
-
         }
     }
 }

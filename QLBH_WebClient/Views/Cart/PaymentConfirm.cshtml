@@ -1,8 +1,10 @@
-﻿
+﻿@model QLBH_WebClient.Models.ReturnData
+
 @{
     ViewBag.Title = "PaymentConfirm";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 
 <div class="bg-light py-3">
     <div class="container">
@@ -18,7 +20,7 @@
             <div class="col-md-12 text-center">
                 <span class="icon-check_circle display-3 text-success"></span>
                 <h2 class="display-3 text-black">Cảm ơn bạn !</h2>
-                <div id="orderNote" class="lead mb-5"></div>
+                <div id="orderNote" class="lead mb-5">@Model.Description</div>
                 <p><a href="/SanPham/Index" class="btn btn-sm btn-primary">Quay về .</a></p>
             </div>
         </div>
@@ -31,29 +33,28 @@
         ConfirmOrder();
     });
 
+    //function confirmGHN() {
+    //    $.ajax({
+    //        type: 'GET',
+    //        url: "/Cart/CreateCODVNPAY",
+    //        data: inputData,
+    //        success: function (data) {
+    //        },
+    //        error: function (data) {
+    //            console.log("error:" + JSON.stringify(data));
+
+    //        },
+    //    })
+    //}
+
     function ConfirmOrder() {
 
         $.ajax({
             type: 'GET',
-            url: "/Cart/PaymentConfirmVNPAY",
-            data: inputData,
+            url: "/Cart/PaymentConfirm",
+            data: {},
             success: function (data) {
-                var result = data.ResponseCode;
-                if (result > 0) {
-                    swal({
-                        text: data.Description,
-                        icon: "success",
-                        button: "OK!",
-                    });
-                    $('#orderNote').text("Đơn hàng của bạn đã được xác nhận, hãy chờ chúng tôi giao hàng nhé !");
-                }
-                else {
-                    swal({
-                        text: data.Description,
-                        icon: "error",
-                        button: "OK!",
-                    });
-                    $('#orderNote').text("Có lỗi xảy ra trong quá trình đặt hàng, xin vui lòng thử lại !!");
+                RemoveCookie('ShoppingCart');
                 }
             },
             error: function (data) {
@@ -63,4 +64,8 @@
         })
     }
 
+
+
 </script>
+
+

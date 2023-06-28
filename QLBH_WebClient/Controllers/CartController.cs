@@ -16,6 +16,7 @@ using System.Xml.Linq;
 using static QLBH_WebClient.Models.GHN;
 using Microsoft.Ajax.Utilities;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace QLBH_WebClient.Controllers
 {
@@ -25,85 +26,14 @@ namespace QLBH_WebClient.Controllers
         private static string media_api = ConfigurationManager.AppSettings["MEDIA_URL"] ?? "http://localhost:5127";
         private static int slh = 0;
         private static int total = 0;
+
+        //Mã vận đơn
         private static string deliverCode = "";
-        private static OrderEditModel VNPAYorder = new OrderEditModel();
+        private static string deliverCodeVNPAY = "";
 
-        public List<Cart> Carts
-        {
-            get
-            {
-                var data = (List<Cart>)HttpContext.Session["GioHang"];
-                if (data == null)
-                {
-                    data = new List<Cart>();
-                }
-                return data;
-            }
-        }
-    
-        public ActionResult PartialIndex()
-        {
-            ViewBag.Total = total;
-            return PartialView(Carts);
-        }
-
-        public ActionResult RemoveItem(string masp)
-        {
-            var returnData = new ReturnData();
-            var delItem = Carts.Where(x => x.maSp == masp).FirstOrDefault();
-            if(delItem != null)
-            {
-                Carts.Remove(delItem);
-                //total = Int32.Parse(Carts.Sum(x => x.ThanhTien).ToString());
-            }
-
-                return Json( new { SoLuong = Carts.Count }, JsonRequestBehavior.AllowGet);
-            
-        }
-
-        public ActionResult AddToCart(string masp, int SoLuong, string type = "Normal")
-        {
-            var myCart = Carts;
-            var item = myCart.Where(x => x.maSp == masp).FirstOrDefault();
-
-            if (item == null)//chưa có
-            {
-                var sp = new SANPHAM();
-                var request_url = "api/SanPham/GetSanPhamByIdClient";
-                var result = API_Interact.GetDataById(url_api, request_url, masp, "maSp", "");
-                if (result.IsSuccessStatusCode)
-                {
-                    sp = JsonConvert.DeserializeObject<SANPHAM>(result.Content);
-                    item = new Cart
-                    {
-                        maSp = masp,
-                        tenSp = sp.tenSp,
-                        donGia = sp.donGia,
-                        soLuong = SoLuong,
-                        seoImage = sp.seoImage
-                    };
-
-                }
- 
-                myCart.Add(item);
-                
-            }
-            else
-            {
-                item.soLuong += SoLuong;
-            }
-            Session["GioHang"] = myCart;
-            slh = Carts.Count();
-            //total = Int32.Parse(Carts.Sum(x => x.ThanhTien).ToString());
-            if (type == "ajax")
-            {
-                return Json(new
-                {
-                    SoLuong = Carts.Count
-                }, JsonRequestBehavior.AllowGet);
-            }
-            return RedirectToAction("Index");
-        }
+        //Lưu tạm thông tin đơn hàng
+        private static OrderEditModel vnpayORDER = new OrderEditModel();
+        private static GHN codVNPAY = new GHN();
 
 
         // GET: Cart
@@ -316,55 +246,17 @@ namespace QLBH_WebClient.Controllers
             }
         }
 
-        public ActionResult PaymentCOD(GHN ghn)
+        public ActionResult OrderConfirm()
         {
-            var returnData = new ReturnData();
-
-            var list = new List<Cart>();
-         
-            var cookie = Request.Cookies["ShoppingCart"] != null ? Request.Cookies["ShoppingCart"].Value : string.Empty;
-            if (cookie != null && !string.IsNullOrEmpty(cookie))
-            {
-                    list = JsonConvert.DeserializeObject<List<Cart>>(HttpUtility.UrlDecode(cookie));
-            }
-
-            var options = new RestClientOptions("https://dev-online-gateway.ghn.vn")
-            {
-                MaxTimeout = -1,
-            };
-            var client = new RestClient(options);
-            var request = new RestRequest("/shiip/public-api/v2/shipping-order/create", Method.Post);
-            request.AddHeader("ShopId", "124702");
-            request.AddHeader("token", "5bac8d89-0acd-11ee-bb28-f6a6bf301a4e");
-            request.AddHeader("Content-Type", "application/json");
-
-            //Add item to GHN order
-            List<Item> items = new List<Item>();
-            var data = list;
-            foreach (var proc in data) {
-                Item item = new Item();
-                item.name = proc.tenSp;
-                item.quantity = proc.soLuong;
-                item.price = proc.donGia;
-                items.Add(item);
-            }
-            ghn.weight = list.Sum(x => x.soLuong) * 100;
-            ghn.items = items;
-
-            var body = JsonConvert.SerializeObject(ghn);
-            request.AddStringBody(body, DataFormat.Json);
-            RestResponse response = client.Execute(request);
-            if (response.IsSuccessStatusCode)
-            {
-                var content = response.Content;
-                var ghnOrder = new GHNorder();
-                    ghnOrder = JsonConvert.DeserializeObject<GHNorder>(content);
-                deliverCode = ghnOrder.data.order_code;
-            }
-            return Json( new ReturnData { ResponseCode = 900, Description = "Success"}, JsonRequestBehavior.AllowGet); 
-
+            return View();
         }
 
+
+        /// <summary>
+        /// Tạo đơn thanh toán bằng VNPAY
+        /// </summary>
+        /// <param name="thanhtien"></param>
+        /// <returns></returns>
         public ActionResult Payment(int thanhtien)
         {
             string total = (thanhtien * 100).ToString();
@@ -394,7 +286,124 @@ namespace QLBH_WebClient.Controllers
             return Json(paymentUrl, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult PaymentConfirmVNPAY()
+        public ActionResult PaymentCODVNPAY(GHN ghn)
+        {
+            var returnData = new ReturnData();
+
+            var list = new List<Cart>();
+
+            var cookie = Request.Cookies["ShoppingCart"] != null ? Request.Cookies["ShoppingCart"].Value : string.Empty;
+            if (cookie != null && !string.IsNullOrEmpty(cookie))
+            {
+                list = JsonConvert.DeserializeObject<List<Cart>>(HttpUtility.UrlDecode(cookie));
+            }
+
+            var options = new RestClientOptions("https://dev-online-gateway.ghn.vn")
+            {
+                MaxTimeout = -1,
+            };
+            var client = new RestClient(options);
+            var request = new RestRequest("/shiip/public-api/v2/shipping-order/create", Method.Post);
+            request.AddHeader("ShopId", "124702");
+            request.AddHeader("token", "5bac8d89-0acd-11ee-bb28-f6a6bf301a4e");
+            request.AddHeader("Content-Type", "application/json");
+
+            //Add item to GHN order
+            List<Item> items = new List<Item>();
+            var data = list;
+            foreach (var proc in data)
+            {
+                Item item = new Item();
+                item.name = proc.tenSp;
+                item.quantity = proc.soLuong;
+                item.price = proc.donGia;
+                items.Add(item);
+            }
+            ghn.weight = list.Sum(x => x.soLuong) * 100;
+            ghn.items = items;
+            codVNPAY = ghn;
+            return Json(new ReturnData { ResponseCode = 900, Description = "Success" }, JsonRequestBehavior.AllowGet);
+
+        }
+
+
+        public ActionResult CreateVNPAYOrder(OrderEditModel order)
+        {
+            var returnData = new ReturnData();
+            try
+            {
+                //Create order
+                order.maHd = Guid.NewGuid().ToString();
+                order.maKh = "7ddc1b90-2c81-4c40-ad2c-7894dd2c2d8f";
+
+                //Create order detail
+                var list = new List<Cart>();
+                var cookie = Request.Cookies["ShoppingCart"] != null ? Request.Cookies["ShoppingCart"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    list = JsonConvert.DeserializeObject<List<Cart>>(HttpUtility.UrlDecode(cookie));
+                }
+
+                List<HOADONCT> items = new List<HOADONCT>();
+                foreach (var proc in list)
+                {
+                    HOADONCT item = new HOADONCT();
+                    item.maSp = proc.maSp;
+                    item.soLuong = proc.soLuong;
+                    item.donGiaBan = proc.donGia;
+                    item.maHd = order.maHd;
+                    items.Add(item);
+                }
+                order.OrderDetail = items;
+                vnpayORDER = order;
+                return new HttpStatusCodeResult(HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public string CreateCODVNPAY()
+        {
+            var returnData = new ReturnData();
+
+            try
+            {
+                var options = new RestClientOptions("https://dev-online-gateway.ghn.vn")
+                {
+                    MaxTimeout = -1,
+                };
+                var client = new RestClient(options);
+                var request = new RestRequest("/shiip/public-api/v2/shipping-order/create", Method.Post);
+                request.AddHeader("ShopId", "124702");
+                request.AddHeader("token", "5bac8d89-0acd-11ee-bb28-f6a6bf301a4e");
+                request.AddHeader("Content-Type", "application/json");
+                var body = JsonConvert.SerializeObject(codVNPAY);
+                request.AddStringBody(body, DataFormat.Json);
+                RestResponse response = client.Execute(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = response.Content;
+                    var ghnOrder = new GHNorder();
+                    ghnOrder = JsonConvert.DeserializeObject<GHNorder>(content);
+                    deliverCodeVNPAY = ghnOrder.data.order_code;
+                }
+                else
+                {
+                    deliverCodeVNPAY = "400";
+                }    
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return deliverCodeVNPAY;
+
+        }
+
+        public ActionResult PaymentConfirm()
         {
             var returnData = new ReturnData();
 
@@ -428,47 +437,55 @@ namespace QLBH_WebClient.Controllers
                         #region CreateOrder
 
                         //Create order
-                        VNPAYorder.maVanDon = deliverCode;
-                        VNPAYorder.maHd = Guid.NewGuid().ToString();
-                        VNPAYorder.maKh = "7ddc1b90-2c81-4c40-ad2c-7894dd2c2d8f";
+                        vnpayORDER.maVanDon = CreateCODVNPAY();
+                        vnpayORDER.maHd = Guid.NewGuid().ToString();
+                        vnpayORDER.maKh = "7ddc1b90-2c81-4c40-ad2c-7894dd2c2d8f";
 
-                            //Create order detail
-                            var list = new List<Cart>();
-                            var cookie = Request.Cookies["ShoppingCart"] != null ? Request.Cookies["ShoppingCart"].Value : string.Empty;
-                            if (cookie != null && !string.IsNullOrEmpty(cookie))
-                            {
-                                list = JsonConvert.DeserializeObject<List<Cart>>(HttpUtility.UrlDecode(cookie));
-                            }
+                        //Create order detail
+                        var list = new List<Cart>();
+                        var cookie = Request.Cookies["ShoppingCart"] != null ? Request.Cookies["ShoppingCart"].Value : string.Empty;
+                        if (cookie != null && !string.IsNullOrEmpty(cookie))
+                        {
+                            list = JsonConvert.DeserializeObject<List<Cart>>(HttpUtility.UrlDecode(cookie));
+                        }
 
-                            List<HOADONCT> items = new List<HOADONCT>();
-                            foreach (var proc in list)
-                            {
-                                HOADONCT item = new HOADONCT();
-                                item.maSp = proc.maSp;
-                                item.soLuong = proc.soLuong;
-                                item.donGiaBan = proc.donGia;
-                                item.maHd = VNPAYorder.maHd;
-                                items.Add(item);
-                            }
-                            VNPAYorder.OrderDetail = items;
+                        List<HOADONCT> items = new List<HOADONCT>();
+                        foreach (var proc in list)
+                        {
+                            HOADONCT item = new HOADONCT();
+                            item.maSp = proc.maSp;
+                            item.soLuong = proc.soLuong;
+                            item.donGiaBan = proc.donGia;
+                            item.maHd = vnpayORDER.maHd;
+                            items.Add(item);
+                        }
+                        vnpayORDER.OrderDetail = items;
 
-                            var request_url = "/api/Order/InsertOrders";
-                            var jsonData = JsonConvert.SerializeObject(VNPAYorder);
-                            var result = API_Interact.InsertData(url_api, request_url, jsonData, "");
-                            if (result.IsSuccessStatusCode)
-                            {
-                                returnData.ResponseCode = 600;
-                                returnData.Description = "Thanh toán thành công hóa đơn " + orderId + " | Mã giao dịch: " + vnpayTranId;
+                        var request_url = "/api/Order/InsertOrders";
+                        var jsonData = JsonConvert.SerializeObject(vnpayORDER);
+                        var result = API_Interact.InsertData(url_api, request_url, jsonData, "");
+                        if (result.IsSuccessStatusCode)
+                        {
+                            returnData.ResponseCode = 600;
+                            returnData.Description = "Thanh toán thành công hóa đơn " + orderId + " của đơn hàng " + vnpayORDER.maHd + " | Mã giao dịch: " + vnpayTranId;
 
                             // Send email confirm
                             ClientConfirmEmail email = new ClientConfirmEmail();
-                                email.userEmail = VNPAYorder.emailKh;
-                                email.deliverCode = VNPAYorder.maVanDon;
-                                SendEmailConfirmOrder(email);
+                            email.userEmail = vnpayORDER.emailKh;
+                            if(vnpayORDER.maVanDon == "400")
+                            {
+                                email.isCreatedOrder = false;
+                                email.deliverCode = vnpayORDER.maHd;
                             }
-                             return Json(returnData, JsonRequestBehavior.AllowGet);
-                               
-                            #endregion
+                            else
+                            {
+                                email.isCreatedOrder = true;
+                                email.deliverCode = vnpayORDER.maVanDon;
+                            }
+                            SendEmailConfirmOrder(email);
+                        }
+                        return View(returnData);
+                        #endregion
                     }
                     else
                     {
@@ -476,7 +493,7 @@ namespace QLBH_WebClient.Controllers
 
                         returnData.ResponseCode = -600;
                         returnData.Description = "Có lỗi xảy ra trong quá trình xử lý hóa đơn " + orderId + " | Mã giao dịch: " + vnpayTranId + " | Mã lỗi: " + vnp_ResponseCode;
-                        return Json(returnData, JsonRequestBehavior.AllowGet);
+                        return View(returnData);
                     }
                 }
                 else
@@ -486,16 +503,79 @@ namespace QLBH_WebClient.Controllers
                     return Json(returnData, JsonRequestBehavior.AllowGet);
                 }
             }
-            return Json(true);
+            return Redirect("/TrangChu/Index");
         }
 
+
+        /// <summary>
+        /// Tạo đơn COD
+        /// </summary>
+        /// <param name="ghn"></param>
+        /// <returns></returns>
+        public ActionResult PaymentCOD(GHN ghn)
+        {
+            var returnData = new ReturnData();
+
+            var list = new List<Cart>();
+
+            var cookie = Request.Cookies["ShoppingCart"] != null ? Request.Cookies["ShoppingCart"].Value : string.Empty;
+            if (cookie != null && !string.IsNullOrEmpty(cookie))
+            {
+                list = JsonConvert.DeserializeObject<List<Cart>>(HttpUtility.UrlDecode(cookie));
+            }
+
+            var options = new RestClientOptions("https://dev-online-gateway.ghn.vn")
+            {
+                MaxTimeout = -1,
+            };
+            var client = new RestClient(options);
+            var request = new RestRequest("/shiip/public-api/v2/shipping-order/create", Method.Post);
+            request.AddHeader("ShopId", "124702");
+            request.AddHeader("token", "5bac8d89-0acd-11ee-bb28-f6a6bf301a4e");
+            request.AddHeader("Content-Type", "application/json");
+
+            //Add item to GHN order
+            List<Item> items = new List<Item>();
+            var data = list;
+            foreach (var proc in data)
+            {
+                Item item = new Item();
+                item.name = proc.tenSp;
+                item.quantity = proc.soLuong;
+                item.price = proc.donGia;
+                items.Add(item);
+            }
+            ghn.weight = list.Sum(x => x.soLuong) * 100;
+            ghn.items = items;
+
+            var body = JsonConvert.SerializeObject(ghn);
+            request.AddStringBody(body, DataFormat.Json);
+            RestResponse response = client.Execute(request);
+            if (response.IsSuccessStatusCode)
+            {
+                var content = response.Content;
+                var ghnOrder = new GHNorder();
+                ghnOrder = JsonConvert.DeserializeObject<GHNorder>(content);
+                deliverCode = ghnOrder.data.order_code; //Lấy mã vận đơn sau khi tạo được đơn GHN
+            }
+            else
+            {
+                deliverCode = "400";
+            }
+            return Json(new ReturnData { ResponseCode = 900, Description = "Success" }, JsonRequestBehavior.AllowGet);
+
+        }
+
+
+        [HttpPost]
         public ActionResult CreateOrder(OrderEditModel order)
         {
+            
             var returnData = new ReturnData();
             try
             {
                 //Create order
-                order.maVanDon = deliverCode;
+                order.maVanDon = deliverCode;// Set mã vận đơn GHN cho đơn hàng
                 order.maHd = Guid.NewGuid().ToString();
                 order.maKh = "7ddc1b90-2c81-4c40-ad2c-7894dd2c2d8f";
 
@@ -524,15 +604,27 @@ namespace QLBH_WebClient.Controllers
                 var result = API_Interact.InsertData(url_api, request_url, jsonData, "");
                 if (result.IsSuccessStatusCode)
                 {
-                    returnData.ResponseCode = 600;
-                    returnData.Description = "Đặt hàng thành công";
 
                     // Send email confirm
                     ClientConfirmEmail email = new ClientConfirmEmail();
                     email.userEmail = order.emailKh;
-                    email.deliverCode = order.maVanDon;
+                    if(order.maVanDon == "400")
+                    {
+                        email.isCreatedOrder = false;
+                        email.deliverCode = order.maHd;
+                        returnData.Description = @"Đơn hàng " + order.maHd + " được đặt thành công !!!";
+                    }
+                    else
+                    {
+                        email.isCreatedOrder = true;
+                        email.deliverCode = order.maVanDon;
+                        returnData.Description = @"Đơn hàng " + order.maHd + " được đặt thành công !!!" +
+                                             "Quý khách có thể tra cứu đơn hàng với mã vận đơn '" + order.maVanDon + "' ";
+                    }
                     SendEmailConfirmOrder(email);
 
+                    returnData.ResponseCode = 600;
+                   
                     return Json(returnData, JsonRequestBehavior.AllowGet);
                 }
                 else
@@ -540,8 +632,8 @@ namespace QLBH_WebClient.Controllers
                     returnData.ResponseCode = -900;
                     returnData.Description = "Đặt hàng thất bại";
                     return Json(returnData, JsonRequestBehavior.AllowGet);
-                }    
-              
+                }
+
             }
             catch (Exception ex)
             {
@@ -549,44 +641,11 @@ namespace QLBH_WebClient.Controllers
             }
         }
 
-        public ActionResult CreateVNPAYOrder(OrderEditModel order)
-        {
-            var returnData = new ReturnData();
-            try
-            {
-                //Create order
-                order.maVanDon = deliverCode;
-                order.maHd = Guid.NewGuid().ToString();
-                order.maKh = "7ddc1b90-2c81-4c40-ad2c-7894dd2c2d8f";
 
-                //Create order detail
-                var list = new List<Cart>();
-                var cookie = Request.Cookies["ShoppingCart"] != null ? Request.Cookies["ShoppingCart"].Value : string.Empty;
-                if (cookie != null && !string.IsNullOrEmpty(cookie))
-                {
-                    list = JsonConvert.DeserializeObject<List<Cart>>(HttpUtility.UrlDecode(cookie));
-                }
-
-                List<HOADONCT> items = new List<HOADONCT>();
-                foreach (var proc in list)
-                {
-                    HOADONCT item = new HOADONCT();
-                    item.maSp = proc.maSp;
-                    item.soLuong = proc.soLuong;
-                    item.donGiaBan = proc.donGia;
-                    item.maHd = order.maHd;
-                    items.Add(item);
-                }
-                order.OrderDetail = items;
-                VNPAYorder = order;
-                return new HttpStatusCodeResult(HttpStatusCode.OK);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
+        /// <summary>
+        /// Tạo email
+        /// </summary>
+        /// <param name="email"></param>
         public void SendEmailConfirmOrder(ClientConfirmEmail email)
         {
             var returnData = new ReturnData();

@@ -17,6 +17,7 @@
     } 
     var store = GetCookie('ShoppingCart');
     store = AddAndUpdateShoppingCart(store, item);
+
     swal({
         text: "Thêm giỏ hàng thành công !!!",
         icon: "success",

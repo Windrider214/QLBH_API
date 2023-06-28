@@ -730,8 +730,10 @@
     <Content Include="Views\SanPham\PartialThuongHieu.cshtml" />
     <Content Include="Views\SanPham\Detail.cshtml" />
     <Content Include="Views\Cart\Index.cshtml" />
-    <Content Include="Views\Cart\PaymentConfirm.cshtml" />
     <Content Include="Views\Cart\CheckOut.cshtml" />
+    <Content Include="Views\Cart\PaymentConfirm.cshtml" />
+    <Content Include="Views\Cart\CreateOrder.cshtml" />
+    <Content Include="Views\Cart\OrderConfirm.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
