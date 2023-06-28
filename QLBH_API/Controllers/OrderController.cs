@@ -64,8 +64,9 @@ namespace QLBH_API.Controllers
             await Task.Yield();
             if(confirmMessage.isCreatedOrder == true)
             {
-                string body = @" <div>Đơn hàng <strong>'" + confirmMessage.deliverCode + "'</strong> đã được đặt thàng công. </div>" + "</br>" +
-               " <div>Quý khách có thể tra cứu đơn hàng <strong>'" + confirmMessage.deliverCode + "'</strong> tại https://tracking.ghn.dev/ <div>" + "</br>" +
+                string body = @" <div>Đơn hàng <strong>'" + confirmMessage.orderCode + "'</strong> đã được đặt thàng công. </div>" + "</br>" +
+                    " <div>Mã vận đơn của đơn hàng là <strong>'" + confirmMessage.deliverCode + "'</strong> </div>" + "</br>" +
+               " <div>Quý khách có thể tra cứu mã vận đơn tại https://tracking.ghn.dev/ <div>" + "</br>" +
                " <div><i>Cảm ơn đã quý khách đã ủng hộ !!!</i></div> ";
                 var message = new Message(new string[] { confirmMessage.userEmail }, "Thông báo đặt hàng thành công", body!);
                 _emailService.SendEmail(message);
@@ -74,7 +75,7 @@ namespace QLBH_API.Controllers
             {
                 string body = @" <div>Có lỗi xảy ra trong quá trình tạo mã vận đơn </div>" + "</br>" +
               " <div>Vui lòng liên hệ với chúng tôi để nhận được mã vận đơn của quý khách !!! <div>" + "</br>" +
-               " <div>Mã đơn hàng của quý khách là <strong>'"+ confirmMessage.deliverCode +"'</strong> <div>" + "</br>" +
+               " <div>Mã đơn hàng của quý khách là <strong>'"+ confirmMessage.orderCode +"'</strong> <div>" + "</br>" +
               " <div><i>Cảm ơn đã quý khách đã ủng hộ !!!</i></div> ";
                 var message = new Message(new string[] { confirmMessage.userEmail }, "Thông báo đặt hàng thành công", body!);
                 _emailService.SendEmail(message);

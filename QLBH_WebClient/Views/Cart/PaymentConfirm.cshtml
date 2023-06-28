@@ -30,41 +30,8 @@
 
 <script>
     jQuery(document).ready(function ($) {
-        ConfirmOrder();
+        RemoveCookie('ShoppingCart');
     });
-
-    //function confirmGHN() {
-    //    $.ajax({
-    //        type: 'GET',
-    //        url: "/Cart/CreateCODVNPAY",
-    //        data: inputData,
-    //        success: function (data) {
-    //        },
-    //        error: function (data) {
-    //            console.log("error:" + JSON.stringify(data));
-
-    //        },
-    //    })
-    //}
-
-    function ConfirmOrder() {
-
-        $.ajax({
-            type: 'GET',
-            url: "/Cart/PaymentConfirm",
-            data: {},
-            success: function (data) {
-                RemoveCookie('ShoppingCart');
-                }
-            },
-            error: function (data) {
-                console.log("error:" + JSON.stringify(data));
-
-            },
-        })
-    }
-
-
 
 </script>
 

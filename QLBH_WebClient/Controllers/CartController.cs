@@ -475,12 +475,14 @@ namespace QLBH_WebClient.Controllers
                             if(vnpayORDER.maVanDon == "400")
                             {
                                 email.isCreatedOrder = false;
-                                email.deliverCode = vnpayORDER.maHd;
+                                email.orderCode = vnpayORDER.maHd;
                             }
                             else
                             {
                                 email.isCreatedOrder = true;
                                 email.deliverCode = vnpayORDER.maVanDon;
+                                email.orderCode = vnpayORDER.maHd;
+
                             }
                             SendEmailConfirmOrder(email);
                         }
@@ -611,13 +613,14 @@ namespace QLBH_WebClient.Controllers
                     if(order.maVanDon == "400")
                     {
                         email.isCreatedOrder = false;
-                        email.deliverCode = order.maHd;
+                        email.orderCode = order.maHd;
                         returnData.Description = @"Đơn hàng " + order.maHd + " được đặt thành công !!!";
                     }
                     else
                     {
                         email.isCreatedOrder = true;
                         email.deliverCode = order.maVanDon;
+                        email.orderCode = order.maHd;
                         returnData.Description = @"Đơn hàng " + order.maHd + " được đặt thành công !!!" +
                                              "Quý khách có thể tra cứu đơn hàng với mã vận đơn '" + order.maVanDon + "' ";
                     }
