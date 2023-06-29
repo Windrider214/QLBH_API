@@ -32,7 +32,7 @@ namespace QLBH_WebManage.Controllers
                     var request_url = "/api/SanPham/GetSanPhamPaging";
                     Page pageData = new Page { page = page , pageSize = pageSize };
                     var jsonData = JsonConvert.SerializeObject(pageData);
-                    var result = API_Interact.PullData(url_api, request_url, jsonData , "");
+                    var result = API_Interact.PullData(url_api, request_url, jsonData , token);
                     if (result.IsSuccessStatusCode)
                     {
                         accessToken = token;

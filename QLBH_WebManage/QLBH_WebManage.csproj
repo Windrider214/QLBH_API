@@ -159,14 +159,19 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoaiSanPhamController.cs" />
     <Compile Include="Controllers\MediaController.cs" />
+    <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\SanPhamController.cs" />
     <Compile Include="Controllers\ThuongHieuController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="DTO\BLOG.cs" />
     <Compile Include="DTO\BLOGTYPE.cs" />
+    <Compile Include="DTO\HOADON.cs" />
+    <Compile Include="DTO\HOADONCT.cs" />
+    <Compile Include="DTO\KHACHHANG.cs" />
     <Compile Include="DTO\LOAISP.cs" />
     <Compile Include="DTO\MEDIUM.cs" />
     <Compile Include="DTO\MEDIATYPE.cs" />
+    <Compile Include="DTO\PHANHOI.cs" />
     <Compile Include="DTO\SANPHAM.cs" />
     <Compile Include="DTO\THUONGHIEU.cs" />
     <Compile Include="DTO\USER.cs" />
@@ -662,6 +667,8 @@
     <Content Include="Views\Blog\PartialIndex.cshtml" />
     <Content Include="Views\Blog\Index.cshtml" />
     <Content Include="Views\Blog\Detail.cshtml" />
+    <Content Include="Views\Order\Index.cshtml" />
+    <Content Include="Views\Order\PartialIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

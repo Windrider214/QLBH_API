@@ -90,7 +90,7 @@
                             icon: "success",
                             button: "OK!",
                         });
-                        getDs();
+                        getDsMedia();
                     }
                     else {
                         swal({
@@ -109,29 +109,6 @@
         }
 
     }
-
-
-    function getDs() {
-
-        var inputData = {
-            token: cookieToken.token
-        };
-
-        $.ajax({
-            type: 'POST',
-            url: "/Media/PartialIndex",
-            data: inputData,
-            success: function (data) {
-                $('#dsMedia').html(data);
-            },
-            error: function (data) {
-                console.log("error:" + JSON.stringify(data));
-
-            }
-
-        });
-    }
-
 
 </script>
 

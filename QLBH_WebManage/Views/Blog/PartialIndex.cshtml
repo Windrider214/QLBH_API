@@ -95,7 +95,7 @@
                             icon: "warning",
                             button: "OK!",
                         });
-                        getDs();
+                        getDsBlogPaging();
                         $(".modal-backdrop").remove();
                     }
                 },
@@ -105,33 +105,6 @@
             });
         }
 
-    }
-
-
-    function getDs() {
-        var inputData = {
-            MaTinTuc: "",
-            token: cookieToken.token,
-            page: pageIndex,
-            pageSize: pageSize
-        };
-
-        $.ajax({
-            type: 'POST',
-            url: "/Blog/PartialIndex",
-            data: inputData,
-            success: function (data) {
-                $('#dsBlog').html(data);
-               dataPaging('@ViewBag.TotalRow', function () {
-                   getDsBlogPaging();
-                });
-            },
-            error: function (data) {
-                console.log("error:" + JSON.stringify(data));
-
-            }
-
-        });
     }
 
 

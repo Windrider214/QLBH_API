@@ -1,12 +1,4 @@
-﻿@model List<QLBH_WebManage.DTO.SANPHAM>
-
-
-@{
-    Layout = null;
-    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/";
-    string media_seo = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/seoIMG/";
-
-}
+﻿@model List<QLBH_WebManage.DTO.HOADON>
 
 <br />
 <br />
@@ -15,17 +7,19 @@
     <table id="dsLoaiSP" class="table table-sm table-hover table-striped table-bordered">
         <thead class="table-primary">
             <tr>
-                <th>Mã Sản phẩm</th>
-                <th>Tên sản phẩm</th>
-                <th>Đơn vị tính</th>
-                <th>Đơn giá</th>
-                <th>Mã loại</th>
-                <th>Mã thương hiệu</th>
-                <th>SeoImage</th>
-                <th>Số lần xem</th>
-                <th>Giảm giá</th>
-                <th>Số lượng</th>
-                <th>Tình trạng</th>
+                <th>Mã đơn hàng</th>
+                <th>Khách hàng</th>
+                <th>Người đặt</th>
+                <th>Số điện thoại</th>
+                <th>Địa chỉ</th>
+                <th>Email</th>
+                <th>Ngày đặt</th>
+                <th>Ngày giao</th>
+                <th>Loại thanh toán</th>
+                <th>Mã vận đơn</th>
+                <th>Phí ship</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái</th>
                 <th></th>
                 <th></th>
 
@@ -40,34 +34,34 @@
                 {
 
                     <tr>
-                        <th>@item.maSp</th>
-                        <th>@item.tenSp</th>
-                        <th>@item.donViTinh</th>
-                        <th>@string.Format("{0:c0}", @item.donGia)</th>
-                        <th>@item.maLoaiNavigation.tenLoaiSp</th>
-                        <th>@item.maThNavigation.tenTh</th>
-                        <th>
-                            <img src="@media_seo@item.seoImage" style="width: 100px;height: 100px" />
-                        </th>
-                        <th>@item.soLanXem</th>
-                        <th>@item.giamGia</th>
-                        <th>@item.soLuong</th>
+                        <th>@item.maHd</th>
+                        <th>@item.MaKhNavigation.tenKh</th>
+                        <th>@item.hoTenKh</th>
+                        <th>@item.sdtKh</th>
+                        <th>@item.diaChiKh</th>
+                        <th>@item.emailKh</th>
+                        <th>@item.ngayDat</th>
+                        <th>@item.ngayGiao</th>
+                        <th>@item.loaiThanhToan</th>
+                        <th>@item.maVanDon</th>
+                        <th>@string.Format("{0:c0}", @item.phiVanChuyen)</th>
+                        <th>@string.Format("{0:c0}", @item.tongTien)</th>
                         <th>
                             @{
-                                if (item.tinhTrang == true)
+                                if (item.trangThai == true)
                                 {
-                                    <div class="text-success">Còn hàng</div>
+                                    <div class="text-success">Thành công</div>
                                 }
                                 else
                                 {
-                                    <div class="text-warning">Hết hàng</div>
+                                    <div class="text-warning">Chưa xử lí</div>
                                 }
                             }
                         </th>
-                        <td><a href="/SanPham/Detail?MaSP=@item.maSp" class="btn btn-info"><i class="fa fa-pencil"></i></a></td>
+                        <td><a href="/Order/Detail?MaHD=@item.maHd" class="btn btn-info"><i class="fa fa-pencil"></i></a></td>
 
                         <td>
-                            <button onclick="deleteSanPham('@item.maSp')" id="btnDelete" class="btn btn-danger">
+                            <button onclick="deleteHoaDon('@item.maHd')" id="btnDelete" class="btn btn-danger">
                                 <i class="fa fa-trash"></i>
                             </button>
                         </td>
@@ -87,17 +81,17 @@
 
     var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
 
-    function deleteSanPham(masp) {
+    function deleteHoaDon(mahd) {
         var result = confirm("Bạn có chắc chắn muốn xóa");
 
         if (result) {
             var deleteData = {
-                maSp: masp
+                maHd: mahd
             }
 
             $.ajax({
                 type: 'POST',
-                url: "/SanPham/Delete",
+                url: "/Order/Delete",
                 data: deleteData,
                 success: function (data) {
                     var code = data.ResponseCode;
@@ -107,7 +101,7 @@
                             icon: "success",
                             button: "OK!",
                         });
-                        getDsSanPham();
+                        getDsDonHang();
                     }
                     else {
                         swal({
@@ -126,6 +120,5 @@
         }
 
     }
-
 
 </script>

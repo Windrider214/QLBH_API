@@ -8,7 +8,7 @@ using QLBH_Services.UnitOfWork;
 
 namespace QLBH_API.Controllers
 {
-    //[Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Roles = UserRoles.Admin)]
     [ApiController]
     [Route("api/[controller]")]
     public class OrderController : ControllerBase
@@ -22,16 +22,56 @@ namespace QLBH_API.Controllers
             _emailService = emailService;
         }
 
-        [HttpGet("GetOrders")]
-        [AllowAnonymous]
-        public async Task<ActionResult> Orders()
+        [HttpPost("GetOrdersPaging")]
+        public async Task<ActionResult> GetOrdersPaging(Page page)
         {
             await Task.Yield();
-            var lst = _unitWork.HoaDonRepository.GetAll();
+            List<Hoadon> lst = _unitWork.HoaDonRepository.GetListPaging(page.page, page.pageSize);
+            return Ok(lst);
+        }
+
+        [HttpGet("GetTotalRec")]
+        [AllowAnonymous]
+        public async Task<int> GetTotalRec()
+        {
+            await Task.Yield();
+            int totalRow = _unitWork.HoaDonRepository.GetTotalRec();
+            return totalRow;
+        }
+
+        [HttpPost("GetOrdersByID")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetOrdersByID(string mahd)
+        {
+            await Task.Yield();
+            Hoadon lst = _unitWork.HoaDonRepository.GetById(mahd);
+            return Ok(lst);
+        }
+
+        [HttpDelete("DeleteOrder")]
+        public async Task<ActionResult> DeleteOrder(string maHd)
+        {
+            await Task.Yield();
+            var entity = _unitWork.HoaDonRepository.GetById(maHd);
+            if (entity != null)
+            {
+                _unitWork.HoaDonRepository.Remove(entity);
+
+            }
+            var lst = _unitWork.Save();
+            return Ok(lst);
+        }
+
+        [HttpGet("SearchOrder")]
+        public async Task<ActionResult> SearchOrder(string maHd)
+        {
+            await Task.Yield();
+            List<Hoadon> lst = _unitWork.HoaDonRepository.SearchOrder(maHd);
             return Ok(lst);
         }
 
         [HttpPost("InsertOrders")]
+        [AllowAnonymous]
         public async Task<ActionResult> InsertOrders(OrderEditModel hd)
         {
             await Task.Yield();

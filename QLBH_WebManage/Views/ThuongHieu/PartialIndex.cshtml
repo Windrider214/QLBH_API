@@ -87,7 +87,7 @@
                             icon: "warning",
                             button: "OK!",
                         });
-                        getDs();
+                        getDsThuongHieu();
                         $(".modal-backdrop").remove();
                     }
                 },
@@ -97,29 +97,6 @@
             });
         }
 
-    }
-
-
-    function getDs() {
-
-        var inputData = {
-            TenTh: "",
-            token: cookieToken.token
-        };
-
-        $.ajax({
-            type: 'POST',
-            url: "/ThuongHieu/PartialIndex",
-            data: inputData,
-            success: function (data) {
-                $('#dsThuongHieu').html(data);
-            },
-            error: function (data) {
-                console.log("error:" + JSON.stringify(data));
-
-            }
-
-        });
     }
 
 

@@ -1,0 +1,116 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-8 col-sm-6">
+
+        </div>
+
+        <div class="col-4 col-sm-6 text-end">
+            <div class="d-flex">
+                <input class="form-control" type="text" placeholder="Tìm đơn hàng ..." aria-label="Search" id="txtSearch">
+                <button class="btn btn-outline-warning" onclick="Search()"><i class="fa fa-search"></i></button>
+                <button class="btn btn-outline-success" onclick="getDsDonHang()">Làm mới</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="dsDonHang" width="100%">
+
+</div>
+
+<div class="d-flex justify-content-center">
+    <ul id="pagination-demo" class="pagination-x"></ul>
+</div>
+
+<script>
+    jQuery(document).ready(function ($) {
+        getDsDonHang();
+    })
+
+    var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+
+    var pageSize = 10;
+    var pageIndex = 1;
+
+    //Lấy sản phẩm
+    function getDsDonHang() {
+
+        var inputData = {
+            maHd: "",
+            token: cookieToken.token,
+            page: pageIndex,
+            pageSize: pageSize
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/Order/PartialIndex",
+            data: inputData,
+            success: function (data) {
+                $('#dsDonHang').html(data);
+                dataPaging('@ViewBag.TotalRow', function () {
+                    getDsDonHang();
+                });
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+    //Phân trang
+    function dataPaging(totalRow, callback) {
+
+        var totalPage = Math.ceil(totalRow / pageSize);
+        $('#pagination-demo').twbsPagination({
+            totalPages: totalPage,
+            visiblePages: 5,
+            first: "Đầu",
+            next: "Tiếp",
+            last: "Cuối",
+            prev: "Trước",
+            onPageClick: function (event, page) {
+                pageIndex = page;
+                setTimeout(callback, 200);
+            }
+        });
+    }
+
+     function Search() {
+        var mahd = $("#txtSearch").val();
+         mahd = mahd.trim();
+        var searchData = {
+            maHd: mahd,
+            token: cookieToken.token,
+            page: pageIndex,
+            pageSize: pageSize
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/Order/PartialIndex",
+            data: searchData,
+            success: function (data) {
+                $("#dsDonHang").html(data);
+                dataPaging('@ViewBag.TotalRow', function () {
+                    getDsDonHang();
+                });
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+        });
+    }
+</script>
+

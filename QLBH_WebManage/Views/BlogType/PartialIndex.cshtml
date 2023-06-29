@@ -76,7 +76,7 @@
                             icon: "warning",
                             button: "OK!",
                         });
-                        getDs();
+                        getDsBlogType();
                         $(".modal-backdrop").remove();
                     }
                 },
@@ -86,29 +86,6 @@
             });
         }
 
-    }
-
-
-    function getDs() {
-
-        var inputData = {
-            TenDm: "",
-            token: cookieToken.token
-        };
-
-        $.ajax({
-            type: 'POST',
-            url: "/BlogType/PartialIndex",
-            data: inputData,
-            success: function (data) {
-                $('#dsBlogType').html(data);
-            },
-            error: function (data) {
-                console.log("error:" + JSON.stringify(data));
-
-            }
-
-        });
     }
 
 

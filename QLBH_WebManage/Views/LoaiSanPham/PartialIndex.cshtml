@@ -77,7 +77,7 @@
                             icon: "success",
                             button: "OK!",
                         });
-                        getDs();
+                        getDsLoaiSP();
                         $(".modal-backdrop").remove();
                     }
                     else {
@@ -98,28 +98,4 @@
        
     }
 
-
-    function getDs() {
-
-        var inputData = {
-            TenLoaiSP: "",
-            token: cookieToken.token
-        };
-
-        $.ajax({
-            type: 'POST',
-            url: "/LoaiSanPham/PartialIndex",
-            data: inputData,
-            success: function (data) {
-                $('#dsLoaiSP').html(data);
-            },
-            error: function (data) {
-                console.log("error:" + JSON.stringify(data));
-
-            }
-
-        });
-    }
-
-
-    </script>
+</script>
