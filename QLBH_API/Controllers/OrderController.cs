@@ -35,6 +35,7 @@ namespace QLBH_API.Controllers
         public async Task<ActionResult> InsertOrders(OrderEditModel hd)
         {
             await Task.Yield();
+            
             if(hd == null)
             {
                 return BadRequest();

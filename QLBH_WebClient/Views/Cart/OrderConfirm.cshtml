@@ -34,13 +34,14 @@
     function setOrderConfirm() {
         console.log(GetCookie('OrderInform'));
         var confirm = GetCookie('OrderInform');
-
-            
+         
         if (confirm != null) {
             var note = confirm.Description;
             $('#orderNote').text(note);
+            RemoveCookie('CheckOutCODGHN');
             RemoveCookie('OrderInform');
             RemoveCookie('ShoppingCart');
         }
+
     }
 </script>

@@ -392,22 +392,25 @@
             to_ward_code: $("#lstWard").val(),
             to_district_id: $("#lstDistrict").val(),
             to_province_id: $("#lstProvince").val(),
-            cod_amount: total_amount,
-            insurance_value: total_price
+            cod_amount: parseInt(total_amount),
+            insurance_value: parseInt(total_price)
         }
+        SetCookie('CheckOutCODGHN', inputData);
+        CreateOrder('Thanh toán khi nhận hàng');
 
-        $.ajax({
-            type: 'GET',
-            url: "/Cart/PaymentCOD",
-            data: inputData,
-            success: function (data) {
-            },
-            error: function (data) {
-                console.log("error:" + JSON.stringify(data));
-            }
-        }).done(function () {
-            CreateOrder('Thanh toán khi nhận hàng');
-        });
+
+        //$.ajax({
+        //    type: 'GET',
+        //    url: "/Cart/PaymentCOD",
+        //    data: inputData,
+        //    success: function (data) {
+        //    },
+        //    error: function (data) {
+        //        console.log("error:" + JSON.stringify(data));
+        //    }
+        //}).done(function () {
+        //    CreateOrder('Thanh toán khi nhận hàng');
+        //});
    
     }
 
@@ -456,28 +459,6 @@
         })
     }
 
-    function checkoutVNPAY() {
-        var total_price = $("#totalOrderAmount").text();
-        total_price = total_price.replace("₫", "").replace(".", "");
-
-        var inputData = {
-            thanhtien: total_price
-        }
-        $.ajax({
-            type: 'GET',
-            url: "/Cart/Payment",
-            data: inputData,
-            success: function (response) {
-                setTimeout("window.location.href = '" + response + "'", 1000);
-
-            },
-            error: function (data) {
-                console.log("error:" + JSON.stringify(data));
-
-            }
-
-        })
-    }
 
     function checkoutCODVNPAY(total_amount) {
         var total_price = $("#totalOrderAmount").text();
@@ -491,22 +472,13 @@
             to_ward_code: $("#lstWard").val(),
             to_district_id: $("#lstDistrict").val(),
             to_province_id: $("#lstProvince").val(),
-            cod_amount: total_amount,
-            insurance_value: total_price
+            cod_amount: parseInt(total_amount),
+            insurance_value: parseInt(total_price)
         }
 
-        $.ajax({
-            type: 'GET',
-            url: "/Cart/PaymentCODVNPAY",
-            data: inputData,
-            success: function (data) {
-            },
-            error: function (data) {
-                console.log("error:" + JSON.stringify(data));
-            }
-        }).done(function () {
-            CreateVNPAYOrder('Thanh toán trước VNPAY');
-        });
+        SetCookie('CheckOutCODvnPay', inputData);
+        CreateVNPAYOrder('Thanh toán trước VNPAY');
+
     }
 
     function CreateVNPAYOrder(loaithanhtoan) {
@@ -527,28 +499,40 @@
             diaChiKh: dc,
             emailKh: $("#txtEmail").val(),
             ngayDat: moment().format('YYYY-MM-DD HH:mm:ss'),
-            ngayGiao: deliverDate,
+            ngayGiao: moment(deliverDate).format('YYYY-MM-DD HH:mm:ss'),
             loaiThanhToan: loaithanhtoan,
             maVanDon: '',
-            phiVanChuyen: shippingFee,
-            tongTien: total_price,
+            phiVanChuyen: parseInt(shippingFee),
+            tongTien: parseInt(total_price),
             trangThai: 0,
             ghiChu: $("#txtGhiChu").val()
         }
+        SetCookie('CreateVNPAYOrder', inputData);
+        checkoutVNPAY();
+
+    }
+
+    function checkoutVNPAY() {
+        var total_price = $("#totalOrderAmount").text();
+        total_price = total_price.replace("₫", "").replace(".", "");
+
+        var inputData = {
+            thanhtien: total_price
+        }
 
         $.ajax({
-            type: 'POST',
-            url: "/Cart/CreateVNPAYOrder",
+            type: 'GET',
+            url: "/Cart/Payment",
             data: inputData,
-            success: function (data) {
+            success: function (response) {
+                window.location.href = "" + response + "";
+
             },
             error: function (data) {
                 console.log("error:" + JSON.stringify(data));
 
             }
-        }).done(function () {
-            checkoutVNPAY();
-        });
+        })
     }
     
 </script>

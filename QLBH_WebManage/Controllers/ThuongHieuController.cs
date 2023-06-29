@@ -171,8 +171,7 @@ namespace QLBH_WebManage.Controllers
                     returnData.Description = "Thêm thất bại !!!";
                     return Json(returnData, JsonRequestBehavior.AllowGet);
                 }    
-   
-
+  
             }
             catch (Exception)
             {

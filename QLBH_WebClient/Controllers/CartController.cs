@@ -17,6 +17,9 @@ using static QLBH_WebClient.Models.GHN;
 using Microsoft.Ajax.Utilities;
 using System.Net;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
+using Microsoft.SqlServer.Server;
+using Newtonsoft.Json.Converters;
 
 namespace QLBH_WebClient.Controllers
 {
@@ -25,15 +28,13 @@ namespace QLBH_WebClient.Controllers
         private static string url_api = ConfigurationManager.AppSettings["API_URL"] ?? "http://localhost:5050";
         private static string media_api = ConfigurationManager.AppSettings["MEDIA_URL"] ?? "http://localhost:5127";
         private static int slh = 0;
-        private static int total = 0;
 
         //Mã vận đơn
-        private static string deliverCode = "";
-        private static string deliverCodeVNPAY = "";
+        //private static string deliverCode = "";
 
         //Lưu tạm thông tin đơn hàng
-        private static OrderEditModel vnpayORDER = new OrderEditModel();
-        private static GHN codVNPAY = new GHN();
+        //private static OrderEditModel vnpayORDER = new OrderEditModel();
+        //private static GHN codVNPAY = new GHN();
 
 
         // GET: Cart
@@ -286,57 +287,12 @@ namespace QLBH_WebClient.Controllers
             return Json(paymentUrl, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult PaymentCODVNPAY(GHN ghn)
+        public string CreateCODVNPAY()
         {
             var returnData = new ReturnData();
-
-            var list = new List<Cart>();
-
-            var cookie = Request.Cookies["ShoppingCart"] != null ? Request.Cookies["ShoppingCart"].Value : string.Empty;
-            if (cookie != null && !string.IsNullOrEmpty(cookie))
-            {
-                list = JsonConvert.DeserializeObject<List<Cart>>(HttpUtility.UrlDecode(cookie));
-            }
-
-            var options = new RestClientOptions("https://dev-online-gateway.ghn.vn")
-            {
-                MaxTimeout = -1,
-            };
-            var client = new RestClient(options);
-            var request = new RestRequest("/shiip/public-api/v2/shipping-order/create", Method.Post);
-            request.AddHeader("ShopId", "124702");
-            request.AddHeader("token", "5bac8d89-0acd-11ee-bb28-f6a6bf301a4e");
-            request.AddHeader("Content-Type", "application/json");
-
-            //Add item to GHN order
-            List<Item> items = new List<Item>();
-            var data = list;
-            foreach (var proc in data)
-            {
-                Item item = new Item();
-                item.name = proc.tenSp;
-                item.quantity = proc.soLuong;
-                item.price = proc.donGia;
-                items.Add(item);
-            }
-            ghn.weight = list.Sum(x => x.soLuong) * 100;
-            ghn.items = items;
-            codVNPAY = ghn;
-            return Json(new ReturnData { ResponseCode = 900, Description = "Success" }, JsonRequestBehavior.AllowGet);
-
-        }
-
-
-        public ActionResult CreateVNPAYOrder(OrderEditModel order)
-        {
-            var returnData = new ReturnData();
+            string deliverCodeVNPAY = "";
             try
             {
-                //Create order
-                order.maHd = Guid.NewGuid().ToString();
-                order.maKh = "7ddc1b90-2c81-4c40-ad2c-7894dd2c2d8f";
-
-                //Create order detail
                 var list = new List<Cart>();
                 var cookie = Request.Cookies["ShoppingCart"] != null ? Request.Cookies["ShoppingCart"].Value : string.Empty;
                 if (cookie != null && !string.IsNullOrEmpty(cookie))
@@ -344,32 +300,27 @@ namespace QLBH_WebClient.Controllers
                     list = JsonConvert.DeserializeObject<List<Cart>>(HttpUtility.UrlDecode(cookie));
                 }
 
-                List<HOADONCT> items = new List<HOADONCT>();
-                foreach (var proc in list)
+                var codVNPAY = new GHN();
+                var cookieCODVNPAY = Request.Cookies["CheckOutCODvnPay"] != null ? Request.Cookies["CheckOutCODvnPay"].Value : string.Empty;
+                if (cookieCODVNPAY != null && !string.IsNullOrEmpty(cookieCODVNPAY))
                 {
-                    HOADONCT item = new HOADONCT();
-                    item.maSp = proc.maSp;
-                    item.soLuong = proc.soLuong;
-                    item.donGiaBan = proc.donGia;
-                    item.maHd = order.maHd;
+                    codVNPAY = JsonConvert.DeserializeObject<GHN>(HttpUtility.UrlDecode(cookieCODVNPAY));
+                }
+
+                //Add item to GHN order
+                List<Item> items = new List<Item>();
+                var data = list;
+                foreach (var proc in data)
+                {
+                    Item item = new Item();
+                    item.name = proc.tenSp;
+                    item.quantity = proc.soLuong;
+                    item.price = proc.donGia;
                     items.Add(item);
                 }
-                order.OrderDetail = items;
-                vnpayORDER = order;
-                return new HttpStatusCodeResult(HttpStatusCode.OK);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
+                codVNPAY.weight = list.Sum(x => x.soLuong) * 100;
+                codVNPAY.items = items;
 
-        public string CreateCODVNPAY()
-        {
-            var returnData = new ReturnData();
-
-            try
-            {
                 var options = new RestClientOptions("https://dev-online-gateway.ghn.vn")
                 {
                     MaxTimeout = -1,
@@ -435,6 +386,14 @@ namespace QLBH_WebClient.Controllers
                     {
                         //Thanh toán thành công
                         #region CreateOrder
+                        var vnpayORDER = new OrderEditModel();
+                        var format = "dd/MM/yyyy";
+                        var dateTimeConverter = new IsoDateTimeConverter { DateTimeFormat = format };
+                        var cookieVNPAYORDER = Request.Cookies["CreateVNPAYOrder"] != null ? Request.Cookies["CreateVNPAYOrder"].Value : string.Empty;
+                        if (cookieVNPAYORDER != null && !string.IsNullOrEmpty(cookieVNPAYORDER))
+                        {
+                            vnpayORDER = JsonConvert.DeserializeObject<OrderEditModel>(HttpUtility.UrlDecode(cookieVNPAYORDER));
+                        }
 
                         //Create order
                         vnpayORDER.maVanDon = CreateCODVNPAY();
@@ -514,16 +473,23 @@ namespace QLBH_WebClient.Controllers
         /// </summary>
         /// <param name="ghn"></param>
         /// <returns></returns>
-        public ActionResult PaymentCOD(GHN ghn)
+        public string PaymentCOD()
         {
             var returnData = new ReturnData();
-
+            string deliverCode = "";
             var list = new List<Cart>();
 
             var cookie = Request.Cookies["ShoppingCart"] != null ? Request.Cookies["ShoppingCart"].Value : string.Empty;
             if (cookie != null && !string.IsNullOrEmpty(cookie))
             {
                 list = JsonConvert.DeserializeObject<List<Cart>>(HttpUtility.UrlDecode(cookie));
+            }
+
+            var ghn = new GHN();
+            var cookieCODGHN = Request.Cookies["CheckOutCODGHN"] != null ? Request.Cookies["CheckOutCODGHN"].Value : string.Empty;
+            if (cookieCODGHN != null && !string.IsNullOrEmpty(cookieCODGHN))
+            {
+                ghn = JsonConvert.DeserializeObject<GHN>(HttpUtility.UrlDecode(cookieCODGHN));
             }
 
             var options = new RestClientOptions("https://dev-online-gateway.ghn.vn")
@@ -564,7 +530,7 @@ namespace QLBH_WebClient.Controllers
             {
                 deliverCode = "400";
             }
-            return Json(new ReturnData { ResponseCode = 900, Description = "Success" }, JsonRequestBehavior.AllowGet);
+            return deliverCode;
 
         }
 
@@ -577,7 +543,7 @@ namespace QLBH_WebClient.Controllers
             try
             {
                 //Create order
-                order.maVanDon = deliverCode;// Set mã vận đơn GHN cho đơn hàng
+                order.maVanDon = PaymentCOD();// Set mã vận đơn GHN cho đơn hàng
                 order.maHd = Guid.NewGuid().ToString();
                 order.maKh = "7ddc1b90-2c81-4c40-ad2c-7894dd2c2d8f";
 
@@ -622,7 +588,7 @@ namespace QLBH_WebClient.Controllers
                         email.deliverCode = order.maVanDon;
                         email.orderCode = order.maHd;
                         returnData.Description = @"Đơn hàng " + order.maHd + " được đặt thành công !!!" +
-                                             "Quý khách có thể tra cứu đơn hàng với mã vận đơn '" + order.maVanDon + "' ";
+                                                "Quý khách có thể tra cứu đơn hàng với mã vận đơn '" + order.maVanDon + "' ";
                     }
                     SendEmailConfirmOrder(email);
 
@@ -660,7 +626,7 @@ namespace QLBH_WebClient.Controllers
                 var result = API_Interact.InsertData(url_api, request_url, jsonData, "");
                 if(result.IsSuccessStatusCode)
                 {
-                    ViewBag.Check = true;
+                    ViewBag.Status = "OK";
                 }
             }
             catch (Exception)
