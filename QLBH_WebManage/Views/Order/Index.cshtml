@@ -4,14 +4,26 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<br />
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-8 col-sm-6">
 
+    <div class="row">
+        <div class="col-6">
+            <div class="row">
+                <div class="col-5">
+                    <p><strong>Từ ngày:</strong> <input type="text" id="datepicker1"></p>
+                </div>
+                <div class="col-5">
+                    <p><strong>Đến ngày:</strong> <input type="text" id="datepicker2"></p>
+                </div>
+                <div class="col-2">
+
+                </div>
+            </div>
         </div>
 
-        <div class="col-4 col-sm-6 text-end">
+        <div class="col-6 text-end">
             <div class="d-flex">
                 <input class="form-control" type="text" placeholder="Tìm đơn hàng ..." aria-label="Search" id="txtSearch">
                 <button class="btn btn-outline-warning" onclick="Search()"><i class="fa fa-search"></i></button>
@@ -32,7 +44,26 @@
 
 <script>
     jQuery(document).ready(function ($) {
+
+        $(function () {
+            $("#datepicker1").datepicker({
+                changeMonth: true,
+                changeYear: true
+            });
+        });
+
+        $(function () {
+            $("#datepicker2").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                onSelect: function () {
+                    getTotalByDate();
+                }
+            });
+        });
+
         getDsDonHang();
+
     })
 
     var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
@@ -68,6 +99,62 @@
         });
     }
 
+    function getTotalByDate() {
+        var startDate = $("#datepicker1").val();
+        var endDate = $("#datepicker2").val();
+
+        var inputData = {
+            Start: moment(startDate).format(),
+            End: moment(endDate).format()
+        };
+
+           $.ajax({
+            type: 'POST',
+            url: "/Order/GetTotalByDate",
+            data: inputData,
+            success: function (data) {
+                var result = data.ResponseCode;
+                if (result > 0) {
+                    getDsDonHangByDate(result);
+                }
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+      function getDsDonHangByDate(totalRow) {
+          var startDate = $("#datepicker1").val();
+          var endDate = $("#datepicker2").val();
+
+        var inputData = {
+            page: pageIndex,
+            pageSize: pageSize,
+            StartDate: moment(startDate).format(),
+            EndDate: moment(endDate).format()
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/Order/GetListPagingByDate",
+            data: inputData,
+            success: function (data) {
+                $('#dsDonHang').html(data);
+                dataPaging(totalRow, function () {
+                    getDsDonHangByDate(totalRow);
+                });
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+      }
+
     //Phân trang
     function dataPaging(totalRow, callback) {
 
@@ -82,6 +169,12 @@
             onPageClick: function (event, page) {
                 pageIndex = page;
                 setTimeout(callback, 200);
+                $("html").animate(
+                    {
+                        scrollTop: $("#txtSearch").offset().top
+                    },
+                    50 //speed
+                );
             }
         });
     }

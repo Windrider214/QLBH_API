@@ -11,6 +11,7 @@ namespace QLBH_Services.HOADON.HOADONCT
 {
     public interface IHoaDonCTRepository : IGenericRepository<Hoadonct>
     {
+        List<Hoadonct> GetListOrderProcduct(string mahd);
 
     }
 }

@@ -13,6 +13,12 @@ namespace QLBH_Services.HOADON
         List<Hoadon> GetListPaging(int page, int pageSize);
         List<Hoadon> SearchOrder(string maHd);
         List<Hoadon> GetListPagingByCusID(int page, int pageSize, string MaKH);
+        List<Hoadon> GetListPagingByDate(int page, int pageSize, DateTime startDate, DateTime endDate);
+
+        List<Hoadon> GetListByDate(DateTime startDate, DateTime endDate);
+
+
+        Hoadon GetOrderByID(string  maHd);
         int GetTotalRec();
 
     }

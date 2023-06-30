@@ -39,12 +39,12 @@ namespace QLBH_API.Controllers
             return totalRow;
         }
 
-        [HttpPost("GetOrdersByID")]
+        [HttpGet("GetOrdersByID")]
         [AllowAnonymous]
         public async Task<ActionResult> GetOrdersByID(string mahd)
         {
             await Task.Yield();
-            Hoadon lst = _unitWork.HoaDonRepository.GetById(mahd);
+            Hoadon lst = _unitWork.HoaDonRepository.GetOrderByID(mahd);
             return Ok(lst);
         }
 
@@ -59,6 +59,24 @@ namespace QLBH_API.Controllers
 
             }
             var lst = _unitWork.Save();
+            return Ok(lst);
+        }
+
+        [HttpPost("GetListPagingByDate")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetListPagingByDate(OrderByDate order)
+        {
+            await Task.Yield();
+            List<Hoadon> lst = _unitWork.HoaDonRepository.GetListPagingByDate(order.page, order.pageSize, order.StartDate, order.EndDate); 
+            return Ok(lst);
+        }
+
+        [HttpPost("GetListByDate")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetListByDate(DateRange dr)
+        {
+            await Task.Yield();
+            List<Hoadon> lst = _unitWork.HoaDonRepository.GetListByDate(dr.Start, dr.End);
             return Ok(lst);
         }
 
@@ -95,6 +113,28 @@ namespace QLBH_API.Controllers
             }
 
             var lst = _unitWork.Save();
+            return Ok(lst);
+        }
+
+        [HttpPut("UpdateOrder")]
+        public async Task<ActionResult> UpdateOrder(Hoadon hd)
+        {
+            await Task.Yield();
+            var entity = _unitWork.HoaDonRepository.GetById(hd.MaHd);
+            if (entity != null)
+            {
+                _unitWork.HoaDonRepository.Update(hd);
+            }
+            var lst = _unitWork.Save();
+            return Ok(lst);
+        }
+
+        [HttpGet("GetListOrderProduct")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetListOrderProduct(string maHd)
+        {
+            await Task.Yield();
+            List<Hoadonct> lst = _unitWork.HoaDonCTRepository.GetListOrderProcduct(maHd);
             return Ok(lst);
         }
 

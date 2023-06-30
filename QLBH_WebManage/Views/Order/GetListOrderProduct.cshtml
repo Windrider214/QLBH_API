@@ -1,0 +1,42 @@
+﻿@model List<QLBH_WebManage.DTO.HOADONCT>
+@{
+    Layout = null;
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/";
+    string media_seo = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/seoIMG/";
+
+}
+
+<div class="container-fluid">
+    <table id="dsLoaiSP" class="table table-sm table-hover table-striped table-bordered">
+        <thead class="table-primary">
+            <tr>
+                <th></th>
+                <th>Tên sản phẩm</th>
+                <th>Đơn giá</th>
+                <th>Số lượng</th>
+                <th>Tổng</th>
+            </tr>
+        </thead>
+
+
+        <tbody>
+            @if (Model != null && Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                    var total = item.soLuong * item.donGiaBan;
+                    <tr>
+                        <th>                          
+                            <img src="@media_seo@item.MaSpNavigation.seoImage" style="width: 100px;height: 100px" />
+                        </th>
+                        <th>@item.MaSpNavigation.tenSp</th>
+                        <th>@item.soLuong</th>
+                        <th>@string.Format("{0:c0}", item.donGiaBan)</th>
+                        <th>@string.Format("{0:c0}", total)</th>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>

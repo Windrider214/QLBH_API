@@ -50,5 +50,47 @@ namespace QLBH_Services.HOADON
                 Where(x => x.MaHd == maHd).
                 ToList();
         }
+
+        Hoadon IHoaDonRepository.GetOrderByID(string maHd)
+        {
+            return _context.Hoadons.
+                   Include(x => x.MaKhNavigation).
+                   Where(x => x.MaHd == maHd).
+                   AsNoTracking().
+                   FirstOrDefault();
+        }
+
+        List<Hoadon> IHoaDonRepository.GetListPagingByDate(int page, int pageSize, DateTime startDate, DateTime endDate)
+        {
+            if(startDate.Date == endDate.Date)
+            {
+                return _context.Hoadons.
+                           Include(x => x.MaKhNavigation).
+                           Where(s => s.NgayDat.Value.Date == endDate.Date).
+                           Skip((page - 1) * pageSize).Take(pageSize).
+                           ToList();
+            }         
+                return _context.Hoadons.
+                          Include(x => x.MaKhNavigation).
+                          Where(s => s.NgayDat.Value.Date >= startDate.Date && s.NgayDat.Value.Date <= endDate.Date).
+                          Skip((page - 1) * pageSize).Take(pageSize).
+                          ToList();
+            
+        }
+
+        List<Hoadon> IHoaDonRepository.GetListByDate(System.DateTime startDate, System.DateTime endDate)
+        {
+            if (startDate.Date == endDate.Date)
+            {
+                return _context.Hoadons.
+                           Include(x => x.MaKhNavigation).
+                           Where(s => s.NgayDat.Value.Date == endDate.Date).
+                           ToList();
+            }
+            return _context.Hoadons.
+                      Include(x => x.MaKhNavigation).
+                      Where(s => s.NgayDat.Value.Date >= startDate.Date && s.NgayDat.Value.Date <= endDate.Date).           
+                      ToList();
+        }
     }
 }
