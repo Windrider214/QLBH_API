@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using QLBH_WebManage.Auth;
+using QLBH_WebManage.DTO;
 using QLBH_WebManage.Helper;
 using QLBH_WebManage.Models;
 using System;
@@ -58,6 +59,71 @@ namespace QLBH_WebManage.Controllers
                 returnData.ResponseCode = -99;
                 returnData.Description = ex.Message;
                 return Json(returnData, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public ActionResult CheckIn()
+        {
+            var returnData = new ReturnData();
+            try
+            {
+                JwtCookie jwtCookie = new JwtCookie();
+                var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                    var request_url = "/api/User/AuthCheck";
+                    var result = API_Interact.PullData(url_api, request_url, "", jwtCookie.token);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        returnData.ResponseCode = 900;
+                        returnData.Description = TokenDecode.GetID(jwtCookie.token);
+                        return Json(returnData, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        returnData.ResponseCode = -600;
+                        returnData.Description = "Thông tin đăng nhập không chính xác !!!";
+                        return Json(returnData, JsonRequestBehavior.AllowGet);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+    
+            return null;
+        }
+
+        public ActionResult GetUser()
+        {
+            var returnData = new ReturnData();
+
+            try
+            {
+
+                JwtCookie jwtCookie = new JwtCookie();
+                var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                    var request_url = "/api/KhachHang/GetKhachHangByUserID";
+                    var result = API_Interact.GetDataById(url_api, request_url, TokenDecode.GetID(jwtCookie.token), "userID", jwtCookie.token);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        KHACHHANG kh = new KHACHHANG();
+                        kh = JsonConvert.DeserializeObject<KHACHHANG>(result.Content);
+                        return PartialView(kh);
+                    }
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
         }
     }

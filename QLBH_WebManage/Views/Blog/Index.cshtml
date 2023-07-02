@@ -92,8 +92,9 @@
 </div>
 
 <script>
-  jQuery(document).ready(function ($) {
-      getDsUser();
+    jQuery(document).ready(function ($) {
+        checkUSER();
+      //getDsUser();
       getDsBlogType();
       getDsBlogPaging();
       $('#uploadImage').on('change', function () {
@@ -172,7 +173,34 @@
         });
     }
 
-    function getDsUser() {
+    function checkUSER() {
+
+        $.ajax({
+            type: 'POST',
+            url: "/User/CheckIn",
+            data: {},
+            success: function (data) {
+                var result = data.ResponseCode;
+                if (result > 0) {
+                    getDsUser(data.Description);
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "error",
+                        button: "OK!",
+                    });
+                }
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+    function getDsUser(userID) {
 
         var inputData = {
             token: cookieToken.token
@@ -192,6 +220,8 @@
                     })
                 };
                 $("#ddlUser").append(html);
+                $('#ddlUser').val(userID).attr("selected", "selected").attr("disabled", "disabled");
+
             },
             error: function (data) {
                 console.log("error:" + JSON.stringify(data));

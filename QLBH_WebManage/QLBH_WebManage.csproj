@@ -197,8 +197,10 @@
     <Compile Include="Helper\CheckBase64.cs" />
     <Compile Include="Helper\Image.cs" />
     <Compile Include="Helper\Page.cs" />
+    <Compile Include="Helper\TokenDecode.cs" />
     <Compile Include="Helper\VNtoEnglish.cs" />
     <Compile Include="Models\DateRange.cs" />
+    <Compile Include="Models\JwtCookie.cs" />
     <Compile Include="Models\OrderByDate.cs" />
     <Compile Include="Models\ReturnData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -693,6 +695,7 @@
     <Content Include="Views\Order\Detail.cshtml" />
     <Content Include="Views\Order\GetListOrderProduct.cshtml" />
     <Content Include="Views\Order\GetListPagingByDate.cshtml" />
+    <Content Include="Views\User\GetUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

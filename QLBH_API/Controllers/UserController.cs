@@ -5,7 +5,6 @@ using QLBH_Services.UnitOfWork;
 
 namespace QLBH_API.Controllers
 {
-    [Authorize(Roles = UserRoles.Admin)]
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : ControllerBase
@@ -15,6 +14,14 @@ namespace QLBH_API.Controllers
         public UserController(IUnitWork unitWork)
         {
             _unitWork = unitWork;
+        }
+
+        [HttpPost("AuthCheck")]
+        [Authorize]
+        public async Task<ActionResult> AuthCheck()
+        {
+            await Task.Yield();
+            return Ok();
         }
 
         [HttpGet("GetUser")]

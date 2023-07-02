@@ -120,8 +120,7 @@
                     </div>
                 </div>
                 <div class="sb-sidenav-footer">
-                    <div class="small">Logged in as:</div>
-                    Start Bootstrap
+                    <div class="small" id="userInfor"></div>
                 </div>
             </nav>
         </div>
@@ -154,7 +153,7 @@
 
     <script>
         jQuery(document).ready(function ($) {
-        //    getLogo();
+          getUser();
 
             $("#logoBrand").load('/Media/PartialLogo');        
         });
@@ -162,26 +161,23 @@
         var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
 
 
-        //function getLogo() {
-        //    //var inputData = {
-        //    //    token: cookieToken.token
-        //    //};
+        function getUser() {
 
 
-        //    $.ajax({
-        //        type: 'POST',
-        //        url: "/Media/PartialLogo",
-        //        data: {},
-        //        success: function (data) {
-        //            $('#logoBrand').html(data);
-        //        },
-        //        error: function (data) {
-        //            console.log("error:" + JSON.stringify(data));
+            $.ajax({
+                type: 'POST',
+                url: "/User/GetUser",
+                data: {},
+                success: function (data) {
+                    $('#userInfor').html(data);
+                },
+                error: function (data) {
+                    console.log("error:" + JSON.stringify(data));
 
-        //        }
+                }
 
-        //    });
-        //}
+            });
+        }
     </script>
 </body>
 </html>

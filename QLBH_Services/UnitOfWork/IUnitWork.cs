@@ -1,5 +1,6 @@
 ﻿using QLBH_Services.HOADON;
 using QLBH_Services.HOADON.HOADONCT;
+using QLBH_Services.KHACHHANG;
 using QLBH_Services.MEDIA;
 using QLBH_Services.MEDIA.MEDIATYPE;
 using QLBH_Services.SANPHAM;
@@ -37,6 +38,8 @@ namespace QLBH_Services.UnitOfWork
         IHoaDonRepository HoaDonRepository { get; }
 
         IHoaDonCTRepository HoaDonCTRepository { get; }
+
+        IKhachHangRepository KhachHangRepository { get; }
         #region oldRepos
         //SanPhamRepository spRepos { get; }
         //LoaiSPRepository LoaiSPRepository { get; }
