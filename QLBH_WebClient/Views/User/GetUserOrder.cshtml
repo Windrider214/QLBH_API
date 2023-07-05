@@ -1,0 +1,111 @@
+﻿@model List<QLBH_WebClient.DTO.HOADON>
+
+<div class="container-fluid">
+    <table id="dsLoaiSP" class="table table-hover w-auto table-striped table-bordered">
+        <thead class="table-primary">
+            <tr>
+                <th>Mã vận đơn</th>
+                @*<th>Mã đơn hàng</th>*@
+                @*<th>Khách hàng</th>*@
+                <th>Người đặt</th>
+                <th>Số điện thoại</th>
+                <th style="width: 100%">Địa chỉ</th>
+                <th>Ngày đặt</th>
+                <th>Ngày giao</th>
+                <th>Loại thanh toán</th>
+                <th>Phí ship</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái</th>
+                <th></th>
+            </tr>
+        </thead>
+
+
+        <tbody>
+            @if (Model != null && Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+
+                    <tr>
+                        <th>@item.maVanDon</th>
+                        @*<th>@item.maHd</th>*@
+                        @*<th>@item.MaKhNavigation.tenKh</th>*@
+                        <th>@item.hoTenKh</th>
+                        <th>@item.sdtKh</th>
+                        <th>@item.diaChiKh</th>
+                        <th>@item.ngayDat</th>
+                        <th>@item.ngayGiao</th>
+                        <th>@item.loaiThanhToan</th>
+                        <th>@string.Format("{0:c0}", @item.phiVanChuyen)</th>
+                        <th>@string.Format("{0:c0}", @item.tongTien)</th>
+                        <th>
+                            @{
+                                if (item.trangThai == true)
+                                {
+                                    <div class="text-success">Đã giao hàng</div>
+                                }
+                                else
+                                {
+                                    <div class="text-warning">Chưa xử lí</div>
+                                }
+                            }
+                        </th>
+                        <td><a href="/User/OrderDetail?MaHD=@item.maHd" class="btn btn-info"><i class="fa fa-eye"></i></a></td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+    });
+
+    var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+
+    function deleteHoaDon(mahd) {
+        var result = confirm("Bạn có chắc chắn muốn xóa");
+
+        if (result) {
+            var deleteData = {
+                maHd: mahd
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "/Order/Delete",
+                data: deleteData,
+                success: function (data) {
+                    var code = data.ResponseCode;
+                    if (code > 0) {
+                        swal({
+                            text: data.Description,
+                            icon: "success",
+                            button: "OK!",
+                        });
+                        getDsDonHang();
+                    }
+                    else {
+                        swal({
+                            text: data.Description,
+                            icon: "warning",
+                            button: "OK!",
+                        });
+                        $(".modal-backdrop").remove();
+                    }
+                },
+                error: function (data) {
+                    console.log("error:" + JSON.stringify(data));
+                }
+            });
+        }
+
+    }
+
+</script>
+

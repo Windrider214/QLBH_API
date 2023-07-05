@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Shoppers &mdash; Colorlib e-Commerce Template</title>
+    <title>ZAY SHOP &mdash; Hàng Hiệu Xuất Khẩu</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -18,6 +18,7 @@
     <link href="~/Content/css/owl.theme.default.min.css" rel="stylesheet" />
     <link href="~/Content/css/aos.css" rel="stylesheet" />
     <link href="~/Content/css/style.css" rel="stylesheet" />
+    <link href="~/Content/Bs4Login.css" rel="stylesheet" />
 
     <link href="~/Content/slick-1.8.1/slick/slick.css" rel="stylesheet" />
     <link href="~/Content/slick-1.8.1/slick/slick-theme.css" rel="stylesheet" />
@@ -29,6 +30,7 @@
     <script src="~/Content/js/jquery-ui.js"></script>
     <script src="~/Content/js/popper.min.js"></script>
     <script src="~/Content/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/Bs4Login.js"></script>
     <script src="~/Scripts/jquery.twbsPagination.js"></script>
     <script src="~/Scripts/moment.js"></script>
     <script src="~/Scripts/sweetalert.min.js"></script>
@@ -45,7 +47,7 @@
                         <div class="col-6 col-md-4 order-2 order-md-1 site-search-icon text-left">
                             <div class="site-block-top-search">
                                 <span class="icon icon-search2"></span>
-                                <input type="text" id="txtProductSearch" class="form-control border-0" placeholder="Search">
+                                <input type="text" id="txtProductSearch" class="form-control border-0" placeholder="Tìm sản phẩm ...">
                             </div>
                             <div id="search-suggest" style="display:none;background-color:white;z-index: 100">
                                 <ul id="suggest-item" class="list-group list-group-flush">
@@ -55,15 +57,14 @@
 
                         <div class="col-12 mb-3 mb-md-0 col-md-4 order-1 order-md-2 text-center">
                             <div class="site-logo">
-                                <a href="index.html" class="js-logo-clone">Shoppers</a>
+                                <a href="/TrangChu/Index" class="js-logo-clone">ZAY SHOP</a>
                             </div>
                         </div>
 
                         <div class="col-6 col-md-4 order-3 order-md-3 text-right">
                             <div class="site-top-icons">
                                 <ul>
-                                    <li><a href="#"><span class="icon icon-person"></span></a></li>
-                                    <li><a href="#"><span class="icon icon-heart-o"></span></a></li>
+                                    <li><div id="userInfor"></div></li>
                                     <li>
                                         <a href="/Cart/Index" class="site-cart">
                                             <span class="icon icon-shopping_cart"></span>
@@ -200,6 +201,7 @@
 
     <script>
         jQuery(document).ready(function ($) {
+            getUserPanel();
             getSLH();
 
             $('#txtProductSearch').on('keypress', function (e) {
@@ -282,6 +284,23 @@
             });
 
 
+        }
+
+        function getUserPanel() {
+
+            $.ajax({
+                type: 'POST',
+                url: "/User/GetUserPanel",
+                data: {},
+                success: function (data) {
+                    $('#userInfor').html(data);
+                },
+                error: function (data) {
+                    console.log("error:" + JSON.stringify(data));
+
+                }
+
+            });
         }
     </script>
 

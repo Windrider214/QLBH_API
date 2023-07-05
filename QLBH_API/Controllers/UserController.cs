@@ -24,6 +24,15 @@ namespace QLBH_API.Controllers
             return Ok();
         }
 
+        [HttpGet("GetUserById")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetUserById(string userID)
+        {
+            await Task.Yield();
+            var lst = _unitWork.UserRepository.GetUserByID(userID);
+            return Ok(lst);
+        }
+
         [HttpGet("GetUser")]
         [AllowAnonymous]
         public async Task<ActionResult> User_GetAll()

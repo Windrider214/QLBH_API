@@ -1,0 +1,86 @@
+﻿@model QLBH_WebClient.DTO.KHACHHANG
+
+<div>
+    <hr />
+    <div>
+        <div class="mb-3">
+            <label for="txtMaKH" class="form-label font-weight-bold">Mã định danh</label>
+            <input type="text" class="form-control" id="txtMaKH" style="width: 50%" value="@Model.maKh" disabled>
+        </div>
+        <div class="mb-3">
+            <label for="txtMaTK" class="form-label font-weight-bold">Mã tài khoản</label>
+            <input type="text" class="form-control" id="txtMaTK" style="width: 50%" value="@Model.loginId" disabled>
+        </div>
+        <div class="mb-3">
+            <label for="txtTenKH" class="form-label font-weight-bold">Họ và tên</label>
+            <input type="text" class="form-control" id="txtTenKH" style="width: 50%" value="@Model.tenKh">
+        </div>
+        <div class="mb-3">
+            <label for="txtSDT" class="form-label font-weight-bold">Số điện thoại</label>
+            <input type="text" class="form-control" id="txtSDT" style="width: 50%" value="@Model.sdt">
+        </div>
+        <div class="mb-3">
+            <label for="txtDiaChi" class="form-label font-weight-bold">Địa chỉ</label>
+            <input type="text" class="form-control" id="txtDiaChi" style="width: 50%" value="@Model.diaChi">
+        </div>
+        <div class="mb-3">
+            <label for="txtEmail" class="form-label font-weight-bold">Email</label>
+            <input type="text" class="form-control" id="txtEmail" style="width: 50%" value="@Model.emailKh">
+        </div>
+
+    </div>
+</div>
+
+<p>
+    <button class="btn btn-success" onclick="UpdateInform()">Cập nhật</button> 
+
+</p>
+
+<script>
+    function UpdateInform() {
+        var makh = $("#txtMaKH").val();
+        var tenkh = $("#txtTenKH").val();
+        var sdt = $("#txtSDT").val();
+        var diachi = $("#txtDiaChi").val();
+        var loginid = $("#txtMaTK").val();
+        var emailkh = $("#txtEmail").val();
+
+        var inputData = {
+            maKh: makh,
+            tenKh: tenkh,
+            sdt: sdt,
+            diaChi: diachi,
+            loginId: loginid,
+            emailKh: emailkh
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/User/UpdateInform",
+            data: inputData,
+            success: function (data) {
+                var result = data.ResponseCode;
+                if (result > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    }).then(function () {
+                        getCustomer();
+                    });
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "error",
+                        button: "OK!",
+                    });
+                }
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+        });
+    }
+</script>

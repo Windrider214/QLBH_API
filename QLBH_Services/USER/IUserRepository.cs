@@ -10,5 +10,6 @@ namespace QLBH_Services.USER
 {
     public interface IUserRepository : IGenericRepository<AspNetUser>
     {
+        AspNetUser GetUserByID(string userID);
     }
 }

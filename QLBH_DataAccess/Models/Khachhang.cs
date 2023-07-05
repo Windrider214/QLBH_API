@@ -15,6 +15,7 @@ namespace QLBH_DataAccess.Models
         public string? TenKh { get; set; }
         public string? Sdt { get; set; }
         public string? DiaChi { get; set; }
+        public string? EmailKh { get; set; }
         public string? LoginId { get; set; }
 
         public virtual AspNetUser? Login { get; set; }

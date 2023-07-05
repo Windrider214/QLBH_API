@@ -1,0 +1,354 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <div id="logreg-forms">
+                <div class="form-signin">
+                    <h1 class="h3 mb-3 font-weight-bold" style="text-align: center"> Đăng Nhập</h1>
+
+                    <input type="email" id="inputUsername" class="form-control" placeholder="Tên đăng nhập" required="" autofocus="">
+                    <input type="password" id="inputPassword" class="form-control" placeholder="Mật khẩu" required="">
+
+                    <button class="btn btn-success btn-sm btn-block" onclick="login()"><i class="fa fa-sign-in"></i> Đăng Nhập</button>
+                    <a href="#" id="forgot_pswd"><strong>Quên mật khẩu ?</strong></a>
+                    <hr>
+                    <!-- <p>Don't have an account!</p>  -->
+                    <button class="btn btn-primary btn-block" type="button" id="btn-signup"><i class="fa fa-user-plus"></i> Đăng Kí</button>
+                </div>
+
+                <div action="/reset/password/" class="form-reset">
+                    <input type="email" id="resetEmail" class="form-control" placeholder="Email của bạn" required="" autofocus="">
+                    <button class="btn btn-primary btn-block" type="submit" onclick="genRsPwToken()">Tìm mật khẩu</button>
+                    <a href="#" id="cancel_reset"><i class="fa fa-angle-left"></i> Quay lại</a>
+                </div>
+
+                <div action="/signup/" class="form-signup">
+
+                    <input type="text" id="user-name" class="form-control" placeholder="Tên đăng nhập" required="" autofocus="">
+                    <input type="email" id="user-email" class="form-control" placeholder="Email" required autofocus="">
+                    <input type="password" id="user-pass" class="form-control" placeholder="Mật khẩu" required autofocus="">
+                    <input type="text" id="txtTenKH" class="form-control" placeholder="Họ tên " required="" autofocus="">
+                    <input type="email" id="txtSDT" class="form-control" placeholder="Số điện thoại" required autofocus="">
+                    <input type="text" id="txtDiaChi" class="form-control" placeholder="Địa chỉ" required autofocus="">
+
+                    <button class="btn btn-primary btn-block" onclick="signUp()"><i class="fas fa-user-plus"></i> Đăng kí</button>
+                    <a href="#" id="cancel_signup"><i class="fa fa-angle-left"></i> Quay lại</a>
+                </div>
+                <br>
+
+            </div>
+            <p style="text-align:center">
+                <a href="http://bit.ly/2RjWFMfunction toggleResetPswd(e){
+                   e.preventDefault();
+                   $('#logreg-forms .form-signin').toggle() // display:block or none
+                   $('#logreg-forms .form-reset').toggle() // display:block or none
+                   }
+                   function toggleSignUp(e){
+                   e.preventDefault();
+                   $('#logreg-forms .form-signin').toggle(); // display:block or none
+                   $('#logreg-forms .form-signup').toggle(); // display:block or none
+                   }
+                   $(()=>
+                    {
+                    // Login Register Form
+                    $('#logreg-forms #forgot_pswd').click(toggleResetPswd);
+                    $('#logreg-forms #cancel_reset').click(toggleResetPswd);
+                    $('#logreg-forms #btn-signup').click(toggleSignUp);
+                    $('#logreg-forms #cancel_signup').click(toggleSignUp);
+                    })g" target="_blank" style="color:black">
+                </a>
+            </p>
+        </div>
+        <div class="col-6">
+            <img class="img-fluid" src="~/Content/Screenshot_6.jpg" />
+        </div>
+    </div>
+</div>
+
+<!-- Modal Login 2FA --> 
+<div class="modal fade" id="signInModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 9999" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Nhập mã xác thực</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="confirmCode" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" onclick="confirmCode()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Reset Pass -->
+<div class="modal fade" id="resetPwModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 9999" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Đổi mật khẩu</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="confirmToken">Mã xác thực</label>
+                    </div>
+                    <div class="col-6">
+                        <input type="text" id="confirmToken" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <label for="newPass">Mật khẩu mới</label>
+                    </div>
+                    <div class="col-6">
+                        <input type="text" id="newPass" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <label for="confirmNewPass">Xác nhận mật khẩu</label>
+                    </div>
+                    <div class="col-6">
+                        <input type="text" id="confirmNewPass" />
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" onclick="resetPassword()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+    });
+
+    function login() {
+
+        var inputData = {
+            UserName: $("#inputUsername").val(),
+            Password: $("#inputPassword").val(),
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: "/User/Login",
+            data: JSON.stringify(inputData),
+            contentType: "application/json",
+            dataType: "json",
+            success: function (data) {
+                var code = data.ResponseCode;
+                if (code > 0) {
+                    Common.setCookie("ManagerShop_Cookies", data.Description, 1);
+                    swal({
+                        text: "Đăng nhập thành công !!!",
+                        icon: "success",
+                        button: "OK!",
+                    }).then(function () {
+                        window.location.replace("http://localhost:57368/User/Detail")
+
+                    });
+                }
+                else {
+                    swal({
+                        text: "Mã xác thực đăng nhập đã được gửi đến email của bạn !",
+                        icon: "success",
+                        button: "OK!",
+                    }).then(function () {
+                        $("#signInModal").modal('show');
+                    });
+                }
+
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+            }
+        });
+
+    }
+
+    function confirmCode() {
+
+        var inputData = {
+            UserName: $("#inputUsername").val(),
+            confirmCODE: $("#confirmCode").val()
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: "/User/Login2FA",
+            data: JSON.stringify(inputData),
+            contentType: "application/json",
+            dataType: "json",
+            success: function (data) {
+                var code = data.ResponseCode;
+                if (code > 0) {
+                    Common.setCookie("ManagerShop_Cookies", data.Description, 1);
+                    swal({
+                        text: "Đăng nhập thành công !!!",
+                        icon: "success",
+                        button: "OK!",
+                    }).then(function () {
+                        window.location.replace("http://localhost:57368/User/Detail");
+                    });
+                }
+                else {
+                    swal({
+                        text: "Đăng nhập thất bại !!!",
+                        icon: "error",
+                        button: "OK!",
+                    });
+                }
+
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+            }
+        });
+
+    }
+
+    function genRsPwToken() {
+
+        var inputData = {
+            email: $("#resetEmail").val()
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: "/User/GetResetPassToken",
+            data: inputData,
+            success: function (data) {
+                var code = data.ResponseCode;
+                if (code > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    }).then(function () {
+                        $("#resetPwModal").modal('show');
+
+                    });
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "error",
+                        button: "OK!",
+                    });
+                }
+
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+            }
+        });
+
+    }
+
+    function resetPassword() {
+
+        var inputData = {
+            Password: $("#newPass").val(),
+            ConfirmNewPassword: $("#confirmNewPass").val(),
+            token: $("#confirmToken").val(),
+            email: $("#resetEmail").val()
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: "/User/ResetPassword",
+            data: inputData,
+            success: function (data) {
+                var code = data.ResponseCode;
+                if (code > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    }).then(function () {
+                        window.location.replace("http://localhost:57368/User/SignIn");
+
+                    });
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "error",
+                        button: "OK!",
+                    });
+                }
+
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+            }
+        });
+
+    }
+
+    function signUp() {
+
+        var inputData = {
+            Username: $("#user-name").val(),
+            Email: $("#user-email").val(),
+            Password: $("#user-pass").val(),
+            maKh: "",
+            tenKh: $("#txtTenKH").val(),
+            sdt: $("#txtSDT").val(),
+            diaChi: $("#txtDiaChi").val(),
+            loginId: "",
+            emailKh: $("#user-email").val()
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: "/User/CreateCustomer",
+            data: inputData,
+            success: function (data) {
+                var code = data.ResponseCode;
+                if (code > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    }).then(function () {
+                        window.location.replace("http://localhost:57368/User/SignIn");
+
+                    });
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "error",
+                        button: "OK!",
+                    });
+                }
+
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+            }
+        });
+
+    }
+</script>

@@ -1,0 +1,150 @@
+﻿@model QLBH_WebClient.DTO.USER
+
+
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2></h2>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-2">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link active" id="v-pills-order-tab" data-toggle="pill" href="#v-pills-order" role="tab" aria-controls="v-pills-order" aria-selected="true"><strong>Đơn hàng</strong></a>
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false"><b>Thông tin cá nhân</b></a>
+                <a class="nav-link" id="v-pills-changepw-tab" data-toggle="pill" href="#v-pills-changepw" role="tab" aria-controls="v-pills-changepw" aria-selected="false"><b>Đổi mật khẩu</b></a>
+                <a class="nav-link" id="v-pills-twofactor-tab" data-toggle="pill" href="#v-pills-twofactor" role="tab" aria-controls="v-pills-twofactor" aria-selected="false"><b>Xác thực 2 yếu tố</b></a>
+            </div>
+        </div>
+        <div class="col-10">
+            <div id="userContent">
+                <div class="tab-content" id="v-pills-tabContent">
+                    <div class="tab-pane fade show active" id="v-pills-order" role="tabpanel" aria-labelledby="v-pills-order-tab">...</div>
+                    <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">...</div>
+                    <div class="tab-pane fade" id="v-pills-changepw" role="tabpanel" aria-labelledby="v-pills-changepw-tab">...</div>
+                    <div class="tab-pane fade" id="v-pills-twofactor" role="tabpanel" aria-labelledby="v-pills-twofactor-tab">
+                        <div class="mb-3">
+                            <label class="form-label font-weight-bold">Bật / Tắt : <input type="checkbox" id="chkTrangThai"></label>
+                        </div>
+                        <div class="mb-3">
+                            <input type="button" class="btn btn-success btn-sm" id="en2FA" value="Xác nhận" onclick="en2FA()"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    jQuery(document).ready(function ($) {
+        getUserOder();
+        getCustomer();
+        changePassword();
+        setActive();
+    })
+
+    function getUserOder() {
+        $.ajax({
+            type: 'POST',
+            url: "/User/GetUserOrder",
+            data: {},
+            success: function (data) {
+                $('#v-pills-order').html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+    function getCustomer() {
+        $.ajax({
+            type: 'POST',
+            url: "/User/GetCustomer",
+            data: {},
+            success: function (data) {
+                $('#v-pills-profile').html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+    function changePassword() {
+        $.ajax({
+            type: 'POST',
+            url: "/User/ChangePass",
+            data: {},
+            success: function (data) {
+                $('#v-pills-changepw').html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+        function setActive() {
+        var tt = '@Model.twoFactorEnabled';
+        if (tt == "True") {
+            $("#chkTrangThai").prop('checked', true);
+        }
+        else {
+            $("#chkTrangThai").prop('checked', false);
+        }
+    }
+
+    function en2FA() {
+
+        var trangthai = true;
+        if ($("#chkTrangThai").is(":checked")) {
+            trangthai = true;
+        }
+        else {
+            trangthai = false;
+        }
+
+        var inputData = {
+            userID: "",
+            enable: trangthai
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: "/User/Enable2FA",
+            data: inputData,
+            success: function (data) {
+                var code = data.ResponseCode;
+                if (code > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    });
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "error",
+                        button: "OK!",
+                    });
+                }
+
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+            }
+        });
+
+    }
+</script>

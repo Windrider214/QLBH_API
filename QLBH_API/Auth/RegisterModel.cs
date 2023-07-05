@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using QLBH_DataAccess.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace QLBH_API.Auth
 {

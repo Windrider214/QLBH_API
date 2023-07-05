@@ -252,6 +252,35 @@ namespace QLBH_WebClient.Controllers
             return View();
         }
 
+        public string GetMaKH() 
+        {
+            var returnData = new ReturnData();
+
+            try
+            {
+
+                JwtCookie jwtCookie = new JwtCookie();
+                var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                    var request_url = "/api/KhachHang/GetKhachHangByUserID";
+                    var result = API_Interact.GetDataById(url_api, request_url, TokenDecode.GetID(jwtCookie.token), "userID", jwtCookie.token);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        KHACHHANG kh = new KHACHHANG();
+                        kh = JsonConvert.DeserializeObject<KHACHHANG>(result.Content);
+                        return kh.maKh;
+                    }
+                }
+                return "7ddc1b90-2c81-4c40-ad2c-7894dd2c2d8f";
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
         /// <summary>
         /// Tạo đơn thanh toán bằng VNPAY
@@ -290,7 +319,6 @@ namespace QLBH_WebClient.Controllers
         public string CreateCODVNPAY()
         {
             var returnData = new ReturnData();
-            string deliverCodeVNPAY = "";
             try
             {
                 var list = new List<Cart>();
@@ -338,11 +366,11 @@ namespace QLBH_WebClient.Controllers
                     var content = response.Content;
                     var ghnOrder = new GHNorder();
                     ghnOrder = JsonConvert.DeserializeObject<GHNorder>(content);
-                    deliverCodeVNPAY = ghnOrder.data.order_code;
+                    return ghnOrder.data.order_code;
                 }
                 else
                 {
-                    deliverCodeVNPAY = "400";
+                    return "400";
                 }    
             }
             catch (Exception)
@@ -350,8 +378,6 @@ namespace QLBH_WebClient.Controllers
 
                 throw;
             }
-            return deliverCodeVNPAY;
-
         }
 
         public ActionResult PaymentConfirm()
@@ -398,7 +424,7 @@ namespace QLBH_WebClient.Controllers
                         //Create order
                         vnpayORDER.maVanDon = CreateCODVNPAY();
                         vnpayORDER.maHd = Guid.NewGuid().ToString();
-                        vnpayORDER.maKh = "7ddc1b90-2c81-4c40-ad2c-7894dd2c2d8f";
+                        vnpayORDER.maKh = GetMaKH();
 
                         //Create order detail
                         var list = new List<Cart>();
@@ -476,9 +502,8 @@ namespace QLBH_WebClient.Controllers
         public string PaymentCOD()
         {
             var returnData = new ReturnData();
-            string deliverCode = "";
-            var list = new List<Cart>();
 
+            var list = new List<Cart>();
             var cookie = Request.Cookies["ShoppingCart"] != null ? Request.Cookies["ShoppingCart"].Value : string.Empty;
             if (cookie != null && !string.IsNullOrEmpty(cookie))
             {
@@ -524,14 +549,12 @@ namespace QLBH_WebClient.Controllers
                 var content = response.Content;
                 var ghnOrder = new GHNorder();
                 ghnOrder = JsonConvert.DeserializeObject<GHNorder>(content);
-                deliverCode = ghnOrder.data.order_code; //Lấy mã vận đơn sau khi tạo được đơn GHN
+                return  ghnOrder.data.order_code; //Lấy mã vận đơn sau khi tạo được đơn GHN
             }
             else
             {
-                deliverCode = "400";
+                return "400";
             }
-            return deliverCode;
-
         }
 
 
@@ -545,7 +568,7 @@ namespace QLBH_WebClient.Controllers
                 //Create order
                 order.maVanDon = PaymentCOD();// Set mã vận đơn GHN cho đơn hàng
                 order.maHd = Guid.NewGuid().ToString();
-                order.maKh = "7ddc1b90-2c81-4c40-ad2c-7894dd2c2d8f";
+                order.maKh = GetMaKH();
 
                 //Create order detail
                 var list = new List<Cart>();
@@ -637,5 +660,42 @@ namespace QLBH_WebClient.Controllers
         }
 
 
+        public ActionResult GetCustomerInform()
+        {
+            var returnData = new ReturnData();
+
+            try
+            {
+
+                JwtCookie jwtCookie = new JwtCookie();
+                var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                    var request_url = "/api/KhachHang/GetKhachHangByUserID";
+                    var result = API_Interact.GetDataById(url_api, request_url, TokenDecode.GetID(jwtCookie.token), "userID", jwtCookie.token);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        KHACHHANG kh = new KHACHHANG();
+                        kh = JsonConvert.DeserializeObject<KHACHHANG>(result.Content);
+                        return Json(new KHACHHANG
+                        {
+                            maKh = kh.maKh,
+                            tenKh = kh.tenKh,
+                            sdt = kh.sdt,
+                            diaChi = kh.diaChi,
+                            emailKh = kh.emailKh,
+                            loginId = kh.loginId
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

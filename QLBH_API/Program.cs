@@ -23,9 +23,15 @@ builder.Services.AddDbContext<QLBH_ONLINEContext>(options =>
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("ConnStr")));
 // For Identity
-
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
+//Add Config for Required Email
+builder.Services.Configure<IdentityOptions>(
+    opts => opts.SignIn.RequireConfirmedEmail = true
+    );
+builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromHours(10));
+
 // Adding Authentication
 builder.Services.AddAuthentication(options =>
 {
@@ -57,6 +63,7 @@ builder.Services.AddSingleton(emailConfig);
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -80,13 +87,14 @@ builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
 
 var app = builder.Build();
 
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("corspolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -138,8 +138,18 @@ namespace QLBH_API.Controllers
             return Ok(lst);
         }
 
+        [HttpGet("GetOrdersByCustomerID")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetOrdersByCustomerID(string makh)
+        {
+            await Task.Yield();
+            var lst = _unitWork.HoaDonRepository.GetListByCustomerID(makh);
+            return Ok(lst);
+        }
+
 
         [HttpPost("SendEmailConfirmOrder")]
+        [AllowAnonymous]
         public async Task<IActionResult> SendEmailConfirmOrder(ClientConfirmEmail confirmMessage)
         {
             await Task.Yield();

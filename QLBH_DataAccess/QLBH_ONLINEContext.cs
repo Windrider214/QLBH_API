@@ -188,6 +188,7 @@ namespace QLBH_DataAccess
                 entity.HasOne(d => d.MaHdNavigation)
                     .WithMany(p => p.Hoadoncts)
                     .HasForeignKey(d => d.MaHd)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_HOADONCT_HOADON");
 
                 entity.HasOne(d => d.MaSpNavigation)
@@ -205,6 +206,10 @@ namespace QLBH_DataAccess
                 entity.Property(e => e.MaKh)
                     .HasMaxLength(40)
                     .HasColumnName("MaKH");
+
+                entity.Property(e => e.EmailKh)
+                    .HasMaxLength(200)
+                    .HasColumnName("EmailKH");
 
                 entity.Property(e => e.LoginId)
                     .HasMaxLength(450)

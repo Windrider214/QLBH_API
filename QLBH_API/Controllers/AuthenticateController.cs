@@ -7,6 +7,8 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Cryptography;
+using QLBH_API.Email;
+using System.ComponentModel.DataAnnotations;
 
 namespace QLBH_API.Controllers
 {
@@ -16,12 +18,22 @@ namespace QLBH_API.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        public readonly IEmailService _emailService;
+
+
         private readonly IConfiguration _configuration;
-        public AuthenticateController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public AuthenticateController(UserManager<ApplicationUser> userManager, 
+                                        SignInManager<ApplicationUser> signInManager,
+                                        IEmailService emailService,
+                                        RoleManager<IdentityRole> roleManager, 
+                                        IConfiguration configuration)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _signInManager = signInManager;
+            _emailService = emailService;
         }
 
         [HttpPost]
@@ -29,40 +41,131 @@ namespace QLBH_API.Controllers
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userManager.FindByNameAsync(model.Username);
-            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+            if (user.TwoFactorEnabled)
             {
-                var userRoles = await _userManager.GetRolesAsync(user);
+                await _signInManager.SignOutAsync();
+                await _signInManager.PasswordSignInAsync(user, model.Password, false, true);
+                var token = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
+                string body = "Mã xác thực đăng nhập của bạn là : "+ token + "";
+                var message = new Message(new string[] { user.Email! }, "Mã xác thực đăng nhập", body);
+                _emailService.SendEmail(message);
 
-                var authClaims = new List<Claim>
+                return StatusCode( StatusCodes.Status200OK,
+                 new Response { Status = "Success", Message = $"Gửi mã xác thực thành công đến Email {user.Email}" });
+            }
+            else
+            {
+                if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+                {
+                    var userRoles = await _userManager.GetRolesAsync(user);
+
+                    var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim("UserID", user.Id),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
-                foreach (var userRole in userRoles)
+                    foreach (var userRole in userRoles)
+                    {
+                        authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                    }
+
+                    var token = CreateToken(authClaims);
+                    var refreshToken = GenerateRefreshToken();
+
+                    _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
+
+                    user.RefreshToken = refreshToken;
+                    user.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays);
+
+                    await _userManager.UpdateAsync(user);
+
+                    return BadRequest(new
+                    {
+                        Token = new JwtSecurityTokenHandler().WriteToken(token),
+                        RefreshToken = refreshToken,
+                        Expiration = token.ValidTo
+                    });
+                }
+            }
+           
+            return Unauthorized();
+        }
+
+
+        [HttpPost]
+        [Route("login-2FA")]
+        public async Task<IActionResult> LoginWithOTP(Login2FA model)
+        {
+            var user = await _signInManager.UserManager.FindByNameAsync(model.userName);
+            var signIn =  _signInManager.TwoFactorSignInAsync(TokenOptions.DefaultEmailProvider, model.confirmCODE, false, false);
+            if (signIn.IsCompleted)
+            {
+                if (user != null)
                 {
-                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                    var userRoles = await _userManager.GetRolesAsync(user);
+
+                    var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim("UserID", user.Id),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                };
+
+                    foreach (var userRole in userRoles)
+                    {
+                        authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                    }
+
+                    var token = CreateToken(authClaims);
+                    var refreshToken = GenerateRefreshToken();
+
+                    _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
+
+                    user.RefreshToken = refreshToken;
+                    user.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays);
+
+                    await _userManager.UpdateAsync(user);
+
+                    return Ok(new
+                    {
+                        Token = new JwtSecurityTokenHandler().WriteToken(token),
+                        RefreshToken = refreshToken,
+                        Expiration = token.ValidTo
+                    });
+                }
+                return StatusCode(StatusCodes.Status404NotFound,
+                    new Response { Status = "Success", Message = $"Invalid Code" });
+            }
+            return BadRequest();
+        }
+
+        [HttpPut]
+        [Route("enable-2fa")]
+        //[Authorize]
+        public async Task<IActionResult> Enable2FA(En2FA en2fa)
+        {
+            var user = await _userManager.FindByIdAsync(en2fa.userID);
+            if (user != null)
+            {
+                if(en2fa.enable == true)
+                {
+                  await _userManager.SetTwoFactorEnabledAsync(user, true);
+                    user.EmailConfirmed = true;
+                    await _userManager.UpdateAsync(user);
+                }
+                else
+                {
+                    await _userManager.SetTwoFactorEnabledAsync(user, false);
+                    user.EmailConfirmed = false;
+                    await _userManager.UpdateAsync(user);
                 }
 
-                var token = CreateToken(authClaims);
-                var refreshToken = GenerateRefreshToken();
-
-                _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
-
-                user.RefreshToken = refreshToken;
-                user.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays);
-
-                await _userManager.UpdateAsync(user);
-
-                return Ok(new
-                {
-                    Token = new JwtSecurityTokenHandler().WriteToken(token),
-                    RefreshToken = refreshToken,
-                    Expiration = token.ValidTo
-                });
+                return StatusCode(StatusCodes.Status200OK,
+                 new Response { Status = "Success", Message = $"Thay đổi thành công !!!" });
             }
-            return Unauthorized();
+            return NotFound();
         }
 
         [HttpPost]
@@ -81,9 +184,39 @@ namespace QLBH_API.Controllers
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
+            {
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
 
-            return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+            }
+
+            //Add Token to Verify the email....
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmationLink = Url.Action(nameof(ConfirmEmail), "Authenticate", new { token, email = user.Email }, Request.Scheme);
+            var message = new Message(new string[] { user.Email! }, "Confirmation email link", confirmationLink!);
+            _emailService.SendEmail(message);
+
+            return Ok(new
+            {
+                newUserID =  user.Id
+            });
+        }
+
+        [HttpGet("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                var result = await _userManager.ConfirmEmailAsync(user, token);
+                if (result.Succeeded)
+                {
+
+                    return StatusCode(StatusCodes.Status200OK,
+                      new Response { Status = "Success", Message = "Xác thực email thành công !!!" });
+                }
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                       new Response { Status = "Error", Message = "Lỗi xác thực email !!!" });
         }
 
         [HttpPost]
@@ -235,6 +368,93 @@ namespace QLBH_API.Controllers
 
             return principal;
 
+        }
+
+        [HttpPut]
+        [Route("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePasswordAsync(ChangePasswordModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var user = await _userManager.FindByIdAsync(model.userID);
+            if(user == null)
+            {
+                return NotFound("Không tìm thấy tài khoản");
+            }
+            else
+            {
+                var changePassWordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+                if (!changePassWordResult.Succeeded)
+                {
+                    foreach (var error in changePassWordResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+                else
+                {
+                    return Ok(changePassWordResult.Succeeded.ToString());
+                }
+            }
+            return Unauthorized();
+        }
+
+        [HttpGet]
+        [Route("gen-resetpasswordtoken")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GenForgotPasswordToken([Required] string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                string body = "Mã xác thực đổi mật khẩu của bạn là : " + token + "";
+                var message = new Message(new string[] { user.Email! }, "Mã xác thực đổi mật khẩu", body);
+                _emailService.SendEmail(message);
+
+                return StatusCode(StatusCodes.Status200OK,
+                 new Response { Status = "Success", Message = $"Gửi mã xác thực thành công đến Email {user.Email}" });
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        [Route("forgot-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword(ForgotPassModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.email);
+                if (user != null)
+                {
+                    var resetPassWordResult = await _userManager.ResetPasswordAsync(user, model.token, model.Password);
+                    if (!resetPassWordResult.Succeeded)
+                    {
+                        foreach (var error in resetPassWordResult.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                    }
+                    else
+                    {
+                        return StatusCode(StatusCodes.Status200OK,
+                                         new Response { Status = "Success", Message = $"Đổi mật khẩu thành công !!" });
+                    }
+
+
+                }
+                return NotFound();
+            }
+            else
+            {
+                return BadRequest();
+            }
+          
         }
     }
 }

@@ -1,0 +1,136 @@
+﻿
+@model QLBH_WebClient.DTO.HOADON
+
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/";
+    string media_seo = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/seoIMG/";
+}
+
+<h1>Chi tiết đơn hàng @Model.maHd</h1>
+<hr />
+<div class="container">
+    <div class="row">
+        <div class="col-3">
+            <div class="mb-3">
+                <label for="txtMaHD" class="form-label">Mã hóa đơn</label>
+                <input type="text" class="form-control" id="txtMaHD" value="@Model.maHd" disabled>
+            </div>
+            <div class="mb-3">
+                <label for="txtTenKH" class="form-label">Khách hàng</label>
+                <input type="text" class="form-control" id="txtTenKH" placeholder="Để trống ..." value="@Model.MaKhNavigation.tenKh" disabled>
+                <label for="txtMaKH" class="form-label" hidden>Mã khách hàng</label>
+                <input type="text" class="form-control" id="txtMaKH" placeholder="Để trống ..." value="@Model.maKh" hidden>
+            </div>
+            <div class="mb-3">
+                <label for="txtNguoiDat" class="form-label">Người đặt hàng</label>
+                <input type="text" class="form-control" id="txtNguoiDat" value="@Model.hoTenKh">
+            </div>
+            <div class="mb-3">
+                <label for="txtSDT" class="form-label">Số điện thoại</label>
+                <input type="text" class="form-control" id="txtSDT" value="@Model.sdtKh">
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="mb-3">
+                <label for="txtDiaChi" class="form-label">Địa chỉ</label>
+                <input type="text" class="form-control" id="txtDiaChi" value="@Model.diaChiKh">
+            </div>
+            <div class="mb-3">
+                <label for="txtEmailKH" class="form-label">Email</label>
+                <input type="text" class="form-control" id="txtEmailKH" value="@Model.emailKh">
+            </div>
+            <div class="mb-3">
+                <label for="txtNgayDat" class="form-label">Ngày đặt hàng</label>
+                <input type="text" class="form-control" id="txtNgayDat" value="@Model.ngayDat" disable>
+            </div>
+            <div class="mb-3">
+                <label for="txtNgayGiao" class="form-label">Ngày giao hàng ( dự kiến )</label>
+                <input type="text" class="form-control" id="txtNgayGiao" value="@Model.ngayGiao">
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="mb-3">
+                <label for="txtThanhToan" class="form-label">Loại thanh toán</label>
+                <input type="text" class="form-control" id="txtThanhToan" value="@Model.loaiThanhToan">
+            </div>
+            <div class="mb-3">
+                <label for="txtMaVanDon" class="form-label">Mã vận đơn</label>
+                <input type="text" class="form-control" id="txtMaVanDon" value="@Model.maVanDon">
+            </div>
+            <div class="mb-3">
+                <label for="txtPhiVanChuyen" class="form-label">Phí vận chuyển</label>
+                <input type="text" class="form-control" id="txtPhiVanChuyen" value="@Model.phiVanChuyen">
+            </div>
+            <div class="mb-3">
+                <label for="txtTongTien" class="form-label">Tổng tiền đơn hàng</label>
+                <input type="text" class="form-control" id="txtTongTien" value="@Model.tongTien">
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="mb-3">
+                <label for="txtGhiChu" class="form-label">Ghi chú đơn hàng</label>
+                <input type="text" class="form-control" id="txtGhiChu" value="@Model.ghiChu">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Xác nhận đơn hàng : <input type="checkbox" id="chkTrangThai"></label>
+            </div>
+            <div class="mb-3">
+                <p class="text-end font-weight-bold">
+                   @Html.ActionLink("Quay lại", "Detail")
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div id="dsHangCT" style="width: 100%">
+
+        </div>
+    </div>
+</div>
+
+<script>
+    jQuery(document).ready(function ($) {
+        setActive();
+        GetListProduct();
+    })
+
+    function setActive() {
+         var tt = '@Model.trangThai';
+         if (tt == "True") {
+             $("#chkTrangThai").prop('checked', true);
+         }
+         else {
+             $("#chkTrangThai").prop('checked', false);
+         }
+     }
+
+    function GetListProduct() {
+        var mahd = '@Model.maHd';
+
+        var inputData = {
+            MaHD : mahd
+        }
+
+       $.ajax({
+        type: 'POST',
+        url: "/User/GetListOrderProduct",
+        data: inputData,
+        success: function (data) {
+            $('#dsHangCT').html(data);
+        },
+        error: function (data) {
+            console.log("error:" + JSON.stringify(data));
+
+        }
+
+        });
+    }
+
+</script>

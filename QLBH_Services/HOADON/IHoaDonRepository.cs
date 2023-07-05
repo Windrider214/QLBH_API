@@ -17,6 +17,7 @@ namespace QLBH_Services.HOADON
 
         List<Hoadon> GetListByDate(DateTime startDate, DateTime endDate);
 
+        List<Hoadon> GetListByCustomerID(string customerID);
 
         Hoadon GetOrderByID(string  maHd);
         int GetTotalRec();

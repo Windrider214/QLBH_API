@@ -18,6 +18,7 @@ namespace QLBH_WebClient.DTO
         public string sdt { get; set; }
         public string diaChi { get; set; }
         public string loginId { get; set; }
+        public string emailKh { get; set; }
 
         public virtual USER Login { get; set; }
         public virtual ICollection<HOADON> hoadons { get; set; }

@@ -60,6 +60,15 @@ namespace QLBH_Services.HOADON
                    FirstOrDefault();
         }
 
+        List<Hoadon> IHoaDonRepository.GetListByCustomerID(string customerID)
+        {
+            return _context.Hoadons.
+                   Include(x => x.MaKhNavigation).
+                   Where(x => x.MaKh == customerID).
+                   AsNoTracking().
+                   ToList();
+        }
+
         List<Hoadon> IHoaDonRepository.GetListPagingByDate(int page, int pageSize, DateTime startDate, DateTime endDate)
         {
             if(startDate.Date == endDate.Date)

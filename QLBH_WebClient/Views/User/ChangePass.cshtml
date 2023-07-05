@@ -1,0 +1,70 @@
+﻿<h3>Đổi mật khẩu</h3>
+
+
+<div>
+    <hr />
+    <div>
+        <div class="mb-3">
+            <label for="txtOldPass" class="form-label font-weight-bold">Mật khẩu cũ</label>
+            <input type="text" class="form-control" id="txtOldPass" style="width: 50%">
+        </div>
+        <div class="mb-3">
+            <label for="txtNewPass" class="form-label font-weight-bold">Mật khẩu mới</label>
+            <input type="text" class="form-control" id="txtNewPass" style="width: 50%">
+        </div>
+        <div class="mb-3">
+            <label for="txtConfirmPass" class="form-label font-weight-bold">Xác nhận mật khẩu</label>
+            <input type="text" class="form-control" id="txtConfirmPass" style="width: 50%">
+        </div>
+    </div>
+</div>
+
+<p>
+    <button class="btn btn-success" onclick="UpdatePassword()">Cập nhật</button>
+
+</p>
+
+<script>
+    function UpdatePassword() {
+        var oldpass = $("#txtOldPass").val();
+        var newpass = $("#txtNewPass").val();
+        var confirmpass = $("#txtConfirmPass").val();
+
+        var inputData = {
+            CurrentPassword: oldpass,
+            NewPassword: newpass,
+            ConfirmNewPassword: confirmpass
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/User/UpdatePassword",
+            data: inputData,
+            success: function (data) {
+                var result = data.ResponseCode;
+                if (result > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    }).then(function () {
+                        $("#txtOldPass").val("");
+                        $("#txtNewPass").val("");
+                        $("#txtConfirmPass").val("");
+                    });
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "error",
+                        button: "OK!",
+                    });
+                }
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+        });
+    }
+</script>

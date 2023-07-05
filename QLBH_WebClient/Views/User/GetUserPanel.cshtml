@@ -1,0 +1,33 @@
+﻿@model QLBH_WebClient.DTO.USER
+
+@if (Model != null)
+{
+    <div class="dropdown show">
+        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Xin chào, <b>@Model.userName</b> 
+        </a>
+
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="/User/Detail">Thông tin tài khoản</a>
+            <a class="dropdown-item" href="#" onclick="SignOut()">Đăng xuất</a>
+        </div>
+    </div>
+}
+else
+{
+    <a href="/User/SignIn"><span class="h1 icon icon-person"></span></a>
+
+}
+
+<script>
+    function SignOut() {
+        var result = confirm("Bạn muốn đăng xuất ?");
+
+        if (result) {
+
+            Common.eraseCookie("ManagerShop_Cookies");
+            window.location.replace("http://localhost:57368/TrangChu/Index")
+
+        }
+    }
+</script>

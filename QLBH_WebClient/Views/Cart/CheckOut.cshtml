@@ -12,7 +12,7 @@
 <div class="bg-light py-3">
     <div class="container">
         <div class="row">
-            <div class="col-md-12 mb-0"><a href="index.html">Trang Chủ</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Giỏ hàng</strong></div>
+            <div class="col-md-12 mb-0"><a href="/TrangChu/Index">Trang Chủ</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Giỏ hàng</strong></div>
         </div>
     </div>
 </div>
@@ -211,6 +211,7 @@
     var vnpayReponse = "";
 
     jQuery(document).ready(function ($) {
+        getCustomerInform();
 
         $('#checkoutCOD').click(function () {
             var total_price = $("#totalOrderAmount").text();
@@ -526,6 +527,26 @@
             data: inputData,
             success: function (response) {
                 window.location.href = "" + response + "";
+
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+        })
+    }
+
+    function getCustomerInform() {
+
+        $.ajax({
+            type: 'GET',
+            url: "/Cart/GetCustomerInform",
+            data: {},
+            success: function (data) {
+                $("#txtHoTen").val(data.tenKh);
+                $("#txtSDT").val(data.sdt);
+                $("#txtDiaChi").val(data.diaChi);
+                $("#txtEmail").val(data.emailKh);
 
             },
             error: function (data) {
