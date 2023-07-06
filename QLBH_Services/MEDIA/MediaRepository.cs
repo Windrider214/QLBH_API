@@ -37,6 +37,7 @@ namespace QLBH_Services.MEDIA
         {
             return _context.Media.
                     Include(x => x.MediaType).
+                    OrderByDescending(x => x.CreatedDate).
                     Where(x => (x.MediaTypeId == 1) && (x.IsActive == true)).
                     FirstOrDefault();
         }

@@ -82,7 +82,7 @@ namespace QLBH_WebClient.Controllers
                 else
                 {
                     returnData.ResponseCode = -1;
-                    returnData.Description = "Đăng nhập thất bại";
+                    returnData.Description = result.Content;
                     return Json(returnData, JsonRequestBehavior.AllowGet);
                 }
             }
@@ -445,7 +445,7 @@ namespace QLBH_WebClient.Controllers
                 else
                 {
                     returnData.ResponseCode = -600;
-                    returnData.Description = "Lỗi xảy ra !!!";
+                    returnData.Description = result.Content;
                     return Json(returnData, JsonRequestBehavior.AllowGet);
                 }
 
@@ -524,13 +524,13 @@ namespace QLBH_WebClient.Controllers
                 if (result.IsSuccessStatusCode)
                 {
                     returnData.ResponseCode = 900;
-                    returnData.Description = "Đăng kí thành công, hãy kiểm tra email xác thực !!!";
+                    returnData.Description = "Đăng kí thành công, hãy kiểm tra email để xác thực !!!";
                     return Json(returnData, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
                     returnData.ResponseCode = -600;
-                    returnData.Description = "Lỗi xảy ra !!!";
+                    returnData.Description = result.Content;
                     return Json(returnData, JsonRequestBehavior.AllowGet);
                 }
 

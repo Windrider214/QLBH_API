@@ -40,7 +40,7 @@ namespace QLBH_WebManage.Controllers
                 var request_url = "/api/Authenticate/login";
                 var result = API_Interact.Auth(url_api, request_url, jsonData);
 
-                if (result.IsSuccessStatusCode)
+                if (!result.IsSuccessStatusCode)
                 {
                     returnData.ResponseCode = 1;
                     returnData.Description = result.Content;

@@ -11,6 +11,8 @@ namespace QLBH_WebClient.DTO
         public string image { get; set; }
         public int mediaTypeId { get; set; }
         public bool isActive { get; set; }
+        public DateTime? createdDate { get; set; }
+
 
         public MEDIATYPE mediaType { get; set;}
     }

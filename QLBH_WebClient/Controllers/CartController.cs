@@ -452,7 +452,7 @@ namespace QLBH_WebClient.Controllers
                         if (result.IsSuccessStatusCode)
                         {
                             returnData.ResponseCode = 600;
-                            returnData.Description = "Thanh toán thành công hóa đơn " + orderId + " của đơn hàng " + vnpayORDER.maHd + " | Mã giao dịch: " + vnpayTranId;
+                            returnData.Description = "Thanh toán thành công hóa đơn " + orderId + " của đơn hàng " + vnpayORDER.maHd + " | Mã giao dịch: " + vnpayTranId + " | Mã vận đơn: " + vnpayORDER.maVanDon;
 
                             // Send email confirm
                             ClientConfirmEmail email = new ClientConfirmEmail();

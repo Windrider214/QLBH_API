@@ -57,12 +57,14 @@
                 <p><strong class="text-primary h4">@string.Format("{0:c0}", Model.donGia)</strong></p>
                 <div class="mb-5">
                     <div class="input-group mb-3" style="max-width: 120px;">
-                        <div class="input-group-prepend">
-                            <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
-                        </div>
-                        <input type="text" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-primary js-btn-plus" type="button" onclick="inCrease()">&plus;</button>
+                        <div class="input-group mb-3 text-center" style="max-width: 120px;">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-primary js-btn-minus" type="button" data-productid="@Model.maSp" data-type="1" onclick="UpdateItemToCart(this)">&minus;</button>
+                            </div>
+                            <input type="text" class="form-control text-center" id="txtSoLuong_@Model.maSp" value="@Model.soLuong" data-productid="@Model.maSp" onchange="UpdateItemToCart(this)" disabled>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-primary js-btn-plus" type="button" data-productid="@Model.maSp" data-type="2" onclick="UpdateItemToCart(this)">&plus;</button>
+                            </div>
                         </div>
                     </div>
                 </div>

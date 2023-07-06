@@ -5,7 +5,7 @@ using System.Web;
 
 namespace QLBH_WebClient.Helper
 {
-    public class VNtoEnglish
+    public static class VNtoEnglish
     {
         public static String UCS2Convert(String sContent)
         {

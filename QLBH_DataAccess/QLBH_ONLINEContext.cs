@@ -276,6 +276,8 @@ namespace QLBH_DataAccess
                     .HasMaxLength(40)
                     .HasColumnName("MediaID");
 
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
                 entity.Property(e => e.MediaTypeId).HasColumnName("MediaTypeID");
 
                 entity.HasOne(d => d.MediaType)

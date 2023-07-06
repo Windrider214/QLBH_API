@@ -151,7 +151,8 @@
             mediaId: mediaid,
             image: imageBase64,
             mediaTypeId: mediatypeID,
-            isActive: trangthai
+            isActive: trangthai,
+            createdDate: moment().format('YYYY-MM-DD HH:mm:ss')
         };
 
         $.ajax({

@@ -50,8 +50,8 @@ namespace QLBH_API.Controllers
                 var message = new Message(new string[] { user.Email! }, "Mã xác thực đăng nhập", body);
                 _emailService.SendEmail(message);
 
-                return StatusCode( StatusCodes.Status200OK,
-                 new Response { Status = "Success", Message = $"Gửi mã xác thực thành công đến Email {user.Email}" });
+                return Ok(
+                 new  { Status = "Success", Message = $"Gửi mã xác thực thành công đến Email {user.Email}" });
             }
             else
             {
@@ -135,8 +135,7 @@ namespace QLBH_API.Controllers
                         Expiration = token.ValidTo
                     });
                 }
-                return StatusCode(StatusCodes.Status404NotFound,
-                    new Response { Status = "Success", Message = $"Invalid Code" });
+                return BadRequest($"Sai mã xác thực !!!");
             }
             return BadRequest();
         }
@@ -172,9 +171,14 @@ namespace QLBH_API.Controllers
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            var userExists = await _userManager.FindByNameAsync(model.Username);
-            if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+            var userExists1 = await _userManager.FindByNameAsync(model.Username);
+            var userExists2 = await _userManager.FindByEmailAsync(model.Email);
+
+            if (userExists1 != null ||  userExists2 != null)
+            {
+                return BadRequest(" Tên đăng nhập hoặc email đã tồn tại !");
+
+            }
 
             ApplicationUser user = new()
             {
@@ -185,14 +189,14 @@ namespace QLBH_API.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+                return BadRequest(" Lỗi xảy ra trong quá trình đăng kí !");
 
             }
 
             //Add Token to Verify the email....
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var confirmationLink = Url.Action(nameof(ConfirmEmail), "Authenticate", new { token, email = user.Email }, Request.Scheme);
-            var message = new Message(new string[] { user.Email! }, "Confirmation email link", confirmationLink!);
+            var message = new Message(new string[] { user.Email! }, "Xác thực tài khoản đăng kí ", confirmationLink!);
             _emailService.SendEmail(message);
 
             return Ok(new
@@ -416,8 +420,8 @@ namespace QLBH_API.Controllers
                 var message = new Message(new string[] { user.Email! }, "Mã xác thực đổi mật khẩu", body);
                 _emailService.SendEmail(message);
 
-                return StatusCode(StatusCodes.Status200OK,
-                 new Response { Status = "Success", Message = $"Gửi mã xác thực thành công đến Email {user.Email}" });
+                return Ok(
+                  $"Gửi mã xác thực thành công đến Email {user.Email}");
             }
             return NotFound();
         }
@@ -442,8 +446,7 @@ namespace QLBH_API.Controllers
                     }
                     else
                     {
-                        return StatusCode(StatusCodes.Status200OK,
-                                         new Response { Status = "Success", Message = $"Đổi mật khẩu thành công !!" });
+                        return Ok($"Đổi mật khẩu thành công !!" );
                     }
 
 
