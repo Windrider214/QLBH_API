@@ -32,6 +32,14 @@ namespace QLBH_Services.HOADON
                      ToList().Count();
         }
 
+        int IHoaDonRepository.GetCusTotalOrder(string MaKH)
+        {
+            return _context.Hoadons.
+                     Include(x => x.MaKhNavigation).
+                     Where(x => x.MaKh == MaKH).
+                     ToList().Count();
+        }
+
         List<Hoadon> IHoaDonRepository.GetListPagingByCusID(int page, int pageSize, string MaKH)
         {
 

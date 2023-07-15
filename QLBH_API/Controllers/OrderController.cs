@@ -30,12 +30,22 @@ namespace QLBH_API.Controllers
             return Ok(lst);
         }
 
+
         [HttpGet("GetTotalRec")]
         [AllowAnonymous]
         public async Task<int> GetTotalRec()
         {
             await Task.Yield();
             int totalRow = _unitWork.HoaDonRepository.GetTotalRec();
+            return totalRow;
+        }
+
+        [HttpGet("GetCusTotalOrder")]
+        [AllowAnonymous]
+        public async Task<int> GetCusTotalOrder(string MaKH)
+        {
+            await Task.Yield();
+            int totalRow = _unitWork.HoaDonRepository.GetCusTotalOrder(MaKH);
             return totalRow;
         }
 
@@ -68,6 +78,15 @@ namespace QLBH_API.Controllers
         {
             await Task.Yield();
             List<Hoadon> lst = _unitWork.HoaDonRepository.GetListPagingByDate(order.page, order.pageSize, order.StartDate, order.EndDate); 
+            return Ok(lst);
+        }
+
+        [HttpPost("GetListPagingByCusID")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetListPagingByCusID(CusOrder order)
+        {
+            await Task.Yield();
+            List<Hoadon> lst = _unitWork.HoaDonRepository.GetListPagingByCusID(order.page, order.pageSize, order.MaKH);
             return Ok(lst);
         }
 

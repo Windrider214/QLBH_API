@@ -230,6 +230,23 @@ namespace QLBH_WebClient.Controllers
             }
         }
 
+        public int GetCusTotalOrder()
+        {
+            JwtCookie jwtCookie = new JwtCookie();
+            var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+            if (cookie != null && !string.IsNullOrEmpty(cookie))
+            {
+                jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                var request_url = "/api/Order/GetCusTotalOrder";
+                var result = API_Interact.GetDataById(url_api, request_url, GetCustomerID(), "MaKH", jwtCookie.token);
+                if (result.IsSuccessStatusCode)
+                {
+                    return int.Parse(result.Content);
+                }
+            }
+            return 1;
+        }
+
         public ActionResult Detail()
         {
             JwtCookie jwtCookie = new JwtCookie();
@@ -243,6 +260,7 @@ namespace QLBH_WebClient.Controllers
                 {
                     USER user = new USER();
                     user = JsonConvert.DeserializeObject<USER>(result.Content);
+                    ViewBag.TotalRow = GetCusTotalOrder();
                     return View(user);
                 }
             }
@@ -288,16 +306,17 @@ namespace QLBH_WebClient.Controllers
             }
         }
 
-        public ActionResult GetUserOrder()
+        public ActionResult GetUserOrder(CusOrder order)
         {
             JwtCookie jwtCookie = new JwtCookie();
             var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
             if (cookie != null && !string.IsNullOrEmpty(cookie))
             {
                 jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
-
-                var request_url = "/api/Order/GetOrdersByCustomerID";
-                var result = API_Interact.GetDataById(url_api, request_url, GetCustomerID(), "MaKH", jwtCookie.token);
+                order.MaKH = GetCustomerID();
+                var request_url = "/api/Order/GetListPagingByCusID";
+                var jsonData = JsonConvert.SerializeObject(order);
+                var result = API_Interact.PullData(url_api, request_url, jsonData, jwtCookie.token);
                 if (result.IsSuccessStatusCode)
                 {
                     List<HOADON> hd = new List<HOADON>();

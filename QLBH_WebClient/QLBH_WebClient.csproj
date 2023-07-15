@@ -202,6 +202,7 @@
     <Compile Include="Models\ChangePasswordModel.cs" />
     <Compile Include="Models\ClientConfirmEmail.cs" />
     <Compile Include="Models\CreatedUser.cs" />
+    <Compile Include="Models\CusOrder.cs" />
     <Compile Include="Models\En2FA.cs" />
     <Compile Include="Models\ForgotPassModel.cs" />
     <Compile Include="Models\GHN.cs" />

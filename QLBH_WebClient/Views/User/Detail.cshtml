@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-2">
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                <a class="nav-link active" id="v-pills-order-tab" data-toggle="pill" href="#v-pills-order" role="tab" aria-controls="v-pills-order" aria-selected="true"><strong>Đơn hàng</strong></a>
+                <a class="nav-link active" id="v-pills-order-tab" data-toggle="pill" href="#v-pills-orders" role="tab" aria-controls="v-pills-orders" aria-selected="true"><strong>Đơn hàng</strong></a>
                 <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false"><b>Thông tin cá nhân</b></a>
                 <a class="nav-link" id="v-pills-changepw-tab" data-toggle="pill" href="#v-pills-changepw" role="tab" aria-controls="v-pills-changepw" aria-selected="false"><b>Đổi mật khẩu</b></a>
                 <a class="nav-link" id="v-pills-twofactor-tab" data-toggle="pill" href="#v-pills-twofactor" role="tab" aria-controls="v-pills-twofactor" aria-selected="false"><b>Xác thực 2 yếu tố</b></a>
@@ -20,15 +20,21 @@
         <div class="col-10">
             <div id="userContent">
                 <div class="tab-content" id="v-pills-tabContent">
-                    <div class="tab-pane fade show active" id="v-pills-order" role="tabpanel" aria-labelledby="v-pills-order-tab">...</div>
-                    <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">...</div>
+                    <div class="tab-pane fade show active" id="v-pills-orders" role="tabpanel" aria-labelledby="v-pills-order-tab">
+                        <div id="v-pills-order">...</div>
+
+                        <div class="d-flex justify-content-center">
+                            <ul id="pagination-demo" class="pagination-x"></ul>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab"></div>
                     <div class="tab-pane fade" id="v-pills-changepw" role="tabpanel" aria-labelledby="v-pills-changepw-tab">...</div>
                     <div class="tab-pane fade" id="v-pills-twofactor" role="tabpanel" aria-labelledby="v-pills-twofactor-tab">
                         <div class="mb-3">
                             <label class="form-label font-weight-bold">Bật / Tắt : <input type="checkbox" id="chkTrangThai"></label>
                         </div>
                         <div class="mb-3">
-                            <input type="button" class="btn btn-success btn-sm" id="en2FA" value="Xác nhận" onclick="en2FA()"/>
+                            <input type="button" class="btn btn-success btn-sm" id="en2FA" value="Xác nhận" onclick="en2FA()" />
                         </div>
                     </div>
                 </div>
@@ -46,19 +52,57 @@
         setActive();
     })
 
+
+    var pageSize = 5;
+    var pageIndex = 1;
+
     function getUserOder() {
+
+
+        var inputData = {
+            MaKH: "",
+            page: pageIndex,
+            pageSize: pageSize
+        };
+
         $.ajax({
             type: 'POST',
             url: "/User/GetUserOrder",
-            data: {},
+            data: inputData,
             success: function (data) {
                 $('#v-pills-order').html(data);
+                   dataPaging('@ViewBag.TotalRow', function () {
+                       getUserOder();
+                });
             },
             error: function (data) {
                 console.log("error:" + JSON.stringify(data));
 
             }
 
+        });
+    }
+
+    //Phân trang
+    function dataPaging(totalRow, callback) {
+        var totalPage = Math.ceil(totalRow / pageSize);
+        $('#pagination-demo').twbsPagination({
+            totalPages: totalPage,
+            visiblePages: 5,
+            first: "Đầu",
+            next: "Tiếp",
+            last: "Cuối",
+            prev: "Trước",
+            onPageClick: function (event, page) {
+                pageIndex = page;
+                setTimeout(callback, 200);
+                $("html").animate(
+                    {
+                        scrollTop: $("#v-pills-tab").offset().top
+                    },
+                    800 //speed
+                );
+            }
         });
     }
 

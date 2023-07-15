@@ -22,5 +22,7 @@ namespace QLBH_Services.HOADON
         Hoadon GetOrderByID(string  maHd);
         int GetTotalRec();
 
+        int GetCusTotalOrder(string MaKH);
+
     }
 }

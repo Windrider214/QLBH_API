@@ -5,6 +5,7 @@ using QLBH_Services.HOADON.HOADONCT;
 using QLBH_Services.KHACHHANG;
 using QLBH_Services.MEDIA;
 using QLBH_Services.MEDIA.MEDIATYPE;
+using QLBH_Services.PHANHOI;
 using QLBH_Services.SANPHAM;
 using QLBH_Services.SANPHAM.LOAISP;
 using QLBH_Services.SANPHAM.THUONGHIEU;
@@ -81,6 +82,7 @@ namespace QLBH_Services.UnitOfWork
             HoaDonCTRepository = new HoaDonCTRepository(_context);
             KhachHangRepository = new KhachHangRepository(_context);
             RoleRepository = new RoleRepository(_context);
+            PhanHoiRepository = new PhanHoiRepository(_context);
         }
 
         public ILoaiSPRepository LoaiSPRepository
@@ -153,6 +155,12 @@ namespace QLBH_Services.UnitOfWork
             get;
             private set;
         }
+
+        public IPhanHoiRepository PhanHoiRepository
+        {
+            get;
+            private set;
+        } 
 
         public void Dispose()
         {
