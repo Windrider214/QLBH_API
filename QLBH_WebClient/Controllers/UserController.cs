@@ -41,15 +41,21 @@ namespace QLBH_WebClient.Controllers
                 var request_url = "/api/Authenticate/login";
                 var result = API_Interact.Auth(url_api, request_url, jsonData);
 
-                if (!result.IsSuccessStatusCode)
+                if (result.StatusCode == HttpStatusCode.BadRequest)
                 {
                     returnData.ResponseCode = 1;
                     returnData.Description = result.Content;
                     return Json(returnData, JsonRequestBehavior.AllowGet);
                 }
-                else
+                else if (result.StatusCode == HttpStatusCode.OK)
                 {
                     returnData.ResponseCode = -1;
+                    returnData.Description = result.Content;
+                    return Json(returnData, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    returnData.ResponseCode = 0;
                     returnData.Description = result.Content;
                     return Json(returnData, JsonRequestBehavior.AllowGet);
                 }

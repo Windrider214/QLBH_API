@@ -1,0 +1,98 @@
+﻿@model QLBH_WebManage.Auth.UserRoleById
+
+<div>
+    <h1>Phân quyền tài khoản "@Model.UserName"</h1>
+    <hr />
+    <div>
+        <div class="row">
+            <div class="col-12">
+                <div class="mb-3">
+                    <label for="txtMaUser" class="form-label">Mã tài khoản</label>
+                    <input type="text" class="form-control" id="txtMaUser" value="@Model.UserID" disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="ddlRole" class="form-label">Quyền</label>
+                    <select class="form-select" id="ddlRole"></select>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<p>
+    <button class="btn btn-success" onclick="Update()">Cập nhật</button>
+</p>
+
+<script>
+    jQuery(document).ready(function ($) {
+        getListRole();
+    });
+
+        function getListRole() {
+
+        $.ajax({
+            type: 'GET',
+            url: "/User/GetUserRole",
+            data: {},
+            success: function (data) {
+                var html = "";
+                var loaisp = data.result;
+                if (data != null) {
+                    $.each(data, function (index, role) {
+                        html += "<option value=\"" + role.Id + "\">" + role.Name + "</option>"
+
+                    })
+                };
+                $("#ddlRole").append(html);
+                $('#ddlRole').val('@Model.RoleID').attr("selected", "selected");
+
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+     function Update() {
+
+         var roleid = $("#ddlRole").val();
+
+        var inputData = {
+            UserName: "",
+            UserID: '@Model.UserID',
+            RoleID: roleid
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/User/UpdateRole",
+            data: inputData,
+            success: function (data) {
+                var result = data.ResponseCode;
+                if (result > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    });
+                    $(".modal-backdrop").remove();
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "error",
+                        button: "OK!",
+                    });
+                    $(".modal-backdrop").remove();
+                }
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+        });
+    }
+</script>

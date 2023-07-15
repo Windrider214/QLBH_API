@@ -22,6 +22,7 @@ namespace QLBH_WebManage.Controllers
 
         public ActionResult PartialIndex(string maHd, string token, int page, int pageSize)
         {
+
             try
             {
                 if (string.IsNullOrEmpty(maHd))

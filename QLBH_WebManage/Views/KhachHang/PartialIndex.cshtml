@@ -1,0 +1,68 @@
+﻿@model List<QLBH_WebManage.DTO.KHACHHANG>
+
+
+<div class="container-fluid">
+    <table id="dsLoaiSP" class="table table-sm table-hover table-striped table-bordered">
+        <thead class="table-primary">
+            <tr>
+                <th>Mã khách hàng</th>
+                <th>Họ tên</th>
+                <th>Số điện thoại</th>
+                <th>Địa chỉ</th>
+                <th>Email</th>
+                <th>Tài khoản</th>
+                <th>Số đơn mua</th>
+                <th>Lượng phản hồi</th>
+            </tr>
+        </thead>
+
+
+        <tbody>
+            @if (Model != null && Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+
+                    <tr>
+                        <th>@item.maKh</th>
+                        <th>@item.tenKh</th>
+                        <th>@item.sdt</th>
+                        <th>@item.diaChi</th>
+                        <th>@item.emailKh</th>
+                        <th>@item.Login.userName</th>
+                        <th>@item.hoadons.Count</th>
+                        <th>@item.phanhois.Count</th>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="userDetail">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+    });
+
+    var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+
+</script>

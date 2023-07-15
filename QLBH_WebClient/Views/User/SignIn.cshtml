@@ -157,7 +157,7 @@
             dataType: "json",
             success: function (data) {
                 var code = data.ResponseCode;
-                if (code > 0) {
+                if (code == 1) {
                     Common.setCookie("ManagerShop_Cookies", data.Description, 1);
                     swal({
                         text: "Đăng nhập thành công !!!",
@@ -168,13 +168,20 @@
 
                     });
                 }
-                else {
+                else if (code == -1) {
                     swal({
                         text: "Mã xác thực đăng nhập đã được gửi đến email của bạn !",
                         icon: "success",
                         button: "OK!",
                     }).then(function () {
                         $("#signInModal").modal('show');
+                    });
+                }
+                else {
+                    swal({
+                        text: "Đăng nhập thất bại !!!",
+                        icon: "error",
+                        button: "OK!",
                     });
                 }
 

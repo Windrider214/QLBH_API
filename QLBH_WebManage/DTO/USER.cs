@@ -10,6 +10,8 @@ namespace QLBH_WebManage.DTO
     {
         public USER () {
             tintucs = new HashSet<BLOG>();
+            khachhangs = new HashSet<KHACHHANG>();
+            roles = new HashSet<ROLE>();
         }
 
         public string id { get; set; }
@@ -32,8 +34,8 @@ namespace QLBH_WebManage.DTO
         //public AspNetUserClaims aspNetUserClaims { get; set; }
         //public AspNetUserLogins aspNetUserLogins { get; set; }
         //public AspNetUserTokens aspNetUserTokens { get; set; }
-        //public Khachhangs khachhangs { get; set; }
+        public ICollection<KHACHHANG> khachhangs { get; set; }
         public ICollection<BLOG> tintucs { get; set; }
-        //public Roles roles { get; set; }
+        public ICollection<ROLE> roles { get; set; }
     }
 }

@@ -41,55 +41,57 @@ namespace QLBH_API.Controllers
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userManager.FindByNameAsync(model.Username);
-            if (user.TwoFactorEnabled)
-            {
-                await _signInManager.SignOutAsync();
-                await _signInManager.PasswordSignInAsync(user, model.Password, false, true);
-                var token = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
-                string body = "Mã xác thực đăng nhập của bạn là : "+ token + "";
-                var message = new Message(new string[] { user.Email! }, "Mã xác thực đăng nhập", body);
-                _emailService.SendEmail(message);
-
-                return Ok(
-                 new  { Status = "Success", Message = $"Gửi mã xác thực thành công đến Email {user.Email}" });
-            }
-            else
-            {
-                if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
-                {
-                    var userRoles = await _userManager.GetRolesAsync(user);
-
-                    var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim("UserID", user.Id),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                };
-
-                    foreach (var userRole in userRoles)
+            if(user != null && user.EmailConfirmed == true && user.LockoutEnabled == false)
+            {           
+                    if (user.TwoFactorEnabled)
                     {
-                        authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                        await _signInManager.SignOutAsync();
+                        await _signInManager.PasswordSignInAsync(user, model.Password, false, true);
+                        var token = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
+                        string body = "Mã xác thực đăng nhập của bạn là : " + token + "";
+                        var message = new Message(new string[] { user.Email! }, "Mã xác thực đăng nhập", body);
+                        _emailService.SendEmail(message);
+
+                        return Ok(
+                         new { Status = "Success", Message = $"Gửi mã xác thực thành công đến Email {user.Email}" });
                     }
-
-                    var token = CreateToken(authClaims);
-                    var refreshToken = GenerateRefreshToken();
-
-                    _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
-
-                    user.RefreshToken = refreshToken;
-                    user.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays);
-
-                    await _userManager.UpdateAsync(user);
-
-                    return BadRequest(new
+                    else
                     {
-                        Token = new JwtSecurityTokenHandler().WriteToken(token),
-                        RefreshToken = refreshToken,
-                        Expiration = token.ValidTo
-                    });
-                }
-            }
-           
+                        if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+                        {
+                            var userRoles = await _userManager.GetRolesAsync(user);
+
+                            var authClaims = new List<Claim>
+                        {
+                            new Claim(ClaimTypes.Name, user.UserName),
+                            new Claim("UserID", user.Id),
+                            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                        };
+
+                            foreach (var userRole in userRoles)
+                            {
+                                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                            }
+
+                            var token = CreateToken(authClaims);
+                            var refreshToken = GenerateRefreshToken();
+
+                            _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
+
+                            user.RefreshToken = refreshToken;
+                            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays);
+
+                            await _userManager.UpdateAsync(user);
+
+                            return BadRequest(new
+                            {
+                                Token = new JwtSecurityTokenHandler().WriteToken(token),
+                                RefreshToken = refreshToken,
+                                Expiration = token.ValidTo
+                            });
+                        }
+                    }           
+            }    
             return Unauthorized();
         }
 
@@ -184,13 +186,24 @@ namespace QLBH_API.Controllers
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
+                UserName = model.Username,
+                LockoutEnabled = false
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
                 return BadRequest(" Lỗi xảy ra trong quá trình đăng kí !");
 
+            }
+
+            if (!await _roleManager.RoleExistsAsync(UserRoles.User))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+            }
+
+            if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
+            {
+                await _userManager.AddToRoleAsync(user, UserRoles.User);
             }
 
             //Add Token to Verify the email....
@@ -242,18 +255,22 @@ namespace QLBH_API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
 
             if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
+            {
                 await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
-            if (!await _roleManager.RoleExistsAsync(UserRoles.User))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+            }
+            //if (!await _roleManager.RoleExistsAsync(UserRoles.User))
+            //{
+            //    await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+            //}
 
             if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
             {
                 await _userManager.AddToRoleAsync(user, UserRoles.Admin);
             }
-            if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
-            {
-                await _userManager.AddToRoleAsync(user, UserRoles.User);
-            }
+            //if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
+            //{
+            //    await _userManager.AddToRoleAsync(user, UserRoles.User);
+            //}
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
 
@@ -448,8 +465,6 @@ namespace QLBH_API.Controllers
                     {
                         return Ok($"Đổi mật khẩu thành công !!" );
                     }
-
-
                 }
                 return NotFound();
             }
@@ -458,6 +473,88 @@ namespace QLBH_API.Controllers
                 return BadRequest();
             }
           
+        }
+
+        [HttpPost]
+        [Route("lock-user")]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<IActionResult> LockoutUser(LockUser lckUser)
+        {
+          if( lckUser.id == null)
+          {
+              return NotFound();
+          }
+
+          var user = await _userManager.FindByIdAsync(lckUser.id);
+           if( user == null)
+            {
+                return NotFound();
+
+            }
+           else
+            {
+                if (lckUser.IsLock == true)
+                {
+                    user.LockoutEnabled = true;
+                    user.LockoutEnd = DateTime.Now.AddYears(1000);
+                }
+                else
+                {
+                    user.LockoutEnabled = false;
+                    user.LockoutEnd = DateTime.Now.AddTicks(1);
+                }    
+            }
+            await _userManager.UpdateAsync(user);
+            return Ok("Thay đổi thành công !!!");
+
+        }
+
+        [HttpGet]
+        [Route("get-userrole")]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<IActionResult> GetUserRoleByID(string userID)
+        {
+            var model = new UserRoleById();
+            var user = await _userManager.FindByIdAsync(userID);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            
+            var userRole = await _userManager.GetRolesAsync(user);
+            var role = await _roleManager.FindByNameAsync(userRole.FirstOrDefault().ToString());
+
+            model.UserName = user.UserName;
+            model.UserID = user.Id;
+            model.RoleID = role.Id;
+            return Ok(model);
+        }
+
+        [HttpPost]
+        [Route("update-userrole")]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<IActionResult> UpdateUserRoleByID(UserRoleById model)
+        {
+            var user = await _userManager.FindByIdAsync(model.UserID);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var userRole = await _userManager.GetRolesAsync(user);
+            var currentRole = await _roleManager.FindByNameAsync(userRole.FirstOrDefault().ToString());
+
+            var role = await _roleManager.FindByIdAsync(model.RoleID);
+
+            var result1 = await _userManager.RemoveFromRoleAsync(user, currentRole.Name);
+            var result2 = await _userManager.AddToRoleAsync(user, role.Name);
+            
+            if(result1.Succeeded && result2.Succeeded)
+            {
+                await _userManager.UpdateAsync(user);
+                return Ok("Thay đổi thành công !!!");
+            }
+            return BadRequest("Thay đổi thất bại !!!");
         }
     }
 }

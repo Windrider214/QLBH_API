@@ -6,7 +6,10 @@ using QLBH_WebManage.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Drawing;
+using System.Drawing.Printing;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -19,6 +22,22 @@ namespace QLBH_WebManage.Controllers
 
         // GET: User
         public ActionResult Index()
+        {
+            try
+            {
+                var request_url = "/api/User/GetTotalRec";
+                var result = API_Interact.GetData(url_api, request_url, "");
+                ViewBag.TotalRow = Int32.Parse(result);
+                return View();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public ActionResult SignIn()
         {
             return View();
         }
@@ -40,18 +59,25 @@ namespace QLBH_WebManage.Controllers
                 var request_url = "/api/Authenticate/login";
                 var result = API_Interact.Auth(url_api, request_url, jsonData);
 
-                if (!result.IsSuccessStatusCode)
+
+                if (result.StatusCode == HttpStatusCode.BadRequest)
                 {
                     returnData.ResponseCode = 1;
                     returnData.Description = result.Content;
                     return Json(returnData, JsonRequestBehavior.AllowGet);
                 }
-                else
+                else if (result.StatusCode == HttpStatusCode.OK)
                 {
                     returnData.ResponseCode = -1;
-                    returnData.Description = "Đăng nhập thất bại";
+                    returnData.Description = result.Content;
                     return Json(returnData, JsonRequestBehavior.AllowGet);
-                }                   
+                }
+                else
+                {
+                    returnData.ResponseCode = 0;
+                    returnData.Description = result.Content;
+                    return Json(returnData, JsonRequestBehavior.AllowGet);
+                }
             }
             catch (Exception ex)
             {
@@ -117,6 +143,188 @@ namespace QLBH_WebManage.Controllers
                         kh = JsonConvert.DeserializeObject<KHACHHANG>(result.Content);
                         return PartialView(kh);
                     }
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public ActionResult PartialIndex(string UserName, string token, int page, int pageSize)
+        {
+            var returnData = new ReturnData();
+
+            try
+            {
+                JwtCookie jwtCookie = new JwtCookie();
+                var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    if (string.IsNullOrEmpty(UserName))
+                    {
+                        List<USER> user = new List<USER>();
+                        jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                        var request_url = "/api/User/GetAllUsersPaging";
+                        Page pageData = new Page { page = page, pageSize = pageSize };
+                        var jsonData = JsonConvert.SerializeObject(pageData);
+                        var result = API_Interact.PullData(url_api, request_url, jsonData, jwtCookie.token);
+                        if (result.IsSuccessStatusCode)
+                        {
+                            user = JsonConvert.DeserializeObject<List<USER>>(result.Content);
+                            return PartialView(user);
+                        }
+                    }
+                    else
+                    {
+                        List<USER> user = new List<USER>();
+                        var request_url = "/api/User/SearchUser";
+                        var result = API_Interact.SearchDataByName(url_api, request_url, UserName, "UserName", jwtCookie.token);
+                        if (result.IsSuccessStatusCode)
+                        {
+                            user = JsonConvert.DeserializeObject<List<USER>>(result.Content);
+                            return PartialView(user);
+                        }
+                    }               
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public ActionResult LockUser(LockUser lckUser)
+        {
+            var returnData = new ReturnData();
+
+            try
+            {
+                JwtCookie jwtCookie = new JwtCookie();
+                var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                    var request_url = "/api/Authenticate/lock-user";
+                    var jsonData = JsonConvert.SerializeObject(lckUser);
+                        var result = API_Interact.PullData(url_api, request_url, jsonData, jwtCookie.token);
+                        if (result.IsSuccessStatusCode)
+                        if (result.IsSuccessStatusCode)
+                        {
+                            returnData.ResponseCode = 900;
+                            returnData.Description = "Thay đổi thành công !!!";
+                            return Json(returnData, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            returnData.ResponseCode = -600;
+                            returnData.Description = "Thay đổi thất bại !!!";
+                            return Json(returnData, JsonRequestBehavior.AllowGet);
+                        }
+
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        public ActionResult GetUserRole()
+        {
+            var returnData = new ReturnData();
+
+            try
+            {
+                JwtCookie jwtCookie = new JwtCookie();
+                var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    List<ROLE> roles = new List<ROLE>();
+                    jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                    var request_url = "/api/User/GetRole";
+                    var result = API_Interact.GetData(url_api, request_url, jwtCookie.token);
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        roles = JsonConvert.DeserializeObject<List<ROLE>>(result);
+                        return Json(roles, JsonRequestBehavior.AllowGet);
+                    }
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public ActionResult Detail(string userID)
+        {
+            try
+            {
+                JwtCookie jwtCookie = new JwtCookie();
+                var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                    UserRoleById user = new UserRoleById();
+                    var request_url = "api/Authenticate/get-userrole";
+                    var result = API_Interact.GetDataById(url_api, request_url, userID, "userID", jwtCookie.token);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        user = JsonConvert.DeserializeObject<UserRoleById>(result.Content);
+                        return PartialView(user);
+                    }
+                    else
+                    {
+                        return PartialView("Bạn chưa đăng nhập hoặc đã hết thời gian đăng nhập !!!");
+                    }
+                }             
+                return null;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        public ActionResult UpdateRole(UserRoleById model)
+        {
+            var returnData = new ReturnData();
+
+            try
+            {
+                JwtCookie jwtCookie = new JwtCookie();
+                var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                    var request_url = "/api/Authenticate/update-userrole";
+                    var jsonData = JsonConvert.SerializeObject(model);
+                    var result = API_Interact.PullData(url_api, request_url, jsonData, jwtCookie.token);
+                        if (result.IsSuccessStatusCode)
+                        {
+                            returnData.ResponseCode = 900;
+                            returnData.Description = "Thay đổi thành công !!!";
+                            return Json(returnData, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            returnData.ResponseCode = -600;
+                            returnData.Description = "Thay đổi thất bại !!!";
+                            return Json(returnData, JsonRequestBehavior.AllowGet);
+                        }
+
                 }
                 return null;
             }

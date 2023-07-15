@@ -12,5 +12,13 @@ namespace QLBH_Services.KHACHHANG
     {
 
         Khachhang GetByUserID(string userID);
+
+        List<Khachhang> GetListPaging(int page, int pageSize);
+
+        List<Khachhang> SearchKH(string TenKH);
+
+        int GetTotalRec();
+
+
     }
 }

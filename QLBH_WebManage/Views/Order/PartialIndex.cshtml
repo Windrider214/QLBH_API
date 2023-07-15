@@ -72,15 +72,22 @@
 
         </tbody>
     </table>
+
+
 </div>
+
+
 
 
 <script>
     $(document).ready(function () {
-
     });
 
     var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+
+
+    var pageSize = 10;
+    var pageIndex = 1;
 
     function deleteHoaDon(mahd) {
         var result = confirm("Bạn có chắc chắn muốn xóa");
@@ -120,5 +127,6 @@
         }
 
     }
+
 
 </script>

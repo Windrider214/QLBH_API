@@ -11,6 +11,7 @@ using QLBH_Services.SANPHAM.THUONGHIEU;
 using QLBH_Services.TINTUC;
 using QLBH_Services.TINTUC.LOAITIN;
 using QLBH_Services.USER;
+using QLBH_Services.USER.ROLES;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,6 +80,7 @@ namespace QLBH_Services.UnitOfWork
             HoaDonRepository = new HoaDonRepository(_context);
             HoaDonCTRepository = new HoaDonCTRepository(_context);
             KhachHangRepository = new KhachHangRepository(_context);
+            RoleRepository = new RoleRepository(_context);
         }
 
         public ILoaiSPRepository LoaiSPRepository
@@ -141,6 +143,12 @@ namespace QLBH_Services.UnitOfWork
         }
 
         public IKhachHangRepository KhachHangRepository
+        {
+            get;
+            private set;
+        }
+
+        public IRoleRepository RoleRepository
         {
             get;
             private set;

@@ -9,6 +9,7 @@ using QLBH_Services.SANPHAM.THUONGHIEU;
 using QLBH_Services.TINTUC;
 using QLBH_Services.TINTUC.LOAITIN;
 using QLBH_Services.USER;
+using QLBH_Services.USER.ROLES;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +41,8 @@ namespace QLBH_Services.UnitOfWork
         IHoaDonCTRepository HoaDonCTRepository { get; }
 
         IKhachHangRepository KhachHangRepository { get; }
+
+        IRoleRepository RoleRepository { get; }
         #region oldRepos
         //SanPhamRepository spRepos { get; }
         //LoaiSPRepository LoaiSPRepository { get; }

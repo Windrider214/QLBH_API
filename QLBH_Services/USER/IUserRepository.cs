@@ -11,5 +11,12 @@ namespace QLBH_Services.USER
     public interface IUserRepository : IGenericRepository<AspNetUser>
     {
         AspNetUser GetUserByID(string userID);
+
+        List<AspNetUser> GetAllUsersPaging(int page, int pageSize);
+
+        List<AspNetUser> SearchUser(string userName);
+
+        int GetTotalRec();
+
     }
 }

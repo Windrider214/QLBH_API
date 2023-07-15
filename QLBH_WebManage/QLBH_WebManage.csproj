@@ -166,12 +166,15 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Auth\LockUser.cs" />
     <Compile Include="Auth\LoginModel.cs" />
     <Compile Include="Auth\RegisterModel.cs" />
+    <Compile Include="Auth\UserRoleById.cs" />
     <Compile Include="Auth\UserRoles.cs" />
     <Compile Include="Controllers\BlogController.cs" />
     <Compile Include="Controllers\BlogTypeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\KhachHangController.cs" />
     <Compile Include="Controllers\LoaiSanPhamController.cs" />
     <Compile Include="Controllers\MediaController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
@@ -187,6 +190,7 @@
     <Compile Include="DTO\MEDIUM.cs" />
     <Compile Include="DTO\MEDIATYPE.cs" />
     <Compile Include="DTO\PHANHOI.cs" />
+    <Compile Include="DTO\ROLE.cs" />
     <Compile Include="DTO\SANPHAM.cs" />
     <Compile Include="DTO\THUONGHIEU.cs" />
     <Compile Include="DTO\USER.cs" />
@@ -679,7 +683,7 @@
     <Content Include="Views\ThuongHieu\Detail.cshtml" />
     <Content Include="Views\SanPham\PartialIndex.cshtml" />
     <Content Include="Views\SanPham\Index.cshtml" />
-    <Content Include="Views\User\Index.cshtml" />
+    <Content Include="Views\User\SignIn.cshtml" />
     <Content Include="Views\SanPham\Detail.cshtml" />
     <Content Include="Views\Media\PartialIndex.cshtml" />
     <Content Include="Views\Media\Index.cshtml" />
@@ -696,6 +700,11 @@
     <Content Include="Views\Order\GetListOrderProduct.cshtml" />
     <Content Include="Views\Order\GetListPagingByDate.cshtml" />
     <Content Include="Views\User\GetUser.cshtml" />
+    <Content Include="Views\User\Index.cshtml" />
+    <Content Include="Views\User\PartialIndex.cshtml" />
+    <Content Include="Views\User\Detail.cshtml" />
+    <Content Include="Views\KhachHang\Index.cshtml" />
+    <Content Include="Views\KhachHang\PartialIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

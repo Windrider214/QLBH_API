@@ -1,0 +1,147 @@
+﻿@model List<QLBH_WebManage.DTO.USER>
+
+
+<div class="container-fluid">
+    <table id="dsLoaiSP" class="table table-sm table-hover table-striped table-bordered">
+        <thead class="table-primary">
+            <tr>
+                <th>Mã tài khoản</th>
+                <th>Tên tài khoản</th>
+                <th>Email</th>
+                <th>Tình trạng</th>
+
+                <th colspan="2">Hành động</th>
+            </tr>
+        </thead>
+
+
+        <tbody>
+            @if (Model != null && Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+
+                    <tr>
+                        <th>@item.id</th>
+                        <th>@item.userName</th>
+                        <th>@item.email</th>
+                        <th>
+                            @{
+                                if (item.lockoutEnabled != true)
+                                {
+                                    <div class="text-success">Hoạt động</div>
+                                }
+                                else
+                                {
+                                    <div class="text-danger">Đang khóa</div>
+                                }
+                            }
+                        </th>
+                        <th>
+                            @{
+                                if (item.lockoutEnabled == true)
+                                {
+                                    <button class="btn btn-success" onclick="lockUser('@item.id', false)"><i class="fa fa-unlock"></i></button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-danger" onclick="lockUser('@item.id', true)"><i class="fa fa-lock"></i></button>
+                                }
+                            }
+                        </th>
+                        <th>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="authenUser('@item.id')">
+                                Phân quyền
+                            </button>
+                        </th>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="userDetail">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+    });
+
+    var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+
+    function lockUser(id, isLock) {
+
+        var inputData = {
+            id: id,
+            IsLock: isLock
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: "/User/LockUser",
+            data: inputData,
+            success: function (data) {
+
+                var code = data.ResponseCode;
+                if (code > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    });
+                    getDsUser();
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "error",
+                        button: "OK!",
+                    });
+                    getDsUser();
+                }
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+            }
+        });
+
+    }
+
+    function authenUser(id) {
+
+        var inputData = {
+            userID: id,
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: "/User/Detail",
+            data: inputData,
+            success: function (data) {
+                $("#userDetail").html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+            }
+        });
+
+    }
+</script>

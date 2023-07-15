@@ -42,6 +42,7 @@
     <ul id="pagination-demo" class="pagination-x"></ul>
 </div>
 
+
 <script>
     jQuery(document).ready(function ($) {
 
@@ -64,9 +65,11 @@
 
         getDsDonHang();
 
+
     })
 
     var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+
 
     var pageSize = 10;
     var pageIndex = 1;
@@ -87,9 +90,10 @@
             data: inputData,
             success: function (data) {
                 $('#dsDonHang').html(data);
-                dataPaging('@ViewBag.TotalRow', function () {
+                  dataPaging('@ViewBag.TotalRow', function () {
                     getDsDonHang();
                 });
+
             },
             error: function (data) {
                 console.log("error:" + JSON.stringify(data));
@@ -116,6 +120,13 @@
                 var result = data.ResponseCode;
                 if (result > 0) {
                     getDsDonHangByDate(result);
+                }
+                else {
+                    swal({
+                        text: "Không tìm thấy !!!",
+                        icon: "error",
+                        button: "OK!",
+                    });
                 }
             },
             error: function (data) {
@@ -144,7 +155,8 @@
             success: function (data) {
                 $('#dsDonHang').html(data);
                 dataPaging(totalRow, function () {
-                    getDsDonHangByDate(totalRow);
+                //    getDsDonHangByDate(totalRow);
+                //    getTotalByDate();
                 });
             },
             error: function (data) {
@@ -169,12 +181,12 @@
             onPageClick: function (event, page) {
                 pageIndex = page;
                 setTimeout(callback, 200);
-                $("html").animate(
-                    {
-                        scrollTop: $("#txtSearch").offset().top
-                    },
-                    50 //speed
-                );
+                //$("html").animate(
+                //    {
+                //        scrollTop: $("#txtSearch").offset().top
+                //    },
+                //    50 //speed
+                //);
             }
         });
     }

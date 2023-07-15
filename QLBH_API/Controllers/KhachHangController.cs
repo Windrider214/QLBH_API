@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QLBH_API.Auth;
+using QLBH_API.Helper;
 using QLBH_DataAccess.Models;
 using QLBH_Services.UnitOfWork;
 
@@ -23,6 +24,24 @@ namespace QLBH_API.Controllers
         {
             await Task.Yield();
             var lst = _unitWork.KhachHangRepository.GetAll();
+            return Ok(lst);
+        }
+
+        [HttpPost("GetAllKhPaging")]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<ActionResult> GetAllKhPaging(Page page)
+        {
+            await Task.Yield();
+            var lst = _unitWork.KhachHangRepository.GetListPaging(page.page, page.pageSize);
+            return Ok(lst);
+        }
+
+        [HttpGet("SearchKH")]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<ActionResult> SearchKH(string TenKH)
+        {
+            await Task.Yield();
+            var lst = _unitWork.KhachHangRepository.SearchKH(TenKH);
             return Ok(lst);
         }
 
@@ -57,6 +76,15 @@ namespace QLBH_API.Controllers
             }
             var lst = _unitWork.Save();
             return Ok(lst);
+        }
+
+        [HttpGet("GetTotalRec")]
+        [AllowAnonymous]
+        public async Task<int> KhachHang_GetTotalRec()
+        {
+            await Task.Yield();
+            int totalRow = _unitWork.KhachHangRepository.GetTotalRec();
+            return totalRow;
         }
     }
 }
