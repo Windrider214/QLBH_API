@@ -32,6 +32,7 @@ namespace QLBH_DataAccess
         public virtual DbSet<Medium> Media { get; set; } = null!;
         public virtual DbSet<Phanhoi> Phanhois { get; set; } = null!;
         public virtual DbSet<Sanpham> Sanphams { get; set; } = null!;
+        public virtual DbSet<Thongkeloinhuan> Thongkeloinhuans { get; set; } = null!;
         public virtual DbSet<Thuonghieu> Thuonghieus { get; set; } = null!;
         public virtual DbSet<Tintuc> Tintucs { get; set; } = null!;
 
@@ -194,6 +195,7 @@ namespace QLBH_DataAccess
                 entity.HasOne(d => d.MaSpNavigation)
                     .WithMany(p => p.Hoadoncts)
                     .HasForeignKey(d => d.MaSp)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_HOADONCT_SANPHAM");
             });
 
@@ -296,6 +298,8 @@ namespace QLBH_DataAccess
                     .HasMaxLength(50)
                     .HasColumnName("MaPH");
 
+                entity.Property(e => e.Email).HasMaxLength(50);
+
                 entity.Property(e => e.MaKh)
                     .HasMaxLength(40)
                     .HasColumnName("MaKH");
@@ -305,6 +309,10 @@ namespace QLBH_DataAccess
                 entity.Property(e => e.NgayTraLoi).HasColumnType("datetime");
 
                 entity.Property(e => e.PhanHoi1).HasColumnName("PhanHoi");
+
+                entity.Property(e => e.TenKh)
+                    .HasMaxLength(50)
+                    .HasColumnName("TenKH");
 
                 entity.Property(e => e.TieuDe).HasMaxLength(200);
 
@@ -347,6 +355,19 @@ namespace QLBH_DataAccess
                     .WithMany(p => p.Sanphams)
                     .HasForeignKey(d => d.MaTh)
                     .HasConstraintName("FK_SANPHAM_THUONGHIEU");
+            });
+
+            modelBuilder.Entity<Thongkeloinhuan>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("thongkeloinhuan");
+
+                entity.Property(e => e.LoiNhuan).HasColumnType("numeric(38, 1)");
+
+                entity.Property(e => e.SoLuongMua).HasColumnName("So luong mua");
+
+                entity.Property(e => e.TenSp).HasColumnName("TenSP");
             });
 
             modelBuilder.Entity<Thuonghieu>(entity =>

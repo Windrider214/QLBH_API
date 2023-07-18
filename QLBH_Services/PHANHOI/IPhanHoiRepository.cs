@@ -15,6 +15,10 @@ namespace QLBH_Services.PHANHOI
 
         List<Phanhoi> GetListPagingByDate(int page, int pageSize, DateTime startDate, DateTime endDate);
         List<Phanhoi> GetFeedbackByCustomerID(string MaKH);
+
+        List<Phanhoi> GetListPagingByCusID(int page, int pageSize, string MaKH);
+        int GetCusTotalFeedback(string MaKH);
+
         int GetTotalRec();
     }
 }

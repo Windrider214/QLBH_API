@@ -1,0 +1,152 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-6">
+            <div class="row">
+                <div class="col-5">
+                    <p><strong>Từ ngày:</strong> <input type="text" id="datepicker1"></p>
+                </div>
+                <div class="col-5">
+                    <p><strong>Đến ngày:</strong> <input type="text" id="datepicker2"></p>
+                </div>
+                <div class="col-2">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 text-end">
+            <div class="d-flex">
+                <input class="form-control" type="text" placeholder="Tìm câu hỏi ..." aria-label="Search" id="txtSearch">
+                <button class="btn btn-outline-warning" onclick="Search()"><i class="fa fa-search"></i></button>
+                <button class="btn btn-outline-success" onclick="getDsPhanHoi()">Làm mới</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="dsPhanHoi" width="100%">
+
+</div>
+
+<div class="d-flex justify-content-center">
+    <ul id="pagination-demo" class="pagination-x"></ul>
+</div>
+
+<script>
+    jQuery(document).ready(function ($) {
+
+        $(function () {
+            $("#datepicker1").datepicker({
+                changeMonth: true,
+                changeYear: true
+            });
+        });
+
+        $(function () {
+            $("#datepicker2").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                onSelect: function () {
+                    getTotalByDate();
+                }
+            });
+        });
+
+        getDsPhanHoi();
+    })
+
+    var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+
+
+    var pageSize = 10;
+    var pageIndex = 1;
+
+    //Lấy sản phẩm
+    function getDsPhanHoi() {
+
+        var inputData = {
+            tieuDe: "",
+            token: cookieToken.token,
+            page: pageIndex,
+            pageSize: pageSize
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/PhanHoi/PartialIndex",
+            data: inputData,
+            success: function (data) {
+                $('#dsPhanHoi').html(data);
+                  dataPaging('@ViewBag.TotalRow', function () {
+                      getDsPhanHoi();
+                });
+
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+    //Phân trang
+    function dataPaging(totalRow, callback) {
+
+        var totalPage = Math.ceil(totalRow / pageSize);
+        $('#pagination-demo').twbsPagination({
+            totalPages: totalPage,
+            visiblePages: 5,
+            first: "Đầu",
+            next: "Tiếp",
+            last: "Cuối",
+            prev: "Trước",
+            onPageClick: function (event, page) {
+                pageIndex = page;
+                setTimeout(callback, 200);
+                $("html").animate(
+                    {
+                        scrollTop: $("#txtSearch").offset().top
+                    },
+                    50 //speed
+                );
+            }
+        });
+    }
+
+     function Search() {
+        var tieude = $("#txtSearch").val();
+         tieude = tieude.trim();
+        var searchData = {
+            tieuDe: tieude,
+            token: cookieToken.token,
+            page: pageIndex,
+            pageSize: pageSize
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/PhanHoi/PartialIndex",
+            data: searchData,
+            success: function (data) {
+                $("#dsPhanHoi").html(data);
+                dataPaging('@ViewBag.TotalRow', function () {
+                    getDsPhanHoi();
+                });
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+        });
+    }
+</script>

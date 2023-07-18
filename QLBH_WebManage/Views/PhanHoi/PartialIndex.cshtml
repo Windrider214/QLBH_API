@@ -1,0 +1,65 @@
+﻿@model List<QLBH_WebManage.DTO.PHANHOI>
+
+<br />
+<br />
+
+<div class="container">
+    <table id="dsPhanHoi" class="table table-sm table-hover table-striped table-bordered">
+        <thead class="table-primary">
+            <tr>
+                <th>Tiêu đề</th>
+                <th>Tên khách hàng</th>
+                <th>Người gửi</th>
+                <th>Email</th>
+                <th>Ngày gửi</th>
+                <th>Tình trạng</th>
+                <th colspan="2"></th>
+
+            </tr>
+        </thead>
+
+
+        <tbody>
+            @if (Model != null && Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+
+                    <tr>
+                        <td>@item.tieuDe</td>
+                        <td>@item.maKhNavigation.tenKh</td>
+                        <td>@item.tenKh</td>
+                        <td>@item.email</td>
+                        <td>@item.NgayGui</td>
+                        <td>
+                            @{
+                                if (item.TinhTrang == true)
+                                {
+                                    <div class="text-success">Đã trả lời</div>
+                                }
+                                else
+                                {
+                                    <div class="text-warning">Chưa trả lời</div>
+                                }
+                            }
+                        </td>
+                        <td><a href="/PhanHoi/Detail?MaPH=@item.maPh" class="btn btn-info"><i class="fa fa-pencil"></i></a></td>
+                        <td>
+                            <input type="button" onclick="deleteThuongHieu('@item.maPh')" id="btnDelete" value="Xóa" class="btn btn-danger" />
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+
+    });
+    var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+</script>

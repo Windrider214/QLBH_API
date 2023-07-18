@@ -252,6 +252,10 @@ namespace QLBH_WebClient.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Lấy mã khách hàng để đưa vào đơn hàng
+        /// </summary>
+        /// <returns></returns>
         public string GetMaKH() 
         {
             var returnData = new ReturnData();
@@ -316,6 +320,10 @@ namespace QLBH_WebClient.Controllers
             return Json(paymentUrl, JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Tạo đơn hàng Giao hàng nhanh
+        /// </summary>
+        /// <returns></returns>
         public string CreateCODVNPAY()
         {
             var returnData = new ReturnData();
@@ -335,7 +343,7 @@ namespace QLBH_WebClient.Controllers
                     codVNPAY = JsonConvert.DeserializeObject<GHN>(HttpUtility.UrlDecode(cookieCODVNPAY));
                 }
 
-                //Add item to GHN order
+                //Thêm sản phẩm vào đơn hàng GHN
                 List<Item> items = new List<Item>();
                 var data = list;
                 foreach (var proc in data)
@@ -411,7 +419,7 @@ namespace QLBH_WebClient.Controllers
                     if (vnp_ResponseCode == "00")
                     {
                         //Thanh toán thành công
-                        #region CreateOrder
+                        #region Tạo đơn hàng thanh toán bằng VNPAY
                         var vnpayORDER = new OrderEditModel();
                         var format = "dd/MM/yyyy";
                         var dateTimeConverter = new IsoDateTimeConverter { DateTimeFormat = format };
@@ -495,7 +503,7 @@ namespace QLBH_WebClient.Controllers
 
 
         /// <summary>
-        /// Tạo đơn COD
+        /// Tạo đơn COD GHN
         /// </summary>
         /// <param name="ghn"></param>
         /// <returns></returns>
@@ -557,7 +565,7 @@ namespace QLBH_WebClient.Controllers
             }
         }
 
-
+        // Tạo đơn hàng COD
         [HttpPost]
         public ActionResult CreateOrder(OrderEditModel order)
         {
@@ -659,14 +667,17 @@ namespace QLBH_WebClient.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Lấy thông tin cá nhân của tài khoản đã đăng nhập
+        /// </summary>
+        /// <returns></returns>
         public ActionResult GetCustomerInform()
         {
             var returnData = new ReturnData();
 
             try
             {
-
+                KHACHHANG kh = new KHACHHANG();
                 JwtCookie jwtCookie = new JwtCookie();
                 var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
                 if (cookie != null && !string.IsNullOrEmpty(cookie))
@@ -676,7 +687,6 @@ namespace QLBH_WebClient.Controllers
                     var result = API_Interact.GetDataById(url_api, request_url, TokenDecode.GetID(jwtCookie.token), "userID", jwtCookie.token);
                     if (result.IsSuccessStatusCode)
                     {
-                        KHACHHANG kh = new KHACHHANG();
                         kh = JsonConvert.DeserializeObject<KHACHHANG>(result.Content);
                         return Json(new KHACHHANG
                         {

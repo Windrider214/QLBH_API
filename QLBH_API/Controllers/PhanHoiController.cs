@@ -50,7 +50,6 @@ namespace QLBH_API.Controllers
             return Ok(lst);
         }
 
-
         [HttpPost("InsertFeedback")]
         [AllowAnonymous]
         public async Task<ActionResult> InsertFeedback(Phanhoi ph)
@@ -100,10 +99,10 @@ namespace QLBH_API.Controllers
 
         [HttpGet("SearchFeedback")]
         [AllowAnonymous]
-        public async Task<ActionResult> SearchFeedback(string MaPH)
+        public async Task<ActionResult> SearchFeedback(string TieuDe)
         {
             await Task.Yield();
-            List<Phanhoi> lst = _unitWork.PhanHoiRepository.SearchPH(MaPH);
+            List<Phanhoi> lst = _unitWork.PhanHoiRepository.SearchPH(TieuDe);
             return Ok(lst);
         }
 
@@ -116,6 +115,35 @@ namespace QLBH_API.Controllers
             return Ok(lst);
         }
 
+        [HttpPost("GetListPagingByCusID")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetListPagingByCusID(CusFeedback fb)
+        {
+            await Task.Yield();
+            List<Phanhoi> lst = _unitWork.PhanHoiRepository.GetListPagingByCusID(fb.page, fb.pageSize, fb.MaKH);
+            return Ok(lst);
+        }
 
+        [HttpGet("GetCusTotalFeedback")]
+        [AllowAnonymous]
+        public async Task<int> GetCusTotalFeedback(string MaKH)
+        {
+            await Task.Yield();
+            int totalRow = _unitWork.PhanHoiRepository.GetCusTotalFeedback(MaKH);
+            return totalRow;
+        }
+
+        [HttpPost("SendEmailConfirmFeedback")]
+        public async Task<IActionResult> SendEmailConfirmFeedback(ClientConfirmEmail confirmMessage)
+        {
+            await Task.Yield();
+
+            string body = @"<div> '" + confirmMessage.deliverCode + "' </div>";
+                var message = new Message(new string[] { confirmMessage.userEmail }, "Trả lời câu hỏi / yêu cầu tại ZAY SHOP '"+ confirmMessage.orderCode + "' ", body!);
+                _emailService.SendEmail(message);
+            
+           
+            return StatusCode(StatusCodes.Status200OK, new ReturnData { ResponseCode = 900, Description = "Gửi email xác nhận thành công" });
+        }
     }
 }

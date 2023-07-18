@@ -20,18 +20,24 @@ namespace QLBH_WebClient.Controllers
         private static string url_api = ConfigurationManager.AppSettings["API_URL"] ?? "http://localhost:5050";
         private static string media_api = ConfigurationManager.AppSettings["MEDIA_URL"] ?? "http://localhost:63228";
 
-        // GET: User
+        // Tạo trang đăng nhập
         public ActionResult SignIn()
         {
             var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
             if (cookie != null && !string.IsNullOrEmpty(cookie))
             {
-                return null;
+                return View("Vui lòng đăng xuất tài khoản !!!");
 
             }
             return View();
         }
 
+
+        /// <summary>
+        /// Đăng nhập
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public ActionResult Login(LoginModel user)
         {
             var returnData = new ReturnData();
@@ -69,6 +75,12 @@ namespace QLBH_WebClient.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Đăng nhập với xác thực 2 yếu tố
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public ActionResult Login2FA(Login2FA user)
         {
             var returnData = new ReturnData();
@@ -101,6 +113,12 @@ namespace QLBH_WebClient.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Bật xác thực 2 yếu tố
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public ActionResult Enable2FA(En2FA model)
         {
             var returnData = new ReturnData();
@@ -140,6 +158,11 @@ namespace QLBH_WebClient.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Tạo đường dẫn panel của user sau khi đăng nhập
+        /// </summary>
+        /// <returns></returns>
         public ActionResult GetUserPanel()
         {
             var returnData = new ReturnData();
@@ -169,7 +192,10 @@ namespace QLBH_WebClient.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Lấy mã khách hàng của tài khoản
+        /// </summary>
+        /// <returns></returns>
         public string GetCustomerID()
         {
             var returnData = new ReturnData();
@@ -200,6 +226,11 @@ namespace QLBH_WebClient.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Lấy ra thông tin cá nhân của tài khoản 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult GetCustomer()
         {
             var returnData = new ReturnData();
@@ -230,22 +261,6 @@ namespace QLBH_WebClient.Controllers
             }
         }
 
-        public int GetCusTotalOrder()
-        {
-            JwtCookie jwtCookie = new JwtCookie();
-            var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
-            if (cookie != null && !string.IsNullOrEmpty(cookie))
-            {
-                jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
-                var request_url = "/api/Order/GetCusTotalOrder";
-                var result = API_Interact.GetDataById(url_api, request_url, GetCustomerID(), "MaKH", jwtCookie.token);
-                if (result.IsSuccessStatusCode)
-                {
-                    return int.Parse(result.Content);
-                }
-            }
-            return 1;
-        }
 
         public ActionResult Detail()
         {
@@ -260,13 +275,21 @@ namespace QLBH_WebClient.Controllers
                 {
                     USER user = new USER();
                     user = JsonConvert.DeserializeObject<USER>(result.Content);
-                    ViewBag.TotalRow = GetCusTotalOrder();
+                    ViewBag.TotalRowOrder = GetCusTotalOrder();
+                    ViewBag.TotalRowFeedback = GetCusTotalFeedback();
                     return View(user);
                 }
             }
             return View("Bạn chưa đăng nhập !!!");
         }
+        
 
+
+        /// <summary>
+        /// Thay đổi thông tin cá nhân
+        /// </summary>
+        /// <param name="kh"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateInput(false)]
         public ActionResult UpdateInform(KHACHHANG kh)
@@ -306,6 +329,26 @@ namespace QLBH_WebClient.Controllers
             }
         }
 
+        #region Lấy thông tin đơn hàng của tài khoản
+        //Lấy tổng số đơn ( để phân trang )
+        public int GetCusTotalOrder()
+        {
+            JwtCookie jwtCookie = new JwtCookie();
+            var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+            if (cookie != null && !string.IsNullOrEmpty(cookie))
+            {
+                jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                var request_url = "/api/Order/GetCusTotalOrder";
+                var result = API_Interact.GetDataById(url_api, request_url, GetCustomerID(), "MaKH", jwtCookie.token);
+                if (result.IsSuccessStatusCode)
+                {
+                    return int.Parse(result.Content);
+                }
+            }
+            return 1;
+        }
+
+        // Lấy đơn hàng
         public ActionResult GetUserOrder(CusOrder order)
         {
             JwtCookie jwtCookie = new JwtCookie();
@@ -327,6 +370,7 @@ namespace QLBH_WebClient.Controllers
             return PartialView();
         }
 
+        // lấy sản phẩm trong đơn ( HOADONCT )
         public ActionResult GetListOrderProduct(string MaHD)
         {
             try
@@ -352,6 +396,7 @@ namespace QLBH_WebClient.Controllers
             }
         }
 
+        // Lấy thông tin đơn hàng
         public ActionResult OrderDetail(string MaHD)
         {
             try
@@ -376,7 +421,9 @@ namespace QLBH_WebClient.Controllers
                 throw;
             }
         }
+        #endregion
 
+        #region Đổi mật khẩu trong user panel
         public ActionResult ChangePass()
         {
             return PartialView();
@@ -482,6 +529,15 @@ namespace QLBH_WebClient.Controllers
 
             }
         }
+        #endregion
+
+        #region Tạo mới tài khoản
+
+        /// <summary>
+        /// Khi đăng ký mới tài khoản thì đồng thời ghi lại thông tin cá nhân
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
 
         public string Register(RegisterModel model)
         {
@@ -518,7 +574,7 @@ namespace QLBH_WebClient.Controllers
 
             try
             {
-                sgup.maKh = Guid.NewGuid().ToString();  
+                sgup.maKh = Guid.NewGuid().ToString();
                 RegisterModel reg = new RegisterModel
                 {
                     Username = sgup.Username,
@@ -528,11 +584,11 @@ namespace QLBH_WebClient.Controllers
 
                 sgup.loginId = Register(reg);
 
-                if(sgup.loginId == string.Empty)
+                if (sgup.loginId == string.Empty)
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
-                
+
                 KHACHHANG kh = new KHACHHANG
                 {
                     maKh = sgup.maKh,
@@ -567,5 +623,79 @@ namespace QLBH_WebClient.Controllers
 
             }
         }
+        #endregion
+
+        #region Lấy thông tin phản hồi
+        //Lấy tổng số phản hồi ( để phân trang )
+        public int GetCusTotalFeedback()
+        {
+            JwtCookie jwtCookie = new JwtCookie();
+            var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+            if (cookie != null && !string.IsNullOrEmpty(cookie))
+            {
+                jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                var request_url = "/api/PhanHoi/GetCusTotalFeedback";
+                var result = API_Interact.GetDataById(url_api, request_url, GetCustomerID(), "MaKH", jwtCookie.token);
+                if (result.IsSuccessStatusCode)
+                {
+                    return int.Parse(result.Content);
+                }
+            }
+            return 1;
+        }
+
+        // Lấy phản hồi
+        public ActionResult GetUserFeedback(CusFeedback fb)
+        {
+            JwtCookie jwtCookie = new JwtCookie();
+            var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+            if (cookie != null && !string.IsNullOrEmpty(cookie))
+            {
+                jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                fb.MaKH = GetCustomerID();
+                var request_url = "/api/PhanHoi/GetListPagingByCusID";
+                var jsonData = JsonConvert.SerializeObject(fb);
+                var result = API_Interact.PullData(url_api, request_url, jsonData, jwtCookie.token);
+                if (result.IsSuccessStatusCode)
+                {
+                    List<PHANHOI> ph = new List<PHANHOI>();
+                    ph = JsonConvert.DeserializeObject<List<PHANHOI>>(result.Content);
+                    return PartialView(ph);
+                }
+            }
+            return PartialView();
+        }
+
+        // Xem nội dung trả lời
+        public ActionResult FeedBackDetail(string MaPH)
+        {
+            try
+            {
+                JwtCookie jwtCookie = new JwtCookie();
+                var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                    var ph = new PHANHOI();
+                    var request_url = "/api/PhanHoi/GetFeedbackByID";
+                    var result = API_Interact.GetDataById(url_api, request_url, MaPH, "MaPH", jwtCookie.token);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        ph = JsonConvert.DeserializeObject<PHANHOI>(result.Content);
+                        return PartialView(ph);
+
+                    }
+                }
+                return PartialView();
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        #endregion
+
     }
 }

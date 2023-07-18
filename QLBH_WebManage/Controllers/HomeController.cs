@@ -1,6 +1,10 @@
-﻿using QLBH_WebManage.Helper;
+﻿using Newtonsoft.Json;
+using QLBH_WebManage.DTO;
+using QLBH_WebManage.Helper;
+using QLBH_WebManage.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -9,25 +13,164 @@ namespace QLBH_WebManage.Controllers
 {
     public class HomeController : Controller
     {
+        private static string url_api = ConfigurationManager.AppSettings["API_URL"] ?? "http://localhost:5050";
+        private static string media_api = ConfigurationManager.AppSettings["MEDIA_URL"] ?? "http://localhost:63228";
+
         public ActionResult Index()
         {
-            string id = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJVc2VySUQiOiI2ZTRlNGI1ZS1kNTJlLTQ3ZTMtODlmZC0yNzlkZDAwMWMwMzAiLCJqdGkiOiIwNTlhYjM0My02Nzc2LTQ4MTctOWZkZC05YzYxOTU4OGNiNzYiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOlsiVXNlciIsIkFkbWluIl0sImV4cCI6MTY4ODI0MTcxMSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDAwIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo0MjAwIn0.QZuFSxGjz7p7q8Fpagu-dJQq9sdRsCaJ2wUN_CUC8Tg";
-            ViewBag.ID = TokenDecode.GetID(id);
             return View();
         }
 
-        public ActionResult About()
+        [HttpPost]
+        public ActionResult ThongKeLoiNhuan()
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
+            try
+            {
+                List<object> data = new List<object>();
+                JwtCookie jwtCookie = new JwtCookie();
+                List<TKLOINHUAN> tk = new List<TKLOINHUAN>();
+                var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                    var request_url = "/api/Statistic/ThongKeLoiNhuan";
+                    var result = API_Interact.GetData(url_api, request_url, jwtCookie.token);
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        tk = JsonConvert.DeserializeObject<List<TKLOINHUAN>>(result);
+                        return Json(result, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
-        public ActionResult Contact()
+        public ActionResult ThongKeDoanhThu()
         {
-            ViewBag.Message = "Your contact page.";
+            try
+            {
+                List<object> data = new List<object>();
+                JwtCookie jwtCookie = new JwtCookie();
+                var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                    var request_url = "/api/Statistic/ThongKeDoanhThu";
+                    var result = API_Interact.GetData(url_api, request_url, jwtCookie.token);
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        ViewBag.Total = result;
+                        return PartialView();
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
 
-            return View();
+        public ActionResult ThongKeDonHang()
+        {
+            try
+            {
+                List<object> data = new List<object>();
+                JwtCookie jwtCookie = new JwtCookie();
+                var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                    var request_url = "/api/Statistic/ThongKeDonHang";
+                    var result = API_Interact.GetData(url_api, request_url, jwtCookie.token);
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        ViewBag.Total = result;
+                        return PartialView();
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public ActionResult ThongKeSanPham()
+        {
+            try
+            {
+                List<object> data = new List<object>();
+                JwtCookie jwtCookie = new JwtCookie();
+                var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                    var request_url = "/api/Statistic/ThongKeSanPham";
+                    var result = API_Interact.GetData(url_api, request_url, jwtCookie.token);
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        ViewBag.Total = result;
+                        return PartialView();
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public ActionResult ThongKeKhachHang()
+        {
+            try
+            {
+                List<object> data = new List<object>();
+                JwtCookie jwtCookie = new JwtCookie();
+                var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                    var request_url = "/api/Statistic/ThongKeKhachHang";
+                    var result = API_Interact.GetData(url_api, request_url, jwtCookie.token);
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        ViewBag.Total = result;
+                        return PartialView();
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }

@@ -12,6 +12,8 @@ namespace QLBH_WebManage.DTO
         public string noiDung { get; set; }
         public string phanHoi1 { get; set; }
         public string maKh { get; set; }
+        public string tenKh { get; set; }
+        public string email { get; set; }
         public DateTime? NgayGui { get; set; }
         public DateTime? NgayTraLoi { get; set; }
         public bool? TinhTrang { get; set; }

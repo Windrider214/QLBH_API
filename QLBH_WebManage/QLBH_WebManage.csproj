@@ -178,6 +178,7 @@
     <Compile Include="Controllers\LoaiSanPhamController.cs" />
     <Compile Include="Controllers\MediaController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
+    <Compile Include="Controllers\PhanHoiController.cs" />
     <Compile Include="Controllers\SanPhamController.cs" />
     <Compile Include="Controllers\ThuongHieuController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -193,6 +194,7 @@
     <Compile Include="DTO\ROLE.cs" />
     <Compile Include="DTO\SANPHAM.cs" />
     <Compile Include="DTO\THUONGHIEU.cs" />
+    <Compile Include="DTO\TKLOINHUAN.cs" />
     <Compile Include="DTO\USER.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -203,6 +205,7 @@
     <Compile Include="Helper\Page.cs" />
     <Compile Include="Helper\TokenDecode.cs" />
     <Compile Include="Helper\VNtoEnglish.cs" />
+    <Compile Include="Models\ClientConfirmEmail.cs" />
     <Compile Include="Models\DateRange.cs" />
     <Compile Include="Models\JwtCookie.cs" />
     <Compile Include="Models\OrderByDate.cs" />
@@ -253,6 +256,8 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="Scripts\chart.js" />
+    <Content Include="Scripts\chart.min.js" />
     <Content Include="Scripts\ckeditor\adapters\jquery.js" />
     <Content Include="Scripts\ckeditor\ckeditor.js" />
     <Content Include="Scripts\ckeditor\config.js" />
@@ -672,8 +677,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\LoaiSanPham\PartialIndex.cshtml" />
     <Content Include="Views\LoaiSanPham\Index.cshtml" />
@@ -705,6 +708,13 @@
     <Content Include="Views\User\Detail.cshtml" />
     <Content Include="Views\KhachHang\Index.cshtml" />
     <Content Include="Views\KhachHang\PartialIndex.cshtml" />
+    <Content Include="Views\PhanHoi\PartialIndex.cshtml" />
+    <Content Include="Views\PhanHoi\Index.cshtml" />
+    <Content Include="Views\PhanHoi\Detail.cshtml" />
+    <Content Include="Views\Home\ThongKeDoanhThu.cshtml" />
+    <Content Include="Views\Home\ThongKeDonHang.cshtml" />
+    <Content Include="Views\Home\ThongKeSanPham.cshtml" />
+    <Content Include="Views\Home\ThongKeKhachHang.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

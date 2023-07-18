@@ -1,0 +1,80 @@
+﻿@model List<QLBH_WebClient.DTO.PHANHOI>
+
+<div class="container-fluid">
+    <table id="dsLoaiSP" class="table table-hover w-auto table-striped table-bordered">
+        <thead class="table-primary">
+            <tr>
+                <th>Tiêu đề</th>
+                <th>Nội dung</th>
+                <th>Ngày gửi</th>
+                <th>Ngày trả lời</th>
+                <th>Tình trạng</th>
+                <th></th>
+            </tr>
+        </thead>
+
+
+        <tbody>
+            @if (Model != null && Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+
+                    <tr>
+                        <th>@item.tieuDe</th>
+                        <th>@item.noiDung</th>
+                        <th>@item.NgayGui</th>
+                        <th>@item.NgayTraLoi</th>
+                        <th>
+                            @{
+                                if (item.TinhTrang == true)
+                                {
+                                    <div class="text-success">Đã trả lời</div>
+                                }
+                                else
+                                {
+                                    <div class="text-warning">Chưa trả lời</div>
+                                }
+                            }
+                        </th>
+                        <td><button onclick="getFeedback('@item.maPh')" class="btn btn-info"><i class="fa fa-eye"></i></button></td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+
+    });
+
+    var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+
+    function getFeedback(maph) {
+
+        var intputData = {
+            MaPH: maph
+        };
+
+        $.ajax({
+            type: 'GET',
+            url: "/User/FeedBackDetail",
+            data: intputData,
+            success: function (data) {
+                $('#feedBack').html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+</script>
+
+

@@ -1,0 +1,150 @@
+﻿@model QLBH_WebManage.DTO.PHANHOI
+
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/thuonghieu/";
+}
+
+<div>
+    <h4>Phản hồi "@Model.tieuDe"</h4>
+    <hr />
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-4">
+                <div class="mb-3">
+                    <label for="txtMaKH" class="form-label">Mã phản hồi</label>
+                    <input type="text" class="form-control" id="txtMaPH" placeholder="Để trống ..." value="@Model.maPh" disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="txtTenKH" class="form-label">Tiêu đề</label>
+                    <input type="text" class="form-control" id="txtTieuDe" value="@Model.tieuDe" disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="txtTenKH" class="form-label">Nội dung</label>
+                    <textarea class="form-control" id="txtNoiDung" disabled> @Html.DisplayFor(modelItem => Model.noiDung)</textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="txtMaKH" class="form-label">Mã khách hàng</label>
+                    <input type="text" class="form-control" id="txtMaKH" value="@Model.maKh" disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="txtTenKH" class="form-label">Người gửi</label>
+                    <input type="text" class="form-control" id="txtNguoiGui" value="@Model.tenKh" disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="txtTenKH" class="form-label">Email</label>
+                    <input type="text" class="form-control" id="txtEmail" value="@Model.email" disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="txtTenKH" class="form-label">Ngày gửi</label>
+                    <input type="text" class="form-control" id="txtNgayGui" value="@Model.NgayGui" disabled>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="mb-3">
+                    <label for="txtMaKH" class="form-label">Ngày trả lời</label>
+                    <input type="text" class="form-control" id="txtNgayTraLoi" value="@Model.NgayTraLoi" disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="txtTraLoi" class="form-label">Trả lời: <textarea id="txtTraLoi" class="form-control"> @Html.DisplayFor(modelItem => Model.phanHoi1)</textarea></label>
+                    <script>CKEDITOR.replace("txtTraLoi");</script>
+                </div>
+                <div class="mb-3">
+                    <label for="chkTrangThai" class="form-label">Xác nhận trả lời : <input type="checkbox" id="chkTrangThai"></label>
+                </div>
+                <p>
+                    <button class="btn btn-success" onclick="Update()">Cập nhật</button> | @Html.ActionLink("Quay lại", "Index")
+
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    jQuery(document).ready(function ($) {
+        setActive();
+    });
+
+    function setActive() {
+        var tt = '@Model.TinhTrang';
+        if (tt == "True") {
+            $("#chkTrangThai").prop('checked', true);
+        }
+        else {
+            $("#chkTrangThai").prop('checked', false);
+        }
+    }
+
+    function Update() {
+        var tieude = $("#txtTieuDe").val();
+        var noidung = $("#txtNoiDung").val();
+        var tenkh = $("#txtNguoiGui").val();
+        var email = $("#txtEmail").val();
+        var ngaygui = $("#txtNgayGui").val();
+        var maph = $("#txtMaPH").val();
+        var makh = $("#txtMaKH").val();
+        var ngaytraloi = moment().format('YYYY-MM-DD HH:mm:ss');
+        var traloi = CKEDITOR.instances['txtTraLoi'].getData();
+
+        var trangthai = true;
+        if ($("#chkTrangThai").is(":checked")) {
+            trangthai = true;
+        }
+        else {
+            trangthai = false;
+        }
+
+
+        var inputData = {
+            tieuDe: tieude,
+            noiDung: noidung,
+            tenKh: tenkh,
+            email: email,
+            NgayGui: ngaygui,
+            maKh: makh,
+            maPh: maph,
+            NgayTraLoi: ngaytraloi,
+            phanHoi1: traloi,
+            TinhTrang: trangthai
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/PhanHoi/FeedbackUpdate",
+            data: inputData,
+            success: function (data) {
+                var result = data.ResponseCode;
+                if (result > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    });
+                    $(".modal-backdrop").remove();
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "warning",
+                        button: "OK!",
+                    });
+                    $(".modal-backdrop").remove();
+                }
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+        });
+    }
+</script>

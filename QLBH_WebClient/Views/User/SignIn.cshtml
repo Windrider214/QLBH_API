@@ -7,17 +7,16 @@
 <div class="container">
     <div class="row">
         <div class="col-6">
-            <div id="logreg-forms">
+            <div id="logreg-forms" >
                 <div class="form-signin">
                     <h1 class="h3 mb-3 font-weight-bold" style="text-align: center"> Đăng Nhập</h1>
-
-                    <input type="email" id="inputUsername" class="form-control" placeholder="Tên đăng nhập" required="" autofocus="">
+                    <input type="text" id="inputUsername" class="form-control" placeholder="Tên đăng nhập" required="" autofocus="">
                     <input type="password" id="inputPassword" class="form-control" placeholder="Mật khẩu" required="">
-
+                        <div class="text-right">
+                            <a href="#" id="forgot_pswd" class="text-right"><strong>Quên mật khẩu ?</strong></a>
+                        </div>
                     <button class="btn btn-success btn-sm btn-block" onclick="login()"><i class="fa fa-sign-in"></i> Đăng Nhập</button>
-                    <a href="#" id="forgot_pswd"><strong>Quên mật khẩu ?</strong></a>
                     <hr>
-                    <!-- <p>Don't have an account!</p>  -->
                     <button class="btn btn-primary btn-block" type="button" id="btn-signup"><i class="fa fa-user-plus"></i> Đăng Kí</button>
                 </div>
 

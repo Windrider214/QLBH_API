@@ -21,5 +21,11 @@ namespace QLBH_Services.HOADON.HOADONCT
                     Where(x => x.MaHd == mahd).
                     ToList();
         }
+
+        int IHoaDonCTRepository.GetTotalRec()
+        {
+            return _context.Hoadoncts.
+                    Sum(x => x.SoLuong * x.DonGiaBan).Value;
+        }
     }
 }

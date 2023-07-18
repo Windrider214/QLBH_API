@@ -7,12 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QLBH_Services.HOADON.HOADONCT
+namespace QLBH_Services.STATISTIC
 {
-    public interface IHoaDonCTRepository : IGenericRepository<Hoadonct>
+    public class ThongKeLoiNhuanRepository : GenericRepository<Thongkeloinhuan>, IThongKeLoiNhuanRepository
     {
-        List<Hoadonct> GetListOrderProcduct(string mahd);
+        public ThongKeLoiNhuanRepository(QLBH_ONLINEContext context) : base(context) { }
 
-        int GetTotalRec();
     }
 }

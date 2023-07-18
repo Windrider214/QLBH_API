@@ -9,6 +9,7 @@ using QLBH_Services.PHANHOI;
 using QLBH_Services.SANPHAM;
 using QLBH_Services.SANPHAM.LOAISP;
 using QLBH_Services.SANPHAM.THUONGHIEU;
+using QLBH_Services.STATISTIC;
 using QLBH_Services.TINTUC;
 using QLBH_Services.TINTUC.LOAITIN;
 using QLBH_Services.USER;
@@ -83,6 +84,7 @@ namespace QLBH_Services.UnitOfWork
             KhachHangRepository = new KhachHangRepository(_context);
             RoleRepository = new RoleRepository(_context);
             PhanHoiRepository = new PhanHoiRepository(_context);
+            ThongKeLoiNhuanRepository = new ThongKeLoiNhuanRepository(_context);
         }
 
         public ILoaiSPRepository LoaiSPRepository
@@ -160,12 +162,19 @@ namespace QLBH_Services.UnitOfWork
         {
             get;
             private set;
-        } 
+        }
+
+        public IThongKeLoiNhuanRepository ThongKeLoiNhuanRepository
+        {
+            get;
+            private set;
+        }
 
         public void Dispose()
         {
             _context.Dispose();
         }
+
 
 
         public int Save()

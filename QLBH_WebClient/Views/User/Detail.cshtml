@@ -6,15 +6,23 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2></h2>
+<div class="bg-light py-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mb-0"><a href="/TrangChu/Index">Trang Chủ</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Thiết lập tài khoản</strong></div>
+        </div>
+    </div>
+</div>
+<hr />
 <div class="container-fluid">
     <div class="row">
         <div class="col-2">
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                <a class="nav-link active" id="v-pills-order-tab" data-toggle="pill" href="#v-pills-orders" role="tab" aria-controls="v-pills-orders" aria-selected="true"><strong>Đơn hàng</strong></a>
-                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false"><b>Thông tin cá nhân</b></a>
-                <a class="nav-link" id="v-pills-changepw-tab" data-toggle="pill" href="#v-pills-changepw" role="tab" aria-controls="v-pills-changepw" aria-selected="false"><b>Đổi mật khẩu</b></a>
-                <a class="nav-link" id="v-pills-twofactor-tab" data-toggle="pill" href="#v-pills-twofactor" role="tab" aria-controls="v-pills-twofactor" aria-selected="false"><b>Xác thực 2 yếu tố</b></a>
+                <a class="nav-link active" id="v-pills-order-tab" data-toggle="pill" href="#v-pills-orders" role="tab" aria-controls="v-pills-orders" aria-selected="true"><strong><i class="fa fa-sticky-note"></i> Đơn hàng</strong></a>
+                <a class="nav-link" id="v-pills-feedback-tab" data-toggle="pill" href="#v-pills-feedbacks" role="tab" aria-controls="v-pills-feedbacks" aria-selected="false"><b><i class="fa fa-envelope"></i> Hòm thư</b></a>
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false"><b><i class="fa fa-user"></i> Thông tin cá nhân</b></a>
+                <a class="nav-link" id="v-pills-changepw-tab" data-toggle="pill" href="#v-pills-changepw" role="tab" aria-controls="v-pills-changepw" aria-selected="false"><b><i class="fa fa-lock"></i> Đổi mật khẩu</b></a>
+                <a class="nav-link" id="v-pills-twofactor-tab" data-toggle="pill" href="#v-pills-twofactor" role="tab" aria-controls="v-pills-twofactor" aria-selected="false"><b><i class="fa fa-gear"></i> Xác thực 2 yếu tố</b></a>
             </div>
         </div>
         <div class="col-10">
@@ -24,8 +32,15 @@
                         <div id="v-pills-order">...</div>
 
                         <div class="d-flex justify-content-center">
-                            <ul id="pagination-demo" class="pagination-x"></ul>
+                            <ul id="pagination-demo1" class="pagination-x"></ul>
                         </div>
+                    </div>
+                    <div class="tab-pane fade show" id="v-pills-feedbacks" role="tabpanel" aria-labelledby="v-pills-feedback-tab">
+                        <div id="v-pills-feedback">...</div>
+                        <div class="d-flex justify-content-center">
+                            <ul id="pagination-demo2" class="pagination-x"></ul>
+                        </div>
+                        <div id="feedBack"></div>
                     </div>
                     <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab"></div>
                     <div class="tab-pane fade" id="v-pills-changepw" role="tabpanel" aria-labelledby="v-pills-changepw-tab">...</div>
@@ -48,6 +63,7 @@
     jQuery(document).ready(function ($) {
         getUserOder();
         getCustomer();
+        getUserFeedback();
         changePassword();
         setActive();
     })
@@ -71,7 +87,7 @@
             data: inputData,
             success: function (data) {
                 $('#v-pills-order').html(data);
-                   dataPaging('@ViewBag.TotalRow', function () {
+                   dataPaging1('@ViewBag.TotalRowOrder', function () {
                        getUserOder();
                 });
             },
@@ -83,12 +99,62 @@
         });
     }
 
-    //Phân trang
-    function dataPaging(totalRow, callback) {
+    //Phân trang order
+    function dataPaging1(totalRow, callback) {
         var totalPage = Math.ceil(totalRow / pageSize);
-        $('#pagination-demo').twbsPagination({
+        $('#pagination-demo1').twbsPagination({
             totalPages: totalPage,
             visiblePages: 5,
+            first: "Đầu",
+            next: "Tiếp",
+            last: "Cuối",
+            prev: "Trước",
+            onPageClick: function (event, page) {
+                pageIndex = page;
+                setTimeout(callback, 200);
+                $("html").animate(
+                    {
+                        scrollTop: $("#v-pills-tab").offset().top
+                    },
+                    800 //speed
+                );
+            }
+        });
+    }
+
+   function getUserFeedback() {
+
+
+        var inputData = {
+            MaKH: "",
+            page: pageIndex,
+            pageSize: pageSize
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/User/GetUserFeedback",
+            data: inputData,
+            success: function (data) {
+                $('#v-pills-feedback').html(data);
+                   dataPaging2('@ViewBag.TotalRowFeedback', function () {
+                       getUserFeedback();
+                });
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+    //Phân trang feedback
+    function dataPaging2(totalRow, callback) {
+        var totalPage = Math.ceil(totalRow / pageSize);
+        $('#pagination-demo2').twbsPagination({
+            totalPages: totalPage,
+            visiblePages: 3,
             first: "Đầu",
             next: "Tiếp",
             last: "Cuối",

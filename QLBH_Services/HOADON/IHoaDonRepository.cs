@@ -24,5 +24,6 @@ namespace QLBH_Services.HOADON
 
         int GetCusTotalOrder(string MaKH);
 
+
     }
 }

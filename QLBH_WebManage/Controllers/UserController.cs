@@ -213,7 +213,6 @@ namespace QLBH_WebManage.Controllers
                     var jsonData = JsonConvert.SerializeObject(lckUser);
                         var result = API_Interact.PullData(url_api, request_url, jsonData, jwtCookie.token);
                         if (result.IsSuccessStatusCode)
-                        if (result.IsSuccessStatusCode)
                         {
                             returnData.ResponseCode = 900;
                             returnData.Description = "Thay đổi thành công !!!";

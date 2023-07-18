@@ -20,6 +20,7 @@ namespace QLBH_Services.PHANHOI
         {
 
             return _context.Phanhois.
+                Include(x => x.MaKhNavigation).
                 Where(x => x.TieuDe.Contains(tieuDe.Trim())).
                 ToList();
         }
@@ -29,6 +30,7 @@ namespace QLBH_Services.PHANHOI
         {
 
             return _context.Phanhois.
+                Include(x => x.MaKhNavigation).
                 OrderByDescending(y => y.NgayGui).
                 Skip((page - 1) * pageSize).Take(pageSize).
                 ToList();
@@ -45,6 +47,7 @@ namespace QLBH_Services.PHANHOI
         {
 
             return _context.Phanhois.
+                    Include(x => x.MaKhNavigation).
                 OrderByDescending(y => y.NgayGui).
                     Where(x => x.MaKh == MaKH).
                     ToList();
@@ -54,16 +57,35 @@ namespace QLBH_Services.PHANHOI
         {
             if (startDate.Date == endDate.Date)
             {
-                return _context.Phanhois.
+                return _context.Phanhois.Include(x => x.MaKhNavigation).
                            Where(s => s.NgayGui.Value.Date == endDate.Date).
                            Skip((page - 1) * pageSize).Take(pageSize).
                            ToList();
             }
-            return _context.Phanhois.
+            return _context.Phanhois.Include(x => x.MaKhNavigation).
                       Where(s => s.NgayGui.Value.Date >= startDate.Date && s.NgayGui.Value.Date <= endDate.Date).
                       Skip((page - 1) * pageSize).Take(pageSize).
                       ToList();
 
+        }
+
+        List<Phanhoi> IPhanHoiRepository.GetListPagingByCusID(int page, int pageSize, string MaKH)
+        {
+
+            return _context.Phanhois.
+                    Include(x => x.MaKhNavigation).
+                    OrderByDescending(y => y.NgayGui).
+                    Where(x => x.MaKh == MaKH).
+                    Skip((page - 1) * pageSize).Take(pageSize).
+                    ToList();
+        }
+
+        int IPhanHoiRepository.GetCusTotalFeedback(string MaKH)
+        {
+            return _context.Hoadons.
+                     Include(x => x.MaKhNavigation).
+                     Where(x => x.MaKh == MaKH).
+                     ToList().Count();
         }
     }
 }

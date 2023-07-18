@@ -172,6 +172,7 @@
     <Compile Include="Auth\UserRoles.cs" />
     <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\MediaController.cs" />
+    <Compile Include="Controllers\PhanHoiController.cs" />
     <Compile Include="Controllers\SanPhamController.cs" />
     <Compile Include="Controllers\TrangChuController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -202,6 +203,7 @@
     <Compile Include="Models\ChangePasswordModel.cs" />
     <Compile Include="Models\ClientConfirmEmail.cs" />
     <Compile Include="Models\CreatedUser.cs" />
+    <Compile Include="Models\CusFeedback.cs" />
     <Compile Include="Models\CusOrder.cs" />
     <Compile Include="Models\En2FA.cs" />
     <Compile Include="Models\ForgotPassModel.cs" />
@@ -773,6 +775,9 @@
     <Content Include="Views\User\OrderDetail.cshtml" />
     <Content Include="Views\User\GetCustomer.cshtml" />
     <Content Include="Views\User\ChangePass.cshtml" />
+    <Content Include="Views\PhanHoi\Index.cshtml" />
+    <Content Include="Views\User\GetUserFeedback.cshtml" />
+    <Content Include="Views\User\FeedBackDetail.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
