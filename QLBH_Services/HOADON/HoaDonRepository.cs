@@ -1,8 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.EntityFrameworkCore;
 using QLBH_DataAccess;
 using QLBH_DataAccess.GenericRepository;
 using QLBH_DataAccess.Models;
+using QLBH_Services.Helper;
+using QLBH_Services.HOADON.HOADONCT;
 using QLBH_Services.SANPHAM;
+using QLBH_Services.STATISTIC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -110,5 +114,37 @@ namespace QLBH_Services.HOADON
                       ToList();
         }
 
+        List<TKDOANHTHU> IHoaDonRepository.ThongKeDoanhThuThang(int year)
+        {
+            var lst = _context.Hoadons.
+                       Where(x => x.NgayDat.Value.Year == year).
+                       GroupBy(x => x.NgayDat.Value.Month).
+                       Select(x => new TKDOANHTHU() { DoanhThu = x.Sum(z => z.TongTien - z.PhiVanChuyen), Thang = x.Key }).                     
+                       ToList();
+            return lst;
+        }
+
+        List<TKKINHDOANH> IHoaDonRepository.ThongKeKinhDoanh()
+        {
+            var lst = _context.Hoadons.
+                        Join(
+                              _context.Hoadoncts,
+                              hd => hd.MaHd,
+                              hdct => hdct.MaHd,
+                              (hd, hdct) => new { hd, hdct }
+                            ).
+                        Join(
+                              _context.Sanphams,
+                              combineHdct => combineHdct.hdct.MaSp,
+                              sp => sp.MaSp,
+                              (combineHdct, sp) => new
+                              { combineHdct, sp }
+                            ).
+                        GroupBy(x => x.sp.TenSp).
+                        Select(x => new TKKINHDOANH() { TenSP = x.Key, DoanhThu = x.Sum(z => z.combineHdct.hd.TongTien.Value) }).
+                        ToList();
+                            
+            return lst;
+        }
     }
 }

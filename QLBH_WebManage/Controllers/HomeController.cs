@@ -28,7 +28,6 @@ namespace QLBH_WebManage.Controllers
             {
                 List<object> data = new List<object>();
                 JwtCookie jwtCookie = new JwtCookie();
-                List<TKLOINHUAN> tk = new List<TKLOINHUAN>();
                 var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
                 if (cookie != null && !string.IsNullOrEmpty(cookie))
                 {
@@ -37,8 +36,66 @@ namespace QLBH_WebManage.Controllers
                     var result = API_Interact.GetData(url_api, request_url, jwtCookie.token);
                     if (!string.IsNullOrEmpty(result))
                     {
-                        tk = JsonConvert.DeserializeObject<List<TKLOINHUAN>>(result);
                         return Json(result, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public ActionResult ThongKeKinhDoanh()
+        {
+            try
+            {
+                List<object> data = new List<object>();
+                JwtCookie jwtCookie = new JwtCookie();
+                var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                    var request_url = "/api/Statistic/ThongKeKinhDoanh";
+                    var result = API_Interact.GetData(url_api, request_url, jwtCookie.token);
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        return Json(result, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public ActionResult ThongKeDoanhThuThang(string Year)
+        {
+            try
+            {
+                List<object> data = new List<object>();
+                JwtCookie jwtCookie = new JwtCookie();
+                var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                    var request_url = "/api/Statistic/ThongKeDoanhThuThang";
+                    var result = API_Interact.GetDataById(url_api, request_url, Year , "year", jwtCookie.token);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        return Json(result.Content, JsonRequestBehavior.AllowGet);
                     }
                     else
                     {

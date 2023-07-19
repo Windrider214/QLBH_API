@@ -1,5 +1,6 @@
 ﻿using QLBH_DataAccess.GenericRepository;
 using QLBH_DataAccess.Models;
+using QLBH_Services.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,9 @@ namespace QLBH_Services.HOADON
 
         int GetCusTotalOrder(string MaKH);
 
+        List<TKDOANHTHU> ThongKeDoanhThuThang(int year);
+
+        List<TKKINHDOANH> ThongKeKinhDoanh();
 
     }
 }

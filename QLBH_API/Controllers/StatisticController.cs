@@ -27,6 +27,22 @@ namespace QLBH_API.Controllers
             return Ok(lst);
         }
 
+        [HttpGet("ThongKeDoanhThuThang")]
+        public async Task<ActionResult> ThongKeDoanhThuThang(int year)
+        {
+            await Task.Yield();
+            var lst = _unitWork.HoaDonRepository.ThongKeDoanhThuThang(year);
+            return Ok(lst);
+        }
+
+        [HttpGet("ThongKeKinhDoanh")]
+        public async Task<ActionResult> ThongKeKinhDoanh()
+        {
+            await Task.Yield();
+            var lst = _unitWork.HoaDonRepository.ThongKeKinhDoanh();
+            return Ok(lst);
+        }
+
         [HttpGet("ThongKeDoanhThu")]
         public async Task<ActionResult> ThongKeDoanhThu()
         {
