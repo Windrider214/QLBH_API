@@ -19,7 +19,13 @@ namespace QLBH_Services.SANPHAM
 
         List<Sanpham> GetTop5();
 
-        
+        List<Sanpham> GetListPagingActive(int page, int pageSize);
+
+        List<Sanpham> GetListPagingByType(int page, int pageSize, string maloai);
+        int GetTotalRecByType(string maloai);
+
+        List<Sanpham> GetListPagingByBrand(int page, int pageSize, string math);
+        int GetTotalRecByBrand(string math);
 
         #region oldRepos
         //List<Sanpham> SANPHAM_GetAll();

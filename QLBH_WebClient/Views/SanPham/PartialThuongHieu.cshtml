@@ -12,13 +12,92 @@
         if (Model != null && Model.Count > 0)
         {
             foreach (var item in Model)
-            {
-        <a href="#" class="d-flex color-item align-items-center">
-            <img src="@media@item.anhTh" style="width: 50px;height: 50px" class="rounded" /> &nbsp;&nbsp;&nbsp;  <span class="text-end"><strong>@item.tenTh</strong></span>
-        </a>
-        <input type="checkbox" id="chK_@item.maTh"/>
+            { <br />
+
+                <a style="cursor: pointer" onclick="getDsSanPhamByBrand('@item.maTh')" class="d-flex color-item align-items-center">
+                    <img src="@media@item.anhTh" style="width: 50px;height: 50px" class="rounded" /> &nbsp;&nbsp;&nbsp;  <span class="text-end"><strong>@item.tenTh</strong></span>
+                </a>
             }
         }
     }
 
 </div>
+
+<script>
+    jQuery(document).ready(function ($) {
+
+    });
+
+    var pageSize = 6;
+    var pageIndex = 1;
+
+    //Lấy sản phẩm
+    function getDsSanPhamByBrand(math) {
+        var inputData1 = {
+            math: math,
+
+        };
+
+        var inputData2 = {
+            MaTH: math,
+            page: pageIndex,
+            pageSize: pageSize
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/SanPham/GetProcTotalByBrand",
+            data: inputData1,
+            success: function (data) {
+                Common.setCookie("TotalByBrand", data, 1);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        }).done(function () {
+            $("#pagination-demo").hide();
+            $("#pagination-demo1").hide();
+            $("#pagination-demo2").show();
+                  $.ajax({
+                type: 'POST',
+                      url: "/SanPham/PartialSanPhamByBrand",
+                data: inputData2,
+                      success: function (data) {
+                          var total = Common.getCookie("TotalByBrand");
+                    $('#dsSP').html(data);
+                    dataPaging2(total, function () {
+                        getDsSanPhamByBrand(math);
+                    });
+                },
+                error: function (data) {
+                    console.log("error:" + JSON.stringify(data));
+
+                }
+
+            });
+        });
+
+
+    }
+
+    //Phân trang
+    function dataPaging2(totalRow, callback) {
+
+        var totalPage = Math.ceil(totalRow / pageSize);
+        $('#pagination-demo2').twbsPagination({
+            totalPages: totalPage,
+            visiblePages: 5,
+            first: "Đầu",
+            next: "Tiếp",
+            last: "Cuối",
+            prev: "Trước",
+            onPageClick: function (event, page) {
+                pageIndex = page;
+                setTimeout(callback, 200);
+            }
+        });
+    }
+
+</script>

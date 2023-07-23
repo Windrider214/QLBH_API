@@ -1,11 +1,14 @@
 ﻿using Newtonsoft.Json;
 using QLBH_WebClient.DTO;
 using QLBH_WebClient.Helper;
+using QLBH_WebClient.Models;
+
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -25,7 +28,7 @@ namespace QLBH_WebClient.Controllers
                 if (string.IsNullOrEmpty(TenSp))
                 {
                     List<SANPHAM> sp = new List<SANPHAM>();
-                    var request_url = "/api/SanPham/GetSanPhamPaging";
+                    var request_url = "/api/SanPham/GetSanPhamActivePaging";
                     Page pageData = new Page { page = page, pageSize = pageSize };
                     var jsonData = JsonConvert.SerializeObject(pageData);
                     var result = API_Interact.PullData(url_api, request_url, jsonData, "");
@@ -138,6 +141,29 @@ namespace QLBH_WebClient.Controllers
             }
         }
 
+        public ActionResult LoaiSP(string MaLoai)
+        {
+            try
+            {
+                var lsp = new LOAISP();
+                var request_url = "api/SanPham/GetLoaiSPById";
+                var result = API_Interact.GetDataById(url_api, request_url, MaLoai, "MaLoai", "");
+                if (result.IsSuccessStatusCode)
+                {
+                    lsp = JsonConvert.DeserializeObject<LOAISP>(result.Content);
+                    return View(lsp);
+
+                }
+                return null;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public ActionResult SearchSuggest(string TenSp)
         {
             try
@@ -150,6 +176,109 @@ namespace QLBH_WebClient.Controllers
                     sp = JsonConvert.DeserializeObject<List<SANPHAM>>(result.Content);
                 }
                 return Json(result.Content, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public ActionResult GetProcTotalByType(string maloai)
+        {
+            try
+            {
+                var request_url = "/api/SanPham/GetTotalRecByType";
+                var result = API_Interact.GetDataById(url_api, request_url, maloai, "maloai", "");
+                return Json(result.Content, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public ActionResult PartialSanPhamByType(ProducFilter proc)
+        {
+            try
+            {              
+                    List<SANPHAM> sp = new List<SANPHAM>();
+                    var request_url = "/api/SanPham/GetSanPhamByTypePaging";
+                    var jsonData = JsonConvert.SerializeObject(proc);
+                    var result = API_Interact.PullData(url_api, request_url, jsonData, "");
+                    if (result.IsSuccessStatusCode)
+                    {
+                        //sp = new JavaScriptSerializer().Deserialize<List<SANPHAM>>(result);
+                        sp = JsonConvert.DeserializeObject<List<SANPHAM>>(result.Content);
+                        return PartialView(sp);
+                    }
+                
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public ActionResult GetProcTotalByBrand(string math)
+        {
+            try
+            {
+                var request_url = "/api/SanPham/GetTotalRecByBrand";
+                var result = API_Interact.GetDataById(url_api, request_url, math, "math", "");
+                return Json(result.Content, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public ActionResult PartialSanPhamByBrand(ProducFilter proc)
+        {
+            try
+            {
+                List<SANPHAM> sp = new List<SANPHAM>();
+                var request_url = "/api/SanPham/GetSanPhamByBrandPaging";
+                var jsonData = JsonConvert.SerializeObject(proc);
+                var result = API_Interact.PullData(url_api, request_url, jsonData, "");
+                if (result.IsSuccessStatusCode)
+                {
+                    //sp = new JavaScriptSerializer().Deserialize<List<SANPHAM>>(result);
+                    sp = JsonConvert.DeserializeObject<List<SANPHAM>>(result.Content);
+                    return PartialView(sp);
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult CapNhatLuotXem(string MaSP)
+        {
+            try
+            {
+                var request_url = "/api/SanPham/CapNhatLuotXem";
+                var result = API_Interact.GetDataById(url_api, request_url, MaSP, "MaSP", "");
+                if (result.IsSuccessStatusCode)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.OK);
+
+                }
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
             }
             catch (Exception)
             {

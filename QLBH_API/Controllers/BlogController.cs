@@ -39,6 +39,24 @@ namespace QLBH_API.Controllers
             return Ok(lst);
         }
 
+        [HttpPost("GetBlogPagingByType")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetBlogPagingByType(BlogFilter blg)
+        {
+            await Task.Yield();
+            var lst = _unitWork.BlogRepository.GetBlogPagingByType(blg.page, blg.pageSize, blg.MaDm);
+            return Ok(lst);
+        }
+
+        [HttpGet("GetTotalByType")]
+        [AllowAnonymous]
+        public async Task<int> GetTotalByType(string madm)
+        {
+            await Task.Yield();
+            var totalRow = _unitWork.BlogRepository.GetTotalRecByType(madm);
+            return totalRow;
+        }
+
         [HttpPost("InsertBlog")]
         public async Task<ActionResult> InsertLoaiBlogType(Tintuc blg)
         {
@@ -70,7 +88,16 @@ namespace QLBH_API.Controllers
             Tintuc lst = _unitWork.BlogRepository.GetById(MaTinTuc);
             return Ok(lst);
         }
+        
 
+        [HttpGet("GetByIdClient")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetByIdClient(string MaTinTuc)
+        {
+            await Task.Yield();
+            Tintuc lst = _unitWork.BlogRepository.GetByIdClient(MaTinTuc);
+            return Ok(lst);
+        }
         [HttpPut("UpdateBlog")]
         public async Task<ActionResult> UpdateBlog(Tintuc blg)
         {
@@ -110,6 +137,31 @@ namespace QLBH_API.Controllers
             Tintuc last = _unitWork.BlogRepository.GetBlogSaleNews();
             //var lst = _unitWork.SanPhamRepository.GetAll();
             return last;
+        }
+
+        [HttpGet("GetAbout")]
+        [AllowAnonymous]
+        public async Task<Tintuc> GetAbout()
+        {
+            await Task.Yield();
+            Tintuc last = _unitWork.BlogRepository.GetAbout();
+            //var lst = _unitWork.SanPhamRepository.GetAll();
+            return last;
+        }
+
+        [HttpGet("CapNhatLuotXem")]
+        [AllowAnonymous]
+        public async Task<ActionResult> CapNhatLuotXem(string MaTinTuc)
+        {
+            await Task.Yield();
+            var entity = _unitWork.BlogRepository.GetById(MaTinTuc);
+            if (entity != null)
+            {
+                entity.LuotXem = entity.LuotXem + 1;
+                _unitWork.BlogRepository.Update(entity);
+            }
+            var lst = _unitWork.Save();
+            return Ok(lst);
         }
         #endregion
 
@@ -175,6 +227,7 @@ namespace QLBH_API.Controllers
             var lst = _unitWork.BlogTypeRepository.Search(s => s.TenDm.Contains(TenDM));
             return Ok(lst);
         }
+
 
         #endregion
     }

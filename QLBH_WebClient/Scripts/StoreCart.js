@@ -124,6 +124,8 @@ UpdateItemToCart = function (e) {
     });
 }
 
+
+
 CalcMinusorPlusQuantity = function (type, productid) {
     var $input_quantity = $("#txtSoLuong_" + productid);
     var sl = $("#txtSoLuong_" + productid).val();

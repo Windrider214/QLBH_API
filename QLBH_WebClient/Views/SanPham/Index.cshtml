@@ -7,7 +7,7 @@
 <div class="bg-light py-3">
     <div class="container">
         <div class="row">
-            <div class="col-md-12 mb-0"><a href="/TrangChu/Index">Trang Chủ</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Sản Phẩm</strong></div>
+            <div class="col-md-12 mb-0"><a href="/TrangChu/Index" class="font-weight-normal">Trang Chủ</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Sản Phẩm</strong></div>
         </div>
     </div>
 </div>
@@ -17,11 +17,11 @@
 
         <div class="row mb-5">
             <div class="col-md-9 order-2">
-                <div class="row">
+                @*<div class="row">
                     <div class="col-md-12 mb-5">
                         <div class="float-md-left mb-4"><h2 class="text-black h5">Tất cả sản phẩm ( @ViewBag.TotalRow )</h2></div>
                     </div>
-                </div>
+                </div>*@
 
                 <div id="dsSP"> </div>
 
@@ -30,10 +30,24 @@
                         <ul id="pagination-demo" class="pagination-x"></ul>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 order-1 mb-5 mb-md-0">
-                <div id="dsLSP"></div>
 
+                <div class="d-flex justify-content-center">
+                    <div class="row" data-aos="fade-up">
+                        <ul id="pagination-demo1" class="pagination-x"></ul>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <div class="row" data-aos="fade-up">
+                        <ul id="pagination-demo2" class="pagination-x"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 order-1 mb-5 mb-md-0" data-aos="fade-right">
+                <button class="btn btn-info btn-lg btn-block" onclick="getDsSanPham()"> Tất cả sản phẩm</button>
+                <hr />
+                <div id="dsLSP"></div>
                 <div class="border p-4 rounded mb-4">
                     <div id="dsTH"></div>
                 </div>
@@ -55,6 +69,11 @@
 
     //Lấy sản phẩm
     function getDsSanPham() {
+        RemoveCookie('TotalByType');
+        $("#pagination-demo1").hide();
+        $("#pagination-demo2").hide();
+
+        $("#pagination-demo").show();
 
         var inputData = {
             TenSp: "",
@@ -138,4 +157,20 @@
 
         });
     }
+
+    $(document).on('click', '.nav-link.active', function () {
+        var href = $(this).attr('href').substring(1);
+        //alert(href);
+        $(this).removeClass('active');
+        $('.tab-pane[id="' + href + '"]').removeClass('active');
+
+    });
+    $(document).mouseup(function (e) {
+        var container = $("#tablist"); // target ID or class
+        // if the target of the click isn't the container nor a descendant of the container
+        if (!container.is(e.target) && container.has(e.target).length === 0) {
+            // get Event here
+            $('.active').removeClass('active');
+        }
+    });
 </script>

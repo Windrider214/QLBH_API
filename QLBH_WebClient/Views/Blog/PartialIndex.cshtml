@@ -1,0 +1,28 @@
+﻿@model List<QLBH_WebClient.DTO.BLOG>
+
+
+@{
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/blogs/";
+
+}
+
+<div class="container">
+    <div class="row" data-aos="fade-right">
+        @if( Model != null && Model.Count > 0)
+         {
+            foreach(var item in Model)
+                {
+                    <div class="col-3">
+                        <img class="img-fluid" src="@media@item.anhTt" />
+                    </div>
+                    <div class="col-9">
+                        <h5 class="font-weight-bold"><a href="/Blog/Detail?MaTinTuc=@item.maTinTuc">@item.tieuDe</a></h5>
+                        <div class="bg-light">Lượt xem : <b>@item.luotXem</b></div>
+                        <hr />
+                        <div class="font-weight-normal">@item.moTa</div>
+                    </div>
+                }
+         }
+    </div>
+</div>
+

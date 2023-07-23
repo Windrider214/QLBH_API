@@ -30,11 +30,12 @@
         </dd>
 
         <dt>
-
+            <label for="txtMoTaCT" class="form-label">Mô tả: <textarea id="txtMoTaCT" class="form-control">@Html.DisplayFor(modelItem => Model.moTa)</textarea></label>
+            <script>CKEDITOR.replace("txtMoTaCT");</script>
         </dt>
-        <label for="txtTenKH" class="form-label">Ảnh loại sản phẩm</label>
 
         <dd>
+            <label for="txtTenKH" class="form-label">Ảnh loại sản phẩm</label>
             <img src="@media@Model.image" style="width: 100px;height: 100px" />
         </dd>
 
@@ -110,6 +111,7 @@
     function UpdateLoaiSP() {
         var maloaisp = $("#txtMaLoaiSP").val();
         var tenloaisp = $("#txtTenLoaiSP").val();
+        var motact = CKEDITOR.instances['txtMoTaCT'].getData();
 
         var imageBase64 = "";
 
@@ -125,7 +127,8 @@
         var inputData = {
             maLoai: maloaisp,
             tenLoaiSp: tenloaisp,
-            image: imageBase64
+            image: imageBase64,
+            moTa: motact
         };
 
         $.ajax({

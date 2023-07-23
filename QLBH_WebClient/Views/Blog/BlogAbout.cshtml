@@ -1,0 +1,40 @@
+﻿@model QLBH_WebClient.DTO.BLOG
+
+@{
+    ViewBag.Title = "BlogAbout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="bg-light py-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mb-0"><a href="/TrangChu/Index" class="font-weight-normal">Trang Chủ</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Giới Thiệu</strong></div>
+        </div>
+    </div>
+</div>
+<br />
+
+<div class="container" data-aos="fade-down">
+    <div class="row">
+        <div class="col text-center">
+            <h1 class="font-weight-bold">
+                <a href="#">@Model.tieuDe</a>
+            </h1>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col">
+            <h6 class="font-weight-normal">
+                @Model.moTa
+            </h6>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col">
+            <div class="font-weight-normal">
+                @Html.Raw(Model.noiDung)
+            </div>
+        </div>
+    </div>
+</div>

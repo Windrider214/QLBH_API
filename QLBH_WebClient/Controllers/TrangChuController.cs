@@ -63,6 +63,32 @@ namespace QLBH_WebClient.Controllers
             }
         }
 
+        public ActionResult BrandMenu(string TenTh)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(TenTh))
+                {
+                    List<THUONGHIEU> th = new List<THUONGHIEU>();
+                    var request_url = "/api/ThuongHieu/GetThuongHieu";
+                    var result = API_Interact.GetData(url_api, request_url, "");
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        th = JsonConvert.DeserializeObject<List<THUONGHIEU>>(result);
+                        return PartialView(th);
+                    }
+                    else
+                    {
+                        return new HttpStatusCodeResult(404, "Hệ thống không xác thực, xin mời đăng nhập lại !!!");
+                    }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
 
         public ActionResult PartialTopSP()
         {

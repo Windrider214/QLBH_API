@@ -1,0 +1,121 @@
+﻿@model QLBH_WebClient.DTO.LOAISP
+
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/categories/";
+
+}
+
+<div class="bg-light py-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mb-0"><a href="/TrangChu/Index" class="font-weight-normal">Trang Chủ</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Danh Mục</strong></div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3">
+            <img src="@media@Model.image" class="img-fluid" />
+        </div>
+        <div class="col-sm-9">
+            <h2 class="font-weight-bold  btn-outline-primary">@Model.tenLoaiSp</h2>
+            <div class="font-weight-normal">
+                @Html.Raw(Model.moTa)
+            </div>
+        </div>
+    </div>
+    <br />
+
+    <hr />
+
+    <div class="row" data-aos="fade-up">
+        <div class="col-md-10" id="dsSanPham"></div>
+    </div>
+    <div class="d-flex justify-content-center">
+        <div class="row" data-aos="fade-up">
+            <ul id="pagination-demo1" class="pagination-x"></ul>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    jQuery(document).ready(function ($) {
+        getDsSanPhamByType('@Model.maLoai');
+    });
+
+    var pageSize = 6;
+    var pageIndex = 1;
+
+    //Lấy sản phẩm
+    function getDsSanPhamByType(maloai) {
+        var inputData1 = {
+            maloai: maloai,
+
+        };
+
+        var inputData2 = {
+            MaLoai: maloai,
+            page: pageIndex,
+            pageSize: pageSize
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/SanPham/GetProcTotalByType",
+            data: inputData1,
+            success: function (data) {
+                Common.setCookie("TotalByType", data, 1);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        }).done(function () {
+
+            $.ajax({
+                type: 'POST',
+                url: "/SanPham/PartialSanPhamByType",
+                data: inputData2,
+                success: function (data) {
+                    var total = Common.getCookie("TotalByType");
+                    $('#dsSanPham').html(data);
+                    dataPaging1(total, function () {
+                        getDsSanPhamByType(maloai);
+                    });
+                },
+                error: function (data) {
+                    console.log("error:" + JSON.stringify(data));
+
+                }
+
+            });
+        });
+
+
+    }
+
+    //Phân trang
+    function dataPaging1(totalRow, callback) {
+
+        var totalPage = Math.ceil(totalRow / pageSize);
+        $('#pagination-demo1').twbsPagination({
+            totalPages: totalPage,
+            visiblePages: 5,
+            first: "Đầu",
+            next: "Tiếp",
+            last: "Cuối",
+            prev: "Trước",
+            onPageClick: function (event, page) {
+                pageIndex = page;
+                setTimeout(callback, 200);
+            }
+        });
+    }
+</script>
+

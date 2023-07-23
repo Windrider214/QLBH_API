@@ -14,6 +14,7 @@ namespace QLBH_DataAccess.Models
         public string? TenTh { get; set; }
         public string? XuatXu { get; set; }
         public string? AnhTh { get; set; }
+        public string? MoTa { get; set; }
 
         public virtual ICollection<Sanpham> Sanphams { get; set; }
     }

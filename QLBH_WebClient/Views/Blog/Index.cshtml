@@ -1,0 +1,122 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="bg-light py-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mb-0"><a href="/TrangChu/Index" class="font-weight-normal">Trang Chủ</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Bài Viết</strong></div>
+        </div>
+    </div>
+</div>
+
+<div class="site-section">
+    <div class="container">
+
+        <div class="row mb-5">
+            <div class="col-md-9 order-2">
+
+                <div id="dsTinTuc"> </div>
+                <br />
+                
+                <div class="d-flex justify-content-center">
+                    <div class="row" data-aos="fade-up">
+                        <ul id="pagination-demo" class="pagination-x"></ul>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <div class="row" data-aos="fade-up">
+                        <ul id="pagination-demo1" class="pagination-x"></ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-3 order-1 mb-5 mb-md-0" data-aos="fade-up">
+                <button class="btn btn-warning btn-block" onclick="getDsBlog()"> Tất cả bài viết</button>
+                <hr />
+                <div id="dsLoaiTin"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    jQuery(document).ready(function ($) {
+        getDsLoaiTin();
+        getDsBlog();
+    });
+
+    var pageSize = 6;
+    var pageIndex = 1;
+
+       function getDsBlog() {
+        RemoveCookie('TotalBlogByType');
+        $("#pagination-demo1").hide();
+        $("#pagination-demo2").hide();
+
+        $("#pagination-demo").show();
+
+        var inputData = {
+            MaTinTuc: "",
+            token: "",
+            page: pageIndex,
+            pageSize: pageSize
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/Blog/PartialIndex",
+            data: inputData,
+            success: function (data) {
+                $('#dsTinTuc').html(data);
+                dataPaging('@ViewBag.TotalRow', function () {
+                    getDsBlog();
+                });
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+
+    //Phân trang
+    function dataPaging(totalRow, callback) {
+
+        var totalPage = Math.ceil(totalRow / pageSize);
+        $('#pagination-demo').twbsPagination({
+            totalPages: totalPage,
+            visiblePages: 5,
+            first: "Đầu",
+            next: "Tiếp",
+            last: "Cuối",
+            prev: "Trước",
+            onPageClick: function (event, page) {
+                pageIndex = page;
+                setTimeout(callback, 200);
+            }
+        });
+    }
+
+    function getDsLoaiTin() {
+
+        $.ajax({
+            type: 'POST',
+            url: "/Blog/PartialBlogType",
+            data: {},
+            success: function (data) {
+                $('#dsLoaiTin').html(data);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+</script>

@@ -49,7 +49,7 @@
                                     </div>
                                 </div>
                                 <div class="card-footer text-center py-3">
-                                    <div class="small"><i class="fa fa-mobile-phone"></i> Liên hệ hỗ trợ - 0981617791 </div>
+                                    <div class="small"><i class="fa fa-mobile-phone"></i> Liên hệ hỗ trợ - 098.161.7791 </div>
                                 </div>
                             </div>
                         </div>
@@ -119,7 +119,11 @@
                     }
                 },
                 error: function (data) {
-                    console.log("error:" + JSON.stringify(data));
+                    swal({
+                        text: "Đăng nhập thất bại !!!",
+                        icon: "error",
+                        button: "OK!",
+                    });
                 }
             });
 

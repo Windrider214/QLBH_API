@@ -44,6 +44,11 @@ namespace QLBH_WebManage.Controllers
 
         public ActionResult Login(LoginModel user)
         {
+            if (!ModelState.IsValid)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+            }
+
             var returnData = new ReturnData();
             try
             {

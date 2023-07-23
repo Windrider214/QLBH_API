@@ -170,10 +170,12 @@
     <Compile Include="Auth\LoginModel.cs" />
     <Compile Include="Auth\RegisterModel.cs" />
     <Compile Include="Auth\UserRoles.cs" />
+    <Compile Include="Controllers\BlogController.cs" />
     <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\MediaController.cs" />
     <Compile Include="Controllers\PhanHoiController.cs" />
     <Compile Include="Controllers\SanPhamController.cs" />
+    <Compile Include="Controllers\ThuongHieuController.cs" />
     <Compile Include="Controllers\TrangChuController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="DTO\BLOG.cs" />
@@ -199,6 +201,7 @@
     <Compile Include="Helper\Page.cs" />
     <Compile Include="Helper\TokenDecode.cs" />
     <Compile Include="Helper\VNtoEnglish.cs" />
+    <Compile Include="Models\BlogFilter.cs" />
     <Compile Include="Models\Cart.cs" />
     <Compile Include="Models\ChangePasswordModel.cs" />
     <Compile Include="Models\ClientConfirmEmail.cs" />
@@ -212,6 +215,7 @@
     <Compile Include="Models\JwtCookie.cs" />
     <Compile Include="Models\Login2FA.cs" />
     <Compile Include="Models\OrderEditModel.cs" />
+    <Compile Include="Models\ProducFilter.cs" />
     <Compile Include="Models\ReturnData.cs" />
     <Compile Include="Models\SignUp.cs" />
     <Compile Include="Others\PayCompare.cs" />
@@ -250,6 +254,10 @@
     <Content Include="Content\js\owl.carousel.min.js" />
     <Content Include="Content\js\popper.min.js" />
     <Content Include="Content\js\slick.min.js" />
+    <Content Include="Content\logo-giao-hang-nhanh-1.png" />
+    <Content Include="Content\Logo-VNPAY-QR.png" />
+    <Content Include="Content\logo.jpg" />
+    <Content Include="Content\logoSaleNoti.png" />
     <Content Include="Content\ProductImgSlider.css" />
     <Content Include="Content\Screenshot_6.jpg" />
     <Content Include="Content\slick-1.8.1\.gitignore" />
@@ -778,6 +786,17 @@
     <Content Include="Views\PhanHoi\Index.cshtml" />
     <Content Include="Views\User\GetUserFeedback.cshtml" />
     <Content Include="Views\User\FeedBackDetail.cshtml" />
+    <Content Include="Views\SanPham\PartialSanPhamByType.cshtml" />
+    <Content Include="Views\SanPham\PartialSanPhamByBrand.cshtml" />
+    <Content Include="Views\TrangChu\BrandMenu.cshtml" />
+    <Content Include="Views\ThuongHieu\Detail.cshtml" />
+    <Content Include="Views\SanPham\LoaiSP.cshtml" />
+    <Content Include="Views\Blog\PartialBlogType.cshtml" />
+    <Content Include="Views\Blog\Index.cshtml" />
+    <Content Include="Views\Blog\PartialIndex.cshtml" />
+    <Content Include="Views\Blog\Detail.cshtml" />
+    <Content Include="Views\Blog\PartialBlogByType.cshtml" />
+    <Content Include="Views\Blog\BlogAbout.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

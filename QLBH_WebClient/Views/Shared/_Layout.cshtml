@@ -83,35 +83,15 @@
             </div>
             <nav class="site-navigation text-right text-md-center" role="navigation">
                 <div class="container">
-                    <ul class="site-menu js-clone-nav d-none d-md-block font-weight-normal ">
-                        <li class="has-children active">
-                            <a href="index.html">Home</a>
-                            <ul class="dropdown">
-                                <li><a href="#">Menu One</a></li>
-                                <li><a href="#">Menu Two</a></li>
-                                <li><a href="#">Menu Three</a></li>
-                                <li class="has-children">
-                                    <a href="#">Sub Menu</a>
-                                    <ul class="dropdown">
-                                        <li><a href="#">Menu One</a></li>
-                                        <li><a href="#">Menu Two</a></li>
-                                        <li><a href="#">Menu Three</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
+                    <ul class="site-menu js-clone-nav d-none d-md-block">
+                        <li><a href="/Blog/BlogAbout" class="font-weight-bold">GIỚI THIỆU</a></li>
+                        <li class="has-children" id="brandMenu" >
+                            <a class="font-weight-bold">THƯƠNG HIỆU</a>
                         </li>
-                        <li class="has-children">
-                            <a href="about.html">About</a>
-                            <ul class="dropdown">
-                                <li><a href="#">Menu One</a></li>
-                                <li><a href="#">Menu Two</a></li>
-                                <li><a href="#">Menu Three</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="shop.html">Shop</a></li>
-                        <li><a href="#">Catalogue</a></li>
-                        <li><a href="#">New Arrivals</a></li>
-                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="/SanPham/Index" class="font-weight-bold">SHOP</a></li>
+                        <li><a href="/Blog/Index" class="font-weight-bold">TIN TỨC</a></li>
+                        <li><a href="#" class="font-weight-bold">HƯỚNG DẪN</a></li>
+                        <li><a href="/PhanHoi/Index" class="font-weight-bold">LIÊN HỆ</a></li>
                     </ul>
                 </div>
             </nav>
@@ -124,68 +104,76 @@
 
 
         @*FOOTER*@
-        <footer class="site-footer border-top">
-            <div class="container">
+        <footer class="site-footer">
+            <div class="container-fluid">
                 <div class="row">
-                    <div class="col-lg-6 mb-5 mb-lg-0">
+                    <div class="col-lg-3 mb-5 mb-lg-0 bg-light">
+                        <div class="row">
+                            <div class="col-md-12 font-weight-normal">
+                                <br />
+                                <h3 class="footer-heading mb-4 font-weight-bold">Về Chúng Tôi</h3>
+                                <p><img src="~/Content/logo.jpg" style="width: 200px;height: 50px" /></p>
+                                <p>CHÚNG TÔI CUNG CẤP SẢN PHẨM CHẤT LƯỢNG TỪ CÁC THƯƠNG HIỆU HÀNG ĐẦU</p>
+                                <div class="row font-weight-normal">
+                                    <div class="col-6 mb-4">
+                                        <p><img src="~/Content/logo-giao-hang-nhanh-1.png" class="img-fluid" /></p>
+                                    </div>
+                                    <div class="col-6 mb-4">
+                                        <p><img src="~/Content/Logo-VNPAY-QR.png" class="img-fluid" /></p>
+                                    </div>
+                                </div>
+                                <p><img src="~/Content/logoSaleNoti.png" class="img-fluid" /></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 mb-5 mb-lg-0 bg-light">
                         <div class="row">
                             <div class="col-md-12">
-                                <h3 class="footer-heading mb-4">Navigations</h3>
-                            </div>
-                            <div class="col-md-6 col-lg-4">
-                                <ul class="list-unstyled">
-                                    <li><a href="#">Sell online</a></li>
-                                    <li><a href="#">Features</a></li>
-                                    <li><a href="#">Shopping cart</a></li>
-                                    <li><a href="#">Store builder</a></li>
-                                </ul>
-                            </div>
-                            <div class="col-md-6 col-lg-4">
-                                <ul class="list-unstyled">
-                                    <li><a href="#">Mobile commerce</a></li>
-                                    <li><a href="#">Dropshipping</a></li>
-                                    <li><a href="#">Website development</a></li>
-                                </ul>
-                            </div>
-                            <div class="col-md-6 col-lg-4">
-                                <ul class="list-unstyled">
-                                    <li><a href="#">Point of sale</a></li>
-                                    <li><a href="#">Hardware</a></li>
-                                    <li><a href="#">Software</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
-                        <h3 class="footer-heading mb-4">Promo</h3>
-                        <a href="#" class="block-6">
-                            <img src="images/hero_1.jpg" alt="Image placeholder" class="img-fluid rounded mb-4">
-                            <h3 class="font-weight-light  mb-0">Finding Your Perfect Shoes</h3>
-                            <p>Promo from  nuary 15 &mdash; 25, 2019</p>
-                        </a>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <div class="block-5 mb-5">
-                            <h3 class="footer-heading mb-4">Contact Info</h3>
-                            <ul class="list-unstyled">
-                                <li class="address">203 Fake St. Mountain View, San Francisco, California, USA</li>
-                                <li class="phone"><a href="tel://23923929210">+2 392 3929 210</a></li>
-                                <li class="email">emailaddress@domain.com</li>
-                            </ul>
-                        </div>
-
-                        <div class="block-7">
-                            <form action="#" method="post">
-                                <label for="email_subscribe" class="footer-heading">Subscribe</label>
-                                <div class="form-group">
-                                    <input type="text" class="form-control py-4" id="email_subscribe" placeholder="Email">
-                                    <input type="submit" class="btn btn-sm btn-primary" value="Send">
+                                <br />
+                                <h3 class="footer-heading mb-4 font-weight-bold" >Liên Hệ</h3>
+                                <div class="font-weight-normal">
+                                    <p>
+                                        <b>Địa chỉ:</b> Số 6 ngõ Bảo Khánh - P.Hàng Trống -
+                                    </p>
+                                    <p>
+                                        Q.Hoàn Kiếm - Hà Nội
+                                    </p>
+                                    <p>
+                                        <b>Hotline:</b> 097.559.2299
+                                    </p>
+                                    <p>
+                                        <b>Website:</b> zayshop.com
+                                    </p>
+                                    <p>
+                                        <b>Email:</b> zayshop@gmail.com
+                                    </p>
+                                    <P>
+                                        <b>Giờ mở cửa:</b> 9h00- 19h30
+                                    </P>
+                                    <P>
+                                        <b></b>Tất cả các ngày trong tuần
+                                    </P>
+                                    <p>
+                                        <a href=""><i class="fa fa-facebook-square fa-2x"></i></a>
+                                        <a href=""><i class="fa fa-youtube-square fa-2x"></i></a>
+                                        <a href=""><i class="fa fa-twitter-square fa-2x"></i></a>
+                                    </p>
                                 </div>
-                            </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 mb-5 mb-lg-0" style="background-color:gainsboro">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <br />
+                                <h3 class="footer-heading mb-4 font-weight-bold">Bản Đồ</h3>
+                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d232.75328183663456!2d105.85031063338032!3d21.03058487127158!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab9562c94d41%3A0x505be35282309a84!2zU-G7kSA2IE5nLiBCw6FvIEtow6FuaCwgSMOgbmcgVHLhu5FuZywgSG_DoG4gS2nhur9tLCBIw6AgTuG7mWksIFZpZXRuYW0!5e0!3m2!1sen!2s!4v1678004621083!5m2!1sen!2s" width="100%" height="400" frameborder="0" style="border:0" allowfullscreen></iframe>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                </div>
         </footer>
     </div>
 
@@ -201,6 +189,7 @@
 
     <script>
         jQuery(document).ready(function ($) {
+            getBrandMenu();
             getUserPanel();
             getSLH();
 
@@ -294,6 +283,23 @@
                 data: {},
                 success: function (data) {
                     $('#userInfor').html(data);
+                },
+                error: function (data) {
+                    console.log("error:" + JSON.stringify(data));
+
+                }
+
+            });
+        }
+
+        function getBrandMenu() {
+
+            $.ajax({
+                type: 'POST',
+                url: "/TrangChu/BrandMenu",
+                data: {},
+                success: function (data) {
+                    $('#brandMenu').append(data);
                 },
                 error: function (data) {
                     console.log("error:" + JSON.stringify(data));

@@ -18,6 +18,7 @@ namespace QLBH_WebClient.DTO
         public string tenLoaiSp { get; set; }
 
         public string image { get; set; }
+        public string moTa { get; set; }
 
 
         public ICollection<SANPHAM> Sanphams { get; set; }

@@ -45,7 +45,10 @@
                     <label for="txtTenKH" class="form-label">Xuất xứ</label>
                     <input type="text" class="form-control" id="txtXuatXu">
                 </div>
-
+                <div class="mb-3">
+                    <label for="txtMoTaCT" class="form-label">Mô tả: <textarea id="txtMoTaCT" class="form-control"></textarea></label>
+                    <script>CKEDITOR.replace("txtMoTaCT");</script>
+                </div>
                 <div class="mb-3">
                     <label>Chọn ảnh</label>
                     <input type="file" class="form-control" id="uploadImage" />
@@ -126,6 +129,8 @@
         var math = $("#txtMaTH").val();
         var tenth = $("#txtTenTH").val();
         var xuatxu = $("#txtXuatXu").val();
+        var motact = CKEDITOR.instances['txtMoTaCT'].getData();
+
 
         var imageBase64 = "";
         if (typeof ($("#imagePreview").attr("src")) === 'undefined') {
@@ -147,7 +152,8 @@
             maTh: null,
             tenTh: tenth,
             xuatXu: xuatxu,
-            anhTh: imageBase64
+            anhTh: imageBase64,
+            moTa: motact
         };
 
         $.ajax({

@@ -19,6 +19,7 @@ namespace QLBH_WebManage.DTO
         [Required]
         public string xuatXu { get; set; }
         public string anhTh { get; set; }
+        public string moTa { get; set; }
 
         public ICollection<SANPHAM> Sanphams { get; set; }
     }

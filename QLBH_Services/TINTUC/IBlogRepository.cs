@@ -14,5 +14,12 @@ namespace QLBH_Services.TINTUC
         List<Tintuc> GetBlogPaging(int page, int pageSize);
         Tintuc GetBlogSaleNews();
         int GetTotalRec();
+
+        List<Tintuc> GetBlogPagingByType(int page, int pageSize, string madm);
+        int GetTotalRecByType(string madm);
+
+        Tintuc GetByIdClient(string MaTinTuc);
+
+        Tintuc GetAbout();
     }
 }

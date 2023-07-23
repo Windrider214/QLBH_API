@@ -5,6 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/";
     string media_seo = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/seoIMG/";
+    string media_brand = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/thuonghieu/";
 
     var imageString = "";
     string[] imageList = null;
@@ -19,7 +20,7 @@
 <div class="bg-light py-3">
     <div class="container">
         <div class="row">
-            <div class="col-md-12 mb-0"><a href="/TrangChu/Index">Trang Chủ</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">@Model.tenSp</strong></div>
+            <div class="col-md-12 mb-0"><a href="/TrangChu/Index" class="font-weight-normal">Trang Chủ</a><span class="mx-2 mb-0">/<a href="/SanPham/Index" class="font-weight-normal"> Sản Phẩm </a> /</span><strong class="text-black">@Model.tenSp</strong></div>
         </div>
     </div>
 </div>
@@ -50,26 +51,44 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <h2 class="text-black">@Model.tenSp</h2>
-                <h3 class="text-black">Thương hiệu : @Model.maThNavigation.tenTh</h3>
-                <h4 class="text-black">Loại : @Model.maLoaiNavigation.tenLoaiSp</h4>
-                <p class="mb-4">@Model.moTa</p>
-                <p><strong class="text-primary h4">@string.Format("{0:c0}", Model.donGia)</strong></p>
-                <div class="mb-5">
-                    <div class="input-group mb-3" style="max-width: 120px;">
-                        <div class="input-group mb-3 text-center" style="max-width: 120px;">
-                            <div class="input-group-prepend">
-                                <button class="btn btn-outline-primary js-btn-minus" type="button" data-productid="@Model.maSp" data-type="1" onclick="UpdateItemToCart(this)">&minus;</button>
-                            </div>
-                            <input type="text" class="form-control text-center" id="txtSoLuong_@Model.maSp" value="@Model.soLuong" data-productid="@Model.maSp" onchange="UpdateItemToCart(this)" disabled>
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-primary js-btn-plus" type="button" data-productid="@Model.maSp" data-type="2" onclick="UpdateItemToCart(this)">&plus;</button>
+                <h1 class="font-weight-bold"><a href="#">@Model.tenSp</a></h1>
+                <hr />
+                <div class="row">
+                    <div class="col-2 col-sm-2">
+                        <img class="img-fluid" src="@media_brand@Model.maThNavigation.anhTh" />
+                    </div>
+                    <div class="col-10 col-sm-10">
+                        <h6 class="mb-4 font-weight-normal">@Model.moTa</h6>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-12 font-weight-normal">
+                        => Xem thêm các sản phẩm : <a href="/ThuongHieu/Detail?MaTH=@Model.maThNavigation.maTh">@Model.maThNavigation.tenTh</a> tại ZAY SHOP
+                    </div>
+                </div>
+                <br />
+                <br />
+                <h4 class="font-weight-bold"> Giá : <strong class="text-primary h4">@string.Format("{0:c0}", Model.donGia)</strong></h4>
+                <br />
+                <div class="row">
+                    <div class="col-3 col-sm-3">
+                        <div class="input-group" style="max-width: 120px;">
+                            <div class="input-group mb-3 text-center" style="max-width: 120px;">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-outline-primary js-btn-minus" type="button" data-productid="@Model.maSp" data-type="1" onclick="UpdateItemToCart2(this)">&minus;</button>
+                                </div>
+                                <input type="text" class="form-control text-center" id="txtSoLuong" value="1" data-productid="@Model.maSp" disabled>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-primary js-btn-plus" type="button" data-productid="@Model.maSp" data-type="2" onclick="UpdateItemToCart2(this)">&plus;</button>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="col-9 col-sm-9">
+                        <p><button type="button" class="btn btn-block btn-success font-weight-bold" data-productid="@Model.maSp" data-productname="@Model.tenSp" data-price="@Model.donGia" data-image="@Model.seoImage" onclick="AddItemToCart2(this)">Thêm vào giỏ hàng</button></p>
+
+                    </div>
                 </div>
-                @*<p><button type="button" class="buy-now btn btn-sm btn-primary" onclick="addtoCart('@Model.maSp')">Thêm vào giỏ hàng</button></p>*@
-                <p><button type="button" class="buy-now btn btn-sm btn-primary" data-productid="@Model.maSp" data-productname="@Model.tenSp" data-price="@Model.donGia" data-image="@Model.seoImage" onclick="AddItemToCart(this)"><i class="fa fa-shopping-cart"></i></button></p>
             </div>
         </div>
     </div>
@@ -79,14 +98,12 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-7 site-section-heading text-center pt-4">
-                <h2>Giới thiệu sản phẩm</h2>
+                <h2 class="font-weight-bold">Giới thiệu sản phẩm</h2>
             </div>
         </div>
-        <div class="row  justify-content-center">
-            <div class="col-md-12">
-                <div>
+        <div class="row">
+            <div class="col text-left font-weight-normal">
                     @Html.Raw(Model.chiTietSp)
-                </div> 
             </div>
         </div>
     </div>
@@ -135,34 +152,137 @@
 </script>
 
 <script>
-    function addtoCart(id) {
 
+    jQuery(document).ready(function ($) {
+        capNhatLuotXem();
+
+    });
+
+
+    function AddItemToCart2 (e) {
+        var item = {
+            maSp: $(e).data('productid'),
+            tenSp: $(e).data('productname'),
+            soLuong: parseInt($('#txtSoLuong').val()),
+            donGia: $(e).data('price'),
+            seoImage: $(e).data('image'),
+        };
+        console.log(item);
+        if (item.maSp == '') {
+            swal({
+                text: "Hãy chọn ít nhất 1 sản phẩm !!!",
+                icon: "error",
+                button: "warning!",
+            });
+            return;
+        }
+        var store = GetCookie('ShoppingCart');
+        store = AddAndUpdateShoppingCart2(store, item);
+
+        swal({
+            text: "Thêm giỏ hàng thành công !!!",
+            icon: "success",
+            button: "OK!",
+        });
+
+        //Update slh header
+        $.ajax({
+            type: 'GET',
+            url: "/Cart/GetSLH",
+            data: {},
+            success: function (data) {
+                console.log(data.slh);
+                $("#slh").html(data.slh);
+            },
+            error: function () {
+                console.log("error:" + JSON.stringify(data));
+            }
+        });
+    }
+
+      function UpdateItemToCart2 (e) {
+
+        var item = {
+            maSp: $(e).data('productid'),
+        }
+
+          var soluong = parseInt($('#txtSoLuong').val());
+
+        if ($(e).data('type') != '0') {
+            soluong = CalcMinusorPlusQuantity2($(e).data('type'), item.maSp)
+
+        }
+
+        var store = GetCookie('ShoppingCart');
+        var index = store.findIndex(function (d) {
+            return d.maSp == item.maSp;
+        });
+
+        if (store.length == 0 || index == -1) {
+            return;
+        }
+
+        SetCookie('ShoppingCart', store);
+
+    }
+
+      function CalcMinusorPlusQuantity2 (type, productid) {
+        var $input_quantity = $("#txtSoLuong");
+          var sl = parseInt($("#txtSoLuong").val());
+
+        // giảm số lượng
+        if (type == 1) {
+            if (parseInt(sl, 10) > 1) {
+                $input_quantity.val(parseInt($input_quantity.val()) - 1);
+            }
+        }
+        // tăng số lượng
+        if (type == 2) {
+            $input_quantity.val(parseInt($input_quantity.val()) + 1);
+        }
+
+          return parseInt($("#txtSoLuong").val());
+    }
+
+        function capNhatLuotXem() {
         var inputData = {
-            masp: id,
-            SoLuong: 1,
-            type: "ajax"
+            MaSP: '@Model.maSp'
         }
 
         $.ajax({
-            url: "/Cart/AddToCart",
+            type: 'POST',
+            url: "/SanPham/CapNhatLuotXem",
             data: inputData,
             success: function (data) {
-                swal({
-                    text: "Thêm giỏ hàng thành công !!!",
-                    icon: "success",
-                    button: "OK!",
-                });
-                console.log(data.SoLuong);
-                $("#slh").html(data.SoLuong);
             },
-            error: function () {
-                swal({
-                    text: data.Description,
-                    icon: "Thêm giỏ hàng thất bại !!!",
-                    button: "warning!",
-                });
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
             }
+
         });
+    }
+
+    function AddAndUpdateShoppingCart2(store, item) {
+        console.log(store);
+        console.log(item);
+        var sl = $("#txtSoLuong").val();
+
+        var index = store.findIndex(function (d) {
+            return d.maSp == item.maSp;
+        });
+        console.log(store[index].soLuong);
+        if (store.length == 0 || index == -1) {
+            store.push(item);
+            SetCookie('ShoppingCart', store);
+            return store;
+        } else {
+            var newSL = parseInt(store[index].soLuong) + parseInt(sl);
+            store[index].soLuong = newSL;
+        }
+        SetCookie('ShoppingCart', store);
+
+        return store;
     }
 </script>
 

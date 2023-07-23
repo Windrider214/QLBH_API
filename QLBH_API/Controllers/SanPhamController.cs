@@ -32,13 +32,64 @@ namespace QLBH_API.Controllers
         }
 
         [HttpPost("GetSanPhamPaging")]
-        [AllowAnonymous]
         public async Task<ActionResult> SanPham_GetAll_Paging(Page page)
         {
             await Task.Yield();
             List<Sanpham> lst = _unitWork.SanPhamRepository.GetListPaging(page.page, page.pageSize);
             //var lst = _unitWork.SanPhamRepository.GetAll();
             return Ok(lst);
+        }
+
+        [HttpPost("GetSanPhamActivePaging")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetSanPhamActivePaging(Page page)
+        {
+            await Task.Yield();
+            List<Sanpham> lst = _unitWork.SanPhamRepository.GetListPagingActive(page.page, page.pageSize);
+            //var lst = _unitWork.SanPhamRepository.GetAll();
+            return Ok(lst);
+        }
+
+        [HttpPost("GetSanPhamByTypePaging")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetSanPhamByTypePaging(ProducFilter proc)
+        {
+            await Task.Yield();
+            List<Sanpham> lst = _unitWork.SanPhamRepository.GetListPagingByType(proc.page, proc.pageSize, proc.MaLoai);
+            //var lst = _unitWork.SanPhamRepository.GetAll();
+            return Ok(lst);
+        }
+
+
+        [HttpGet("GetTotalRecByType")]
+        [AllowAnonymous]
+        public async Task<int> GetTotalRecByType(string maloai)
+        {
+            await Task.Yield();
+            int totalRow = _unitWork.SanPhamRepository.GetTotalRecByType(maloai);
+            //var lst = _unitWork.SanPhamRepository.GetAll();
+            return totalRow;
+        }
+
+        [HttpPost("GetSanPhamByBrandPaging")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetSanPhamByBrandPaging(ProducFilter proc)
+        {
+            await Task.Yield();
+            List<Sanpham> lst = _unitWork.SanPhamRepository.GetListPagingByBrand(proc.page, proc.pageSize, proc.MaTH);
+            //var lst = _unitWork.SanPhamRepository.GetAll();
+            return Ok(lst);
+        }
+
+
+        [HttpGet("GetTotalRecByBrand")]
+        [AllowAnonymous]
+        public async Task<int> GetTotalRecByBrand(string math)
+        {
+            await Task.Yield();
+            int totalRow = _unitWork.SanPhamRepository.GetTotalRecByBrand(math);
+            //var lst = _unitWork.SanPhamRepository.GetAll();
+            return totalRow;
         }
 
         [HttpGet("GetTop5")]
@@ -126,7 +177,20 @@ namespace QLBH_API.Controllers
             return Ok(lst);
         }
 
-
+        [HttpGet("CapNhatLuotXem")]
+        [AllowAnonymous]
+        public async Task<ActionResult> CapNhatLuotXem(string MaSP)
+        {
+            await Task.Yield();
+            var entity = _unitWork.SanPhamRepository.GetById(MaSP);
+            if (entity != null)
+            {
+                entity.SoLanXem = entity.SoLanXem + 1;
+                _unitWork.SanPhamRepository.Update(entity);
+            }
+            var lst = _unitWork.Save();
+            return Ok(lst);
+        }
         #endregion
 
         #region LoaiSanPham
@@ -164,6 +228,7 @@ namespace QLBH_API.Controllers
         }
 
         [HttpGet("GetLoaiSPById")]
+        [AllowAnonymous]
         public async Task<ActionResult> LoaiSanPham_GetById(string MaLoai)
         {
             await Task.Yield();

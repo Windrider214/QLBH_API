@@ -53,6 +53,7 @@ namespace QLBH_API.Controllers
         }
 
         [HttpGet("GetThuongHieuById")]
+        [AllowAnonymous]
         public async Task<ActionResult> ThuongHieu_GetById(string MaTh)
         {
             await Task.Yield();

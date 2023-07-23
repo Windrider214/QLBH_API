@@ -38,9 +38,15 @@
 
 </div>
 
-<div class="d-flex justify-content-center">
-    <ul id="pagination-demo" class="pagination-x"></ul>
+<div>
+    <div class="d-flex justify-content-center">
+        <ul id="pagination-demo" class="pagination-x"></ul>
+        <div class="d-flex justify-content-center">
+            <ul id="pagination-demo1" class="pagination-x"></ul>
+        </div>
+    </div>
 </div>
+
 
 
 <script>
@@ -58,7 +64,7 @@
                 changeMonth: true,
                 changeYear: true,
                 onSelect: function () {
-                    getTotalByDate();
+                    getDsDonHangByDate();
                 }
             });
         });
@@ -76,7 +82,8 @@
 
     //Lấy sản phẩm
     function getDsDonHang() {
-
+        $("#pagination-demo1").hide();
+        $("#pagination-demo").show();
         var inputData = {
             maHd: "",
             token: cookieToken.token,
@@ -103,75 +110,112 @@
         });
     }
 
-    function getTotalByDate() {
-        var startDate = $("#datepicker1").val();
-        var endDate = $("#datepicker2").val();
+    //function getTotalByDate() {
+    //    var startDate = $("#datepicker1").val();
+    //    var endDate = $("#datepicker2").val();
 
-        var inputData = {
-            Start: moment(startDate).format(),
-            End: moment(endDate).format()
-        };
+    //    var inputData = {
+    //        Start: moment(startDate).format(),
+    //        End: moment(endDate).format()
+    //    };
 
-           $.ajax({
-            type: 'POST',
-            url: "/Order/GetTotalByDate",
-            data: inputData,
-            success: function (data) {
-                var result = data.ResponseCode;
-                if (result > 0) {
-                    getDsDonHangByDate(result);
-                }
-                else {
-                    swal({
-                        text: "Không tìm thấy !!!",
-                        icon: "error",
-                        button: "OK!",
-                    });
-                }
-            },
-            error: function (data) {
-                console.log("error:" + JSON.stringify(data));
+    //       $.ajax({
+    //        type: 'POST',
+    //        url: "/Order/GetTotalByDate",
+    //        data: inputData,
+    //        success: function (data) {
+    //            Common.setCookie("TotalByDate", data, 1);
 
-            }
+    //        },
+    //        error: function (data) {
+    //            console.log("error:" + JSON.stringify(data));
 
-        });
-    }
+    //        }
 
-      function getDsDonHangByDate(totalRow) {
+    //    });
+    //}
+
+      function getDsDonHangByDate() {
           var startDate = $("#datepicker1").val();
           var endDate = $("#datepicker2").val();
 
-        var inputData = {
-            page: pageIndex,
-            pageSize: pageSize,
-            StartDate: moment(startDate).format(),
-            EndDate: moment(endDate).format()
-        };
+          var inputData1 = {
+              Start: moment(startDate).format(),
+              End: moment(endDate).format()
+          };
 
-        $.ajax({
-            type: 'POST',
-            url: "/Order/GetListPagingByDate",
-            data: inputData,
-            success: function (data) {
-                $('#dsDonHang').html(data);
-                dataPaging(totalRow, function () {
-                //    getDsDonHangByDate(totalRow);
-                //    getTotalByDate();
-                });
-            },
-            error: function (data) {
-                console.log("error:" + JSON.stringify(data));
+          var inputData2 = {
+              page: pageIndex,
+              pageSize: pageSize,
+              StartDate: moment(startDate).format(),
+              EndDate: moment(endDate).format()
+          };
 
-            }
+          $.ajax({
+              type: 'POST',
+              url: "/Order/GetTotalByDate",
+              data: inputData1,
+              success: function (data) {
+                  Common.setCookie("TotalByDate", data, 1);
+              },
+              error: function (data) {
+                  console.log("error:" + JSON.stringify(data));
 
-        });
+              }
+          }).done(function () {
+              $("#pagination-demo").hide();
+              $("#pagination-demo1").show();
+              $.ajax({
+                  type: 'POST',
+                  url: "/Order/GetListPagingByDate",
+                  data: inputData2,
+                  success: function (data) {
+                      var total = Common.getCookie("TotalByDate");
+                      $('#dsDonHang').html(data);
+                      dataPaging1(total, function () {
+                          getDsDonHangByDate();
+                      });
+                  },
+                  error: function (data) {
+                      console.log("error:" + JSON.stringify(data));
+
+                  }
+
+              });
+          });
+
+        
       }
 
-    //Phân trang
+    //Phân trang 
     function dataPaging(totalRow, callback) {
 
         var totalPage = Math.ceil(totalRow / pageSize);
         $('#pagination-demo').twbsPagination({
+            totalPages: totalPage,
+            visiblePages: 5,
+            first: "Đầu",
+            next: "Tiếp",
+            last: "Cuối",
+            prev: "Trước",
+            onPageClick: function (event, page) {
+                pageIndex = page;
+                setTimeout(callback, 200);
+                //$("html").animate(
+                //    {
+                //        scrollTop: $("#txtSearch").offset().top
+                //    },
+                //    50 //speed
+                //);
+            }
+        });
+    }
+
+    //Phân trang 
+    function dataPaging1(totalRow, callback) {
+
+        var totalPage = Math.ceil(totalRow / pageSize);
+        $('#pagination-demo1').twbsPagination({
             totalPages: totalPage,
             visiblePages: 5,
             first: "Đầu",

@@ -1,0 +1,44 @@
+﻿@model List<QLBH_WebClient.DTO.SANPHAM>
+
+@{
+    Layout = null;
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/";
+    string media_seo = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/sanpham/seoIMG/";
+
+}
+<div class="row">
+    <div class="col-md-12 mb-5">
+        <div class="float-md-left mb-4"><h2 class="text-black h5">Tất cả sản phẩm "<strong>@Model[0].maLoaiNavigation.tenLoaiSp</strong>" (@Model.Count)</h2></div>
+    </div>
+</div>
+<div class="row mb-5">
+    @{
+        if (Model != null && Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                <div class="col-sm-6 col-lg-4 mb-4" data-aos="fade-up">
+                    <div class="block-4 text-center border">
+                        <figure class="block-4-image">
+                            <a href="shop-single.html"><img src="@media_seo@item.seoImage" alt="Image placeholder" class="img-fluid" style="width: 200px;height: 200px "></a>
+                        </figure>
+                        <div class="block-4-text p-4">
+                            <h3><a href="/SanPham/Detail?MaSP=@item.maSp">@item.tenSp</a></h3>
+                            <p class="mb-0 font-weight-normal">Thương hiệu : @item.maThNavigation.tenTh</p>
+                            <p class="text-primary font-weight-bold">@string.Format("{0:c0}", item.donGia)</p>
+                            @*<p><button type="button" class="buy-now btn btn-sm btn-primary" onclick="addtoCart('@item.maSp')"><i class="fa fa-shopping-cart"></i></button></p>*@
+                            <p><button type="button" class="buy-now btn btn-sm btn-primary" data-productid="@item.maSp" data-productname="@item.tenSp" data-price="@item.donGia" data-image="@item.seoImage" onclick="AddItemToCart(this)"><i class="fa fa-shopping-cart"></i></button></p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    }
+</div>
+
+
+
+<script>
+
+
+</script>

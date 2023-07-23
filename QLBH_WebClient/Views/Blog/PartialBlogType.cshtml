@@ -1,0 +1,106 @@
+﻿@model List<QLBH_WebClient.DTO.BLOGTYPE>
+
+
+<div class="border p-4 rounded mb-4">
+    <h3 class="mb-3 h6 text-uppercase text-black d-block">Danh Mục</h3>
+    @*<ul class="list-unstyled mb-0">
+            @{
+                if (Model != null && Model.Count > 0)
+                {
+                    foreach (var item in Model)
+                    {
+                        <li class="mb-1"><a href="#" onclick="getDsSanPhamByType('@item.maLoai')" class="color-item d-flex"><span><strong>@item.tenLoaiSp</strong></span></a></li>
+                    }
+                }
+            }
+        </ul>*@
+    <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
+        @{
+            if (Model != null && Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                    <a class="nav-link font-weight-normal" style="cursor: pointer" onclick="getDsBlogByType('@item.maDm')" data-toggle="pill" role="tab" aria-selected="true">@item.tenDm</a>
+                }
+            }
+        }
+    </div>
+</div>
+
+<script>
+    jQuery(document).ready(function ($) {
+
+    });
+
+    var pageSize = 6;
+    var pageIndex = 1;
+
+    //Lấy sản phẩm
+    function getDsBlogByType(madm) {
+        var inputData1 = {
+            MaDm: madm,
+
+        };
+
+        var inputData2 = {
+            MaDm: madm,
+            page: pageIndex,
+            pageSize: pageSize
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/Blog/GetBlogTotalByType",
+            data: inputData1,
+            success: function (data) {
+                Common.setCookie("TotalBlogByType", data, 1);
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        }).done(function () {
+            $("#pagination-demo").hide();
+            $("#pagination-demo1").show();
+            $.ajax({
+                type: 'POST',
+                url: "/Blog/PartialBlogByType",
+                data: inputData2,
+                success: function (data) {
+                    var total = Common.getCookie("TotalBlogByType");
+                    $('#dsTinTuc').html(data);
+                    dataPaging1(total, function () {
+                        getDsBlogByType(madm);
+                    });
+                },
+                error: function (data) {
+                    console.log("error:" + JSON.stringify(data));
+
+                }
+
+            });
+        });
+
+
+    }
+
+    //Phân trang
+    function dataPaging1(totalRow, callback) {
+
+        var totalPage = Math.ceil(totalRow / pageSize);
+        $('#pagination-demo1').twbsPagination({
+            totalPages: totalPage,
+            visiblePages: 5,
+            first: "Đầu",
+            next: "Tiếp",
+            last: "Cuối",
+            prev: "Trước",
+            onPageClick: function (event, page) {
+                pageIndex = page;
+                setTimeout(callback, 200);
+            }
+        });
+    }
+</script>
+

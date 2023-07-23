@@ -6,27 +6,28 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-6">
+        <div class="col-6" data-aos="fade-right">
             <div id="logreg-forms" >
                 <div class="form-signin">
-                    <h1 class="h3 mb-3 font-weight-bold" style="text-align: center"> Đăng Nhập</h1>
+                    <br />
+                    <h3 class="mb-3 font-weight-bold" style="text-align: center"><i class="fa fa-users"></i> Thông Tin Tài Khoản</h3>
                     <input type="text" id="inputUsername" class="form-control" placeholder="Tên đăng nhập" required="" autofocus="">
                     <input type="password" id="inputPassword" class="form-control" placeholder="Mật khẩu" required="">
                         <div class="text-right">
-                            <a href="#" id="forgot_pswd" class="text-right"><strong>Quên mật khẩu ?</strong></a>
+                            <a href="#" id="forgot_pswd" class="text-right font-weight-light"><strong>Quên mật khẩu ?</strong></a>
                         </div>
-                    <button class="btn btn-success btn-sm btn-block" onclick="login()"><i class="fa fa-sign-in"></i> Đăng Nhập</button>
-                    <hr>
-                    <button class="btn btn-primary btn-block" type="button" id="btn-signup"><i class="fa fa-user-plus"></i> Đăng Kí</button>
+                    <hr />
+                    <button class="btn btn-success btn-block font-weight-normal" onclick="login()"><i class="fa fa-sign-in"></i> &nbsp;Đăng Nhập</button>
+                    <button class="btn btn-primary btn-block font-weight-normal" type="button" id="btn-signup"><i class="fa fa-user-plus"></i> Đăng Kí</button>
                 </div>
 
-                <div action="/reset/password/" class="form-reset">
+                <div action="/reset/password/" class="form-reset" data-aos="fade-up-right">
                     <input type="email" id="resetEmail" class="form-control" placeholder="Email của bạn" required="" autofocus="">
-                    <button class="btn btn-primary btn-block" type="submit" onclick="genRsPwToken()">Tìm mật khẩu</button>
-                    <a href="#" id="cancel_reset"><i class="fa fa-angle-left"></i> Quay lại</a>
+                    <button class="btn btn-primary btn-block btn-sm font-weight-normal" type="submit" onclick="genRsPwToken()"> <i class="fa fa-envelope-open"></i> Lấy mã xác thực</button>
+                    <a href="#" id="cancel_reset" class="font-weight-light"><i class="fa fa-angle-left"></i> Quay lại</a>
                 </div>
 
-                <div action="/signup/" class="form-signup">
+                <div action="/signup/" class="form-signup" data-aos="fade-up-right">
 
                     <input type="text" id="user-name" class="form-control" placeholder="Tên đăng nhập" required="" autofocus="">
                     <input type="email" id="user-email" class="form-control" placeholder="Email" required autofocus="">
@@ -35,8 +36,8 @@
                     <input type="email" id="txtSDT" class="form-control" placeholder="Số điện thoại" required autofocus="">
                     <input type="text" id="txtDiaChi" class="form-control" placeholder="Địa chỉ" required autofocus="">
 
-                    <button class="btn btn-primary btn-block" onclick="signUp()"><i class="fas fa-user-plus"></i> Đăng kí</button>
-                    <a href="#" id="cancel_signup"><i class="fa fa-angle-left"></i> Quay lại</a>
+                    <button class="btn btn-primary btn-block btn-sm font-weight-normal" onclick="signUp()"><i class="fa fa-check-circle"></i> Đăng kí</button>
+                    <a href="#" id="cancel_signup" class="font-weight-light"><i class="fa fa-angle-left"></i> Quay lại</a>
                 </div>
                 <br>
 
@@ -63,7 +64,7 @@
                 </a>
             </p>
         </div>
-        <div class="col-6">
+        <div class="col-6" data-aos="flip-right">
             <img class="img-fluid" src="~/Content/Screenshot_6.jpg" />
         </div>
     </div>
@@ -102,24 +103,24 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-6">
-                        <label for="confirmToken">Mã xác thực</label>
+                    <div class="col-6 font-weight-bold">
+                        <label for="confirmToken">Mã xác thực :</label>
                     </div>
                     <div class="col-6">
                         <input type="text" id="confirmToken" />
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-6">
-                        <label for="newPass">Mật khẩu mới</label>
+                    <div class="col-6 font-weight-bold">
+                        <label for="newPass">Mật khẩu mới :</label>
                     </div>
                     <div class="col-6">
                         <input type="text" id="newPass" />
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-6">
-                        <label for="confirmNewPass">Xác nhận mật khẩu</label>
+                    <div class="col-6 font-weight-bold">
+                        <label for="confirmNewPass">Xác nhận mật khẩu :</label>
                     </div>
                     <div class="col-6">
                         <input type="text" id="confirmNewPass" />
@@ -186,7 +187,11 @@
 
             },
             error: function (data) {
-                console.log("error:" + JSON.stringify(data));
+                swal({
+                    text: "Đăng nhập thất bại !!!",
+                    icon: "error",
+                    button: "OK!",
+                });
             }
         });
 

@@ -202,6 +202,7 @@ namespace QLBH_WebManage.Controllers
             }
         }
 
+        [HttpPost]
         public ActionResult GetTotalByDate(DateRange dr)
         {
             var returnData = new ReturnData();
@@ -214,8 +215,8 @@ namespace QLBH_WebManage.Controllers
                 if (result1.IsSuccessStatusCode)
                 {
                     TotalRowByDate = JsonConvert.DeserializeObject<List<HOADON>>(result1.Content);
-                    returnData.ResponseCode = TotalRowByDate.Count();
-                    return Json(returnData, JsonRequestBehavior.AllowGet);
+            
+                    return Json(TotalRowByDate.Count(), JsonRequestBehavior.AllowGet);
                 }
                 return null;
             }
@@ -227,7 +228,7 @@ namespace QLBH_WebManage.Controllers
     
         }
 
-
+        [HttpPost]
         public ActionResult GetListPagingByDate(OrderByDate order)
         {
             try

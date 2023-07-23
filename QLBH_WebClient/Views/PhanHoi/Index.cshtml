@@ -3,21 +3,30 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<div class="bg-light py-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mb-0"><a href="/TrangChu/Index" class="font-weight-normal">Trang Chủ</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Chăm Sóc Khách Hàng</strong></div>
+        </div>
+    </div>
+</div>
+<br />
 <!--Section: Contact v.2-->
-<div class="mb-4">
-    <!--Section heading-->
-    <h1 class="h1-responsive font-weight-bold text-center my-4" style="color:slateblue"><i class="fa fa-envelope"></i> Liên hệ với chúng tôi</h1>
-    <!--Section description-->
-    <p class="text-center w-responsive mx-auto mb-5 font-weight-normal" >
-        Bạn có thắc mắc hay đóng góp ? Hãy liên hệ ngay với chúng tôi. Bộ phận CSKH sẽ liên hệ ngay với bạn trong thời gian sớm nhất !!!
-    </p>
 
     <div class="container">
         <div class="row">
 
             <!--Grid column-->
-            <div class="col-md-9 mb-md-0 mb-5">
+            <div class="col-md-7 mb-md-0 mb-5" data-aos="fade-right"
+     data-aos-offset="300"
+     data-aos-easing="ease-in-sine">
+                <!--Section heading-->
+                <h1 class="h1-responsive font-weight-bold  my-4" style="color:slateblue"><i class="fa fa-envelope"></i> Liên hệ với chúng tôi</h1>
+                <!--Section description-->
+                <p class=" w-responsive mx-auto mb-5 font-weight-normal">
+                    Bạn có thắc mắc hay đóng góp ? Hãy liên hệ ngay với chúng tôi. Bộ phận CSKH sẽ liên hệ ngay với bạn trong thời gian sớm nhất !!!
+                </p>
+
                 <div id="contact-form" name="contact-form">
 
                     <!--Grid row-->
@@ -61,7 +70,7 @@
                             <div class="md-form">
                                 <label for="txtNoiDung" class="font-weight-bold">Nội dung</label>
                                 <textarea type="text" id="txtNoiDung" name="message" rows="2" class="form-control md-textarea"></textarea>
-                                
+
                             </div>
 
                         </div>
@@ -77,22 +86,23 @@
             </div>
             <!--Grid column-->
             <!--Grid column-->
-            <div class="col-md-3 text-center">
-                <img class="img-fluid" src="~/Content/Screenshot_9.jpg" />
+            <div class="col-md-5 mb-md-0 mb-5" data-aos="fade-left"
+     data-aos-anchor="#example-anchor"
+     data-aos-offset="500"
+     data-aos-duration="500">
+                <img class="img-fluid" src="~/Content/Screenshot_9.jpg" style="height: 500px" />
 
             </div>
             <!--Grid column-->
 
         </div>
     </div>
-</div>
 
 <script>
     $(document).ready(function () {
         getCustomerInform();
     });
 
-    var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
 
     function Insert() {
         var tieude = $("#txtTieuDe").val();

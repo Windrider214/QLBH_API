@@ -11,7 +11,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-7 site-section-heading text-center pt-4">
-                <h2>Sản Phẩm Mới</h2>
+                <h2 class="font-weight-bold">Sản Phẩm Mới</h2>
             </div>
         </div>
         <div class="row">
@@ -29,8 +29,8 @@
                                             <img src="@media_seo@item.seoImage" alt="Image placeholder" class="img-fluid" style="width: 480px;height: 360px">
                                         </figure>
                                         <div class="block-4-text p-4">
-                                            <h3><a href="/SanPham/Detail?MaSP=@item.maSp">@item.tenSp</a></h3>
-                                            <p class="mb-0">Thương hiệu: @item.maThNavigation.tenTh</p>
+                                            <h3><a href="/SanPham/Detail?MaSP=@item.maSp" class="font-weight-bold">@item.tenSp</a></h3>
+                                            <p class="mb-0 font-weight-bold">Thương hiệu: @item.maThNavigation.tenTh</p>
                                             <p class="text-primary font-weight-bold">@string.Format("{0:c0}", item.donGia)</p>
                                         </div>
                                     </div>

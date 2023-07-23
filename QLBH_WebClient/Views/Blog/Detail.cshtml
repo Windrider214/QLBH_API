@@ -1,0 +1,70 @@
+﻿@model QLBH_WebClient.DTO.BLOG
+
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string media = System.Configuration.ConfigurationManager.AppSettings["MEDIA_URL"] + "/images/blogs/";
+
+}
+
+<div class="bg-light py-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mb-0"><a href="/TrangChu/Index" class="font-weight-normal">Trang Chủ</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">@Model.maDmNavigation.tenDm</strong></div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="container" data-aos="fade-right"
+     data-aos-offset="300"
+     data-aos-easing="ease-in-sine">
+    <div class="row">
+        <div class="col text-center">
+            <h1><a href="#" class="font-weight-bold">@Model.tieuDe</a></h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6 font-weight-normal text-left"> Cập nhật : @Model.ngayDang</div>
+        <div class="col-6 font-weight-normal text-right"> Lượt xem : @Model.luotXem</div>
+    </div>
+    <br />
+    <br />
+    <h4 class="font-weight-bold">
+        @Model.moTa
+    </h4>
+    <hr />
+    <div class="row" data-aos="fade-up">
+        <div class="col font-weight-normal text-left">
+            @Html.Raw(Model.noiDung)
+        </div>
+    </div>
+    <hr />
+
+</div>
+
+<script>
+    jQuery(document).ready(function ($) {
+        capNhatLuotXem();
+
+    });
+
+
+    function capNhatLuotXem() {
+        var inputData = {
+            MaTinTuc: '@Model.maTinTuc'
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: "/Blog/CapNhatLuotXem",
+            data: inputData,
+            success: function (data) {
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+
+            }
+
+        });
+    }
+</script>

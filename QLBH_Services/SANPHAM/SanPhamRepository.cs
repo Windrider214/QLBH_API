@@ -35,6 +35,13 @@ namespace QLBH_Services.SANPHAM
                 ToList();
         }
 
+        int ISanPhamRepository.GetTotalRec()
+        {
+            return _context.Sanphams.
+               Include(x => x.MaLoaiNavigation).
+               Include(z => z.MaThNavigation).
+               ToList().Count();
+        }
 
         List<Sanpham> ISanPhamRepository.GetListPaging(int page, int pageSize)
         {
@@ -47,12 +54,59 @@ namespace QLBH_Services.SANPHAM
                 ToList();
         }
 
-        int ISanPhamRepository.GetTotalRec()
+
+        List<Sanpham> ISanPhamRepository.GetListPagingActive(int page, int pageSize)
         {
+
             return _context.Sanphams.
-               Include(x => x.MaLoaiNavigation).
-               Include(z => z.MaThNavigation).
-               ToList().Count();
+                Include(x => x.MaLoaiNavigation).
+                Include(z => z.MaThNavigation).
+                Where(x => x.TinhTrang == true).
+                OrderByDescending(y => y.NgayThem).
+                Skip((page - 1) * pageSize).Take(pageSize).
+                ToList();
+        }
+
+        List<Sanpham> ISanPhamRepository.GetListPagingByType(int page, int pageSize, string maloai)
+        {
+
+            return _context.Sanphams.
+                Include(x => x.MaLoaiNavigation).
+                Include(z => z.MaThNavigation).
+                Where(x => x.TinhTrang == true && x.MaLoai == maloai).
+                OrderByDescending(y => y.NgayThem).
+                Skip((page - 1) * pageSize).Take(pageSize).
+                ToList();
+        }
+
+
+        int ISanPhamRepository.GetTotalRecByType(string maloai)
+        {
+
+            return _context.Sanphams.
+                Where(x => x.TinhTrang == true && x.MaLoai == maloai).
+                ToList().Count();
+        }
+
+        List<Sanpham> ISanPhamRepository.GetListPagingByBrand(int page, int pageSize, string math)
+        {
+
+            return _context.Sanphams.
+                Include(x => x.MaLoaiNavigation).
+                Include(z => z.MaThNavigation).
+                Where(x => x.TinhTrang == true && x.MaTh == math).
+                OrderByDescending(y => y.NgayThem).
+                Skip((page - 1) * pageSize).Take(pageSize).
+                ToList();
+        }
+
+
+        int ISanPhamRepository.GetTotalRecByBrand(string math)
+        {
+
+            return _context.Sanphams.
+                Where(x => x.TinhTrang == true && x.MaTh == math).
+                ToList().Count();
         }
 
         List<Sanpham> ISanPhamRepository.GetTop5()
@@ -76,6 +130,8 @@ namespace QLBH_Services.SANPHAM
                 Where( x => x.MaSp == maSp ).
                 FirstOrDefault();
         }
+
+
         #region oldRepos
         //private readonly QLBH_ONLINEContext _dbContext;
 
