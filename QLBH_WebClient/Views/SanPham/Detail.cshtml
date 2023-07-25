@@ -17,15 +17,13 @@
     }
 }
 
-<div class="bg-light py-3">
-    <div class="container">
+<div class="bg-light py-3 container" data-aos="fade-right">
         <div class="row">
             <div class="col-md-12 mb-0"><a href="/TrangChu/Index" class="font-weight-normal">Trang Chủ</a><span class="mx-2 mb-0">/<a href="/SanPham/Index" class="font-weight-normal"> Sản Phẩm </a> /</span><strong class="text-black">@Model.tenSp</strong></div>
         </div>
-    </div>
 </div>
 
-<div class="site-section">
+<div class="site-section" data-aos="fade-up">
     <div class="container">
         <div class="row">
             <div class="col-md-6">
@@ -85,8 +83,14 @@
                         </div>
                     </div>
                     <div class="col-9 col-sm-9">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 col-sm-6">
                         <p><button type="button" class="btn btn-block btn-success font-weight-bold" data-productid="@Model.maSp" data-productname="@Model.tenSp" data-price="@Model.donGia" data-image="@Model.seoImage" onclick="AddItemToCart2(this)">Thêm vào giỏ hàng</button></p>
-
+                    </div>
+                    <div class="col-6 col-sm-6">
+                        <p><button type="button" class="btn btn-block btn-success font-weight-bold" data-productid="@Model.maSp" data-productname="@Model.tenSp" data-price="@Model.donGia" data-image="@Model.seoImage" onclick="BuyNow(this)">Mua ngay</button></p>
                     </div>
                 </div>
             </div>
@@ -158,6 +162,43 @@
 
     });
 
+    function BuyNow(e) {
+        var item = {
+            maSp: $(e).data('productid'),
+            tenSp: $(e).data('productname'),
+            soLuong: parseInt($('#txtSoLuong').val()),
+            donGia: $(e).data('price'),
+            seoImage: $(e).data('image'),
+        };
+        console.log(item);
+        if (item.maSp == '') {
+            swal({
+                text: "Hãy chọn ít nhất 1 sản phẩm !!!",
+                icon: "error",
+                button: "warning!",
+            });
+            return;
+        }
+        var store = GetCookie('ShoppingCart');
+        store = AddAndUpdateShoppingCart2(store, item);
+
+
+        //Update slh header
+        $.ajax({
+            type: 'GET',
+            url: "/Cart/GetSLH",
+            data: {},
+            success: function (data) {
+                console.log(data.slh);
+                $("#slh").html(data.slh);
+            },
+            error: function () {
+                console.log("error:" + JSON.stringify(data));
+            }
+        }).done(function () {
+            window.location.replace("http://localhost:57368/Cart/Index");
+        });
+    }
 
     function AddItemToCart2 (e) {
         var item = {
@@ -213,36 +254,36 @@
 
         }
 
-        var store = GetCookie('ShoppingCart');
-        var index = store.findIndex(function (d) {
-            return d.maSp == item.maSp;
-        });
+        //var store = GetCookie('ShoppingCart');
+        //var index = store.findIndex(function (d) {
+        //    return d.maSp == item.maSp;
+        //});
 
-        if (store.length == 0 || index == -1) {
-            return;
-        }
+        //if (store.length == 0 || index == -1) {
+        //    return;
+        //}
 
-        SetCookie('ShoppingCart', store);
+        //SetCookie('ShoppingCart', store);
 
-    }
+      }
 
       function CalcMinusorPlusQuantity2 (type, productid) {
         var $input_quantity = $("#txtSoLuong");
           var sl = parseInt($("#txtSoLuong").val());
 
-        // giảm số lượng
-        if (type == 1) {
-            if (parseInt(sl, 10) > 1) {
-                $input_quantity.val(parseInt($input_quantity.val()) - 1);
+            // giảm số lượng
+            if (type == 1) {
+                if (parseInt(sl, 10) > 1) {
+                    $input_quantity.val(parseInt($input_quantity.val()) - 1);
+                }
             }
-        }
-        // tăng số lượng
-        if (type == 2) {
-            $input_quantity.val(parseInt($input_quantity.val()) + 1);
-        }
+            // tăng số lượng
+            if (type == 2) {
+                $input_quantity.val(parseInt($input_quantity.val()) + 1);
+            }
 
           return parseInt($("#txtSoLuong").val());
-    }
+      }
 
         function capNhatLuotXem() {
         var inputData = {
@@ -271,7 +312,7 @@
         var index = store.findIndex(function (d) {
             return d.maSp == item.maSp;
         });
-        console.log(store[index].soLuong);
+        //console.log(store[index].soLuong);
         if (store.length == 0 || index == -1) {
             store.push(item);
             SetCookie('ShoppingCart', store);

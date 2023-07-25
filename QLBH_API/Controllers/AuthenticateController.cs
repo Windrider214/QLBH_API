@@ -9,6 +9,11 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Cryptography;
 using QLBH_API.Email;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using static QLBH_API.Auth.FacebookLogin;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Hosting;
+using Newtonsoft.Json.Linq;
 
 namespace QLBH_API.Controllers
 {
@@ -79,7 +84,7 @@ namespace QLBH_API.Controllers
                             _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
 
                             user.RefreshToken = refreshToken;
-                            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays);
+                            user.RefreshTokenExpiryTime = DateTime.Now.AddYears(refreshTokenValidityInDays);
 
                             await _userManager.UpdateAsync(user);
 
@@ -126,7 +131,7 @@ namespace QLBH_API.Controllers
                     _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
 
                     user.RefreshToken = refreshToken;
-                    user.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays);
+                    user.RefreshTokenExpiryTime = DateTime.Now.AddYears(refreshTokenValidityInDays);
 
                     await _userManager.UpdateAsync(user);
 
@@ -144,7 +149,7 @@ namespace QLBH_API.Controllers
 
         [HttpPut]
         [Route("enable-2fa")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> Enable2FA(En2FA en2fa)
         {
             var user = await _userManager.FindByIdAsync(en2fa.userID);
@@ -159,7 +164,7 @@ namespace QLBH_API.Controllers
                 else
                 {
                     await _userManager.SetTwoFactorEnabledAsync(user, false);
-                    user.EmailConfirmed = false;
+                    user.EmailConfirmed = true;
                     await _userManager.UpdateAsync(user);
                 }
 
@@ -209,7 +214,7 @@ namespace QLBH_API.Controllers
             //Add Token to Verify the email....
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var confirmationLink = Url.Action(nameof(ConfirmEmail), "Authenticate", new { token, email = user.Email }, Request.Scheme);
-            var message = new Message(new string[] { user.Email! }, "Xác thực tài khoản đăng kí ", confirmationLink!);
+            var message = new Message(new string[] { user.Email! }, "Xác thực tài khoản đăng kí ", "Nhấn vào link sau để hoàn tất đăng kí : " + confirmationLink!);
             _emailService.SendEmail(message);
 
             return Ok(new
@@ -228,8 +233,7 @@ namespace QLBH_API.Controllers
                 if (result.Succeeded)
                 {
 
-                    return StatusCode(StatusCodes.Status200OK,
-                      new Response { Status = "Success", Message = "Xác thực email thành công !!!" });
+                    return Redirect("http://localhost:57368/User/ConfirmRegister");
                 }
             }
             return StatusCode(StatusCodes.Status500InternalServerError,
@@ -355,7 +359,7 @@ namespace QLBH_API.Controllers
             var token = new JwtSecurityToken(
                 issuer: _configuration["JWT:ValidIssuer"],
                 audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddDays(tokenValidityInMinutes),
+                expires: DateTime.Now.AddYears(tokenValidityInMinutes),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                 );
@@ -556,5 +560,7 @@ namespace QLBH_API.Controllers
             }
             return BadRequest("Thay đổi thất bại !!!");
         }
+
+    
     }
 }

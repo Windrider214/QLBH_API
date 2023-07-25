@@ -32,6 +32,17 @@ namespace QLBH_WebClient.Controllers
             return View();
         }
 
+        // Xác nhận email thành công
+        public ActionResult ConfirmRegister()
+        {
+            var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+            if (cookie != null && !string.IsNullOrEmpty(cookie))
+            {
+                return null;
+
+            }
+            return View();
+        }
 
         /// <summary>
         /// Đăng nhập
@@ -269,6 +280,7 @@ namespace QLBH_WebClient.Controllers
 
         public ActionResult Detail()
         {
+            USER user = new USER();
             JwtCookie jwtCookie = new JwtCookie();
             var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
             if (cookie != null && !string.IsNullOrEmpty(cookie))
@@ -278,14 +290,15 @@ namespace QLBH_WebClient.Controllers
                 var result = API_Interact.GetDataById(url_api, request_url, TokenDecode.GetID(jwtCookie.token), "userID", jwtCookie.token);
                 if (result.IsSuccessStatusCode)
                 {
-                    USER user = new USER();
                     user = JsonConvert.DeserializeObject<USER>(result.Content);
                     ViewBag.TotalRowOrder = GetCusTotalOrder();
                     ViewBag.TotalRowFeedback = GetCusTotalFeedback();
                     return View(user);
                 }
+                user.id = "";
+                return View(user);
             }
-            return View("Bạn chưa đăng nhập !!!");
+            return Redirect("~/Views/TrangChu/Index");
         }
         
 
@@ -591,7 +604,10 @@ namespace QLBH_WebClient.Controllers
 
                 if (sgup.loginId == string.Empty)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+                    returnData.ResponseCode = -700;
+                    returnData.Description = "Email hoặc tên tài khoản đã sử dụng !!!";
+                    return Json(returnData, JsonRequestBehavior.AllowGet);
                 }
 
                 KHACHHANG kh = new KHACHHANG

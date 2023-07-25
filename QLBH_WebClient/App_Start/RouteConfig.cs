@@ -13,6 +13,13 @@ namespace QLBH_WebClient
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.MapMvcAttributeRoutes();
+
+            routes.MapRoute(
+            name: "HuongDan",
+            url: "huong-dan",
+            defaults: new { controller = "Blog", action = "HuongDan", id = UrlParameter.Optional }
+        );
+
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",

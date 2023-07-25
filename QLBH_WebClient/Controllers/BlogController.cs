@@ -211,5 +211,10 @@ namespace QLBH_WebClient.Controllers
                 throw;
             }
         }
+
+        public ActionResult HuongDan()
+        {
+            return View();
+        }
     }
 }

@@ -6,15 +6,15 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="bg-light py-3">
+<div class="bg-light py-3" data-aos="fade-right">
     <div class="container">
         <div class="row">
-            <div class="col-md-12 mb-0"><a href="/TrangChu/Index" class="font-weight-normal">Trang Chủ</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Thiết lập tài khoản</strong></div>
+            <div class="col-md-12 mb-0"><a href="/TrangChu/Index" class="font-weight-normal">Trang Chủ</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Tài Khoản</strong></div>
         </div>
     </div>
 </div>
 <hr />
-<div class="container-fluid">
+<div class="container-fluid" data-aos="fade-up">
     <div class="row">
         <div class="col-2">
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
@@ -74,7 +74,6 @@
 
     function getUserOder() {
 
-
         var inputData = {
             MaKH: "",
             page: pageIndex,
@@ -92,7 +91,7 @@
                 });
             },
             error: function (data) {
-                console.log("error:" + JSON.stringify(data));
+
 
             }
 
@@ -112,18 +111,17 @@
             onPageClick: function (event, page) {
                 pageIndex = page;
                 setTimeout(callback, 200);
-                $("html").animate(
-                    {
-                        scrollTop: $("#v-pills-tab").offset().top
-                    },
-                    800 //speed
-                );
+                //$("html").animate(
+                //    {
+                //        scrollTop: $("#v-pills-tab").offset().top
+                //    },
+                //    800 //speed
+                //);
             }
         });
     }
 
    function getUserFeedback() {
-
 
         var inputData = {
             MaKH: "",
@@ -162,12 +160,12 @@
             onPageClick: function (event, page) {
                 pageIndex = page;
                 setTimeout(callback, 200);
-                $("html").animate(
-                    {
-                        scrollTop: $("#v-pills-tab").offset().top
-                    },
-                    800 //speed
-                );
+                //$("html").animate(
+                //    {
+                //        scrollTop: $("#v-pills-tab").offset().top
+                //    },
+                //    800 //speed
+                //);
             }
         });
     }
@@ -204,15 +202,28 @@
         });
     }
 
-        function setActive() {
-        var tt = '@Model.twoFactorEnabled';
-        if (tt == "True") {
-            $("#chkTrangThai").prop('checked', true);
+    function setActive() {
+        if ('@Model.id' == '') {
+            swal({
+                text: "Đã hết thời gian đăng nhập, vui lòng đăng nhập lại !",
+                icon: "warning",
+                button: "OK!",
+            }).then(function () {
+                RemoveCookie("ManagerShop_Cookies");
+                window.location.replace("http://localhost:57368/User/SignIn")
+            });
         }
         else {
-            $("#chkTrangThai").prop('checked', false);
+            var tt = '@Model.twoFactorEnabled';
+            if (tt == "True") {
+                $("#chkTrangThai").prop('checked', true);
+            }
+            else {
+                $("#chkTrangThai").prop('checked', false);
+            }
         }
     }
+
 
     function en2FA() {
 

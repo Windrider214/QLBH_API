@@ -4,6 +4,12 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<div class="bg-light py-3 container" data-aos="fade-right">
+    <div class="row">
+        <div class="col-md-12 mb-0"><a href="/TrangChu/Index" class="font-weight-normal">Trang Chủ</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Đăng Nhập</strong></div>
+    </div>
+</div>
+<br />
 <div class="container">
     <div class="row">
         <div class="col-6" data-aos="fade-right">
@@ -357,7 +363,11 @@
 
             },
             error: function (data) {
-                console.log("error:" + JSON.stringify(data));
+                swal({
+                    text: data.Description,
+                    icon: "error",
+                    button: "OK!",
+                });
             }
         });
 

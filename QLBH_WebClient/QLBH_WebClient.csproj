@@ -797,6 +797,8 @@
     <Content Include="Views\Blog\Detail.cshtml" />
     <Content Include="Views\Blog\PartialBlogByType.cshtml" />
     <Content Include="Views\Blog\BlogAbout.cshtml" />
+    <Content Include="Views\User\ConfirmRegister.cshtml" />
+    <Content Include="Views\Blog\HuongDan.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

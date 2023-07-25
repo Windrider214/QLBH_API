@@ -10,6 +10,8 @@ using QLBH_DataAccess;
 using System.Text.Json.Serialization;
 using System;
 using QLBH_API.Email;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.Facebook;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,12 +31,13 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>( opt => {
     opt.Lockout.MaxFailedAccessAttempts = 3;
     opt.User.RequireUniqueEmail = true;
     opt.SignIn.RequireConfirmedEmail = true;
+    
 }).
 AddEntityFrameworkStores<ApplicationDbContext>().
 AddDefaultTokenProviders();
 builder.Services.Configure<IdentityOptions>(
     opts => opts.Lockout.AllowedForNewUsers = false
-    );
+    ); 
 
 //Add Config for Required Email
 builder.Services.Configure<IdentityOptions>(
@@ -67,6 +70,11 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
+builder.Services.AddAuthentication().AddFacebook(opt =>
+{
+    opt.AppId = "953152292653079";
+    opt.AppSecret = "03cf6918592cf461f7f78f8fcc614282";
+});
 //Add Email Configs
 var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
 builder.Services.AddSingleton(emailConfig);
