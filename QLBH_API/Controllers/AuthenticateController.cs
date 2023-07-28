@@ -26,6 +26,8 @@ namespace QLBH_API.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         public readonly IEmailService _emailService;
 
+        private static string userToken = "";
+        private static string userForgotPassToken = "";
 
         private readonly IConfiguration _configuration;
         public AuthenticateController(UserManager<ApplicationUser> userManager, 
@@ -46,17 +48,17 @@ namespace QLBH_API.Controllers
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userManager.FindByNameAsync(model.Username);
-            if(user != null && user.EmailConfirmed == true && user.LockoutEnabled == false)
+            if(user != null && user.EmailConfirmed == true && user.LockoutEnabled == false && await _userManager.CheckPasswordAsync(user, model.Password))
             {           
                     if (user.TwoFactorEnabled)
                     {
                         await _signInManager.SignOutAsync();
                         await _signInManager.PasswordSignInAsync(user, model.Password, false, true);
                         var token = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
+                        userToken = token;
                         string body = "Mã xác thực đăng nhập của bạn là : " + token + "";
                         var message = new Message(new string[] { user.Email! }, "Mã xác thực đăng nhập", body);
                         _emailService.SendEmail(message);
-
                         return Ok(
                          new { Status = "Success", Message = $"Gửi mã xác thực thành công đến Email {user.Email}" });
                     }
@@ -67,11 +69,11 @@ namespace QLBH_API.Controllers
                             var userRoles = await _userManager.GetRolesAsync(user);
 
                             var authClaims = new List<Claim>
-                        {
-                            new Claim(ClaimTypes.Name, user.UserName),
-                            new Claim("UserID", user.Id),
-                            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                        };
+                            {
+                                new Claim(ClaimTypes.Name, user.UserName),
+                                new Claim("UserID", user.Id),
+                                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                            };
 
                             foreach (var userRole in userRoles)
                             {
@@ -105,9 +107,10 @@ namespace QLBH_API.Controllers
         [Route("login-2FA")]
         public async Task<IActionResult> LoginWithOTP(Login2FA model)
         {
+            await Task.Yield();
             var user = await _signInManager.UserManager.FindByNameAsync(model.userName);
-            var signIn =  _signInManager.TwoFactorSignInAsync(TokenOptions.DefaultEmailProvider, model.confirmCODE, false, false);
-            if (signIn.IsCompleted)
+            var signIn =  _signInManager.TwoFactorAuthenticatorSignInAsync(model.confirmCODE, false, false);
+            if (signIn.IsCompleted && model.confirmCODE == userToken)
             {
                 if (user != null)
                 {
@@ -134,7 +137,7 @@ namespace QLBH_API.Controllers
                     user.RefreshTokenExpiryTime = DateTime.Now.AddYears(refreshTokenValidityInDays);
 
                     await _userManager.UpdateAsync(user);
-
+                    userToken = "";
                     return Ok(new
                     {
                         Token = new JwtSecurityTokenHandler().WriteToken(token),
@@ -142,9 +145,10 @@ namespace QLBH_API.Controllers
                         Expiration = token.ValidTo
                     });
                 }
-                return BadRequest($"Sai mã xác thực !!!");
             }
-            return BadRequest();
+            
+            return BadRequest($"Sai mã xác thực !!!");
+
         }
 
         [HttpPut]
@@ -437,6 +441,7 @@ namespace QLBH_API.Controllers
             if (user != null)
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                userForgotPassToken = token;
                 string body = "Mã xác thực đổi mật khẩu của bạn là : " + token + "";
                 var message = new Message(new string[] { user.Email! }, "Mã xác thực đổi mật khẩu", body);
                 _emailService.SendEmail(message);
@@ -458,16 +463,17 @@ namespace QLBH_API.Controllers
                 if (user != null)
                 {
                     var resetPassWordResult = await _userManager.ResetPasswordAsync(user, model.token, model.Password);
-                    if (!resetPassWordResult.Succeeded)
+                    if (resetPassWordResult.Succeeded && model.token == userForgotPassToken)
+                    {
+                        
+                        return Ok($"Đổi mật khẩu thành công !!");
+                    }
+                    else
                     {
                         foreach (var error in resetPassWordResult.Errors)
                         {
                             ModelState.AddModelError(string.Empty, error.Description);
                         }
-                    }
-                    else
-                    {
-                        return Ok($"Đổi mật khẩu thành công !!" );
                     }
                 }
                 return NotFound();

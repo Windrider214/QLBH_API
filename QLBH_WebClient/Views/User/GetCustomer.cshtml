@@ -45,6 +45,61 @@
         var loginid = $("#txtMaTK").val();
         var emailkh = $("#txtEmail").val();
 
+        var Email_regex = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        var sdt_regex = /((09|03|07|08|05)+([0-9]{8})\b)/g;
+
+        if (tenkh == "" || tenkh == null) {
+            swal({
+                text: "Bạn chưa nhập họ tên !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (sdt == "" || sdt == null) {
+            swal({
+                text: "Bạn chưa nhập số điện thoại !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (diachi == "" || diachi == null) {
+            swal({
+                text: "Bạn chưa nhập địa chỉ !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (emailkh == "" || emailkh == null) {
+            swal({
+                text: "Bạn chưa nhập email !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+
+
+        if (Email_regex.test(emailkh) == false) {
+            swal({
+                text: "Email không hợp lệ !!!",
+                icon: "error",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (sdt_regex.test(sdt) == false) {
+            swal({
+                text: "Số điện thoại không đủ 10 số hoặc không hợp lệ !!!",
+                icon: "error",
+                button: "OK!",
+            });
+            return;
+        }
+
         var inputData = {
             maKh: makh,
             tenKh: tenkh,

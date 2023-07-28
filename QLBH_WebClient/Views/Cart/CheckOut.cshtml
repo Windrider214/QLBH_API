@@ -374,6 +374,110 @@
         var total_price = $("#totalOrderAmount").text();
         total_price = total_price.replace("₫", "").replace(".", "");
 
+        var ghichu = $("#txtGhiChu").val();
+        var hoten = $("#txtHoTen").val();
+        var sdt = $("#txtSDT").val();
+        var email = $("#txtEmail").val();
+        var diachi = $("#txtDiaChi").val();
+        var provinceID = $("#lstProvince").val();
+        var disctricID = $("#lstDistrict").val();
+        var WardCode = $("#lstWard").val();
+
+        var Email_regex = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        var sdt_regex = /((09|03|07|08|05)+([0-9]{8})\b)/g;
+
+   
+        if (hoten == "" || hoten == null) {
+            swal({
+                text: "Bạn chưa nhập họ tên !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (sdt == "" || sdt == null) {
+            swal({
+                text: "Bạn chưa nhập số điện thoại !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (diachi == "" || diachi == null) {
+            swal({
+                text: "Bạn chưa nhập địa chỉ !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (email == "" || email == null) {
+            swal({
+                text: "Bạn chưa nhập email !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (ghichu == "" || ghichu == null) {
+            swal({
+                text: "Bạn chưa nhập ghi chú đơn hàng !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (provinceID == '' || provinceID == null || provinceID <= 0) {
+            swal({
+                text: "Vui lòng chọn tỉnh /thành phố !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (disctricID == '' || disctricID == null || disctricID <= 0) {
+            swal({
+                text: "Vui lòng chọn Quận/Huyện !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (WardCode == '' || WardCode == null ) {
+            swal({
+                text: "Vui lòng chọn Phường /Xã !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (total_price == "" || total_price == null) {
+            swal({
+                text: "Tổng tiền thanh toán không hợp lệ !!!",
+                icon: "error",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (Email_regex.test(email) == false) {
+            swal({
+                text: "Email không hợp lệ !!!",
+                icon: "error",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (sdt_regex.test(sdt) == false) {
+            swal({
+                text: "Số điện thoại không đủ 10 số hoặc không hợp lệ !!!",
+                icon: "error",
+                button: "OK!",
+            });
+            return;
+        }
+
         var inputData = {
             note: $("#txtGhiChu").val(),
             to_name: $("#txtHoTen").val(),
@@ -453,6 +557,110 @@
     function checkoutCODVNPAY(total_amount) {
         var total_price = $("#totalOrderAmount").text();
         total_price = total_price.replace("₫", "").replace(".", "");
+
+        var ghichu = $("#txtGhiChu").val();
+        var hoten = $("#txtHoTen").val();
+        var sdt = $("#txtSDT").val();
+        var email = $("#txtEmail").val();
+        var diachi = $("#txtDiaChi").val();
+        var provinceID = $("#lstProvince").val();
+        var disctricID = $("#lstDistrict").val();
+        var WardCode = $("#lstWard").val();
+
+        var Email_regex = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        var sdt_regex = /((09|03|07|08|05)+([0-9]{8})\b)/g;
+
+
+        if (hoten == "" || hoten == null) {
+            swal({
+                text: "Bạn chưa nhập họ tên !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (sdt == "" || sdt == null) {
+            swal({
+                text: "Bạn chưa nhập số điện thoại !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (diachi == "" || diachi == null) {
+            swal({
+                text: "Bạn chưa nhập địa chỉ !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (email == "" || email == null) {
+            swal({
+                text: "Bạn chưa nhập email !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (ghichu == "" || ghichu == null) {
+            swal({
+                text: "Bạn chưa nhập ghi chú đơn hàng !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (provinceID == '' || provinceID == null || provinceID <= 0) {
+            swal({
+                text: "Vui lòng chọn tỉnh /thành phố !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (disctricID == '' || disctricID == null || disctricID <= 0) {
+            swal({
+                text: "Vui lòng chọn Quận/Huyện !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (WardCode == '' || WardCode == null) {
+            swal({
+                text: "Vui lòng chọn Phường /Xã !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (total_price == "" || total_price == null) {
+            swal({
+                text: "Tổng tiền thanh toán không hợp lệ !!!",
+                icon: "error",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (Email_regex.test(email) == false) {
+            swal({
+                text: "Email không hợp lệ !!!",
+                icon: "error",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (sdt_regex.test(sdt) == false) {
+            swal({
+                text: "Số điện thoại không đủ 10 số hoặc không hợp lệ !!!",
+                icon: "error",
+                button: "OK!",
+            });
+            return;
+        }
 
         var inputData = {
             note: $("#txtGhiChu").val(),

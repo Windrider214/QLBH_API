@@ -150,6 +150,27 @@
 
     function login() {
 
+        var userName = $("#inputUsername").val();
+        var passWord = $("#inputPassword").val();
+
+        if (userName == "" || userName == null) {
+            swal({
+                text: "Bạn chưa nhập tên tài khoản !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (passWord == "" || passWord == null) {
+            swal({
+                text: "Bạn chưa nhập mật khẩu !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+
         var inputData = {
             UserName: $("#inputUsername").val(),
             Password: $("#inputPassword").val(),
@@ -205,6 +226,27 @@
 
     function confirmCode() {
 
+        var confirmCODE = $("#confirmCode").val();
+        var confirmCODE_regex = /^[0-9]+$/;
+
+        if (confirmCODE == "" || confirmCODE == null) {
+            swal({
+                text: "Bạn chưa nhập mã xác thực !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (confirmCODE_regex.test(confirmCODE) == false) {
+            swal({
+                text: "Mã xác thực của bạn không đúng định dạng !!!",
+                icon: "error",
+                button: "OK!",
+            });
+            return;
+        }
+
         var inputData = {
             UserName: $("#inputUsername").val(),
             confirmCODE: $("#confirmCode").val()
@@ -246,6 +288,27 @@
 
     function genRsPwToken() {
 
+        var rsEmail = $("#resetEmail").val();
+        var rsEmail_regex = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+
+        if (rsEmail == "" || rsEmail == null) {
+            swal({
+                text: "Bạn chưa nhập email !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (rsEmail_regex.test(rsEmail) == false) {
+            swal({
+                text: "Email không đúng định dạng !!!",
+                icon: "error",
+                button: "OK!",
+            });
+            return;
+        }
+
         var inputData = {
             email: $("#resetEmail").val()
         }
@@ -283,6 +346,49 @@
     }
 
     function resetPassword() {
+
+        var password = $("#newPass").val();
+        var confirmNewPassword = $("#confirmNewPass").val();
+        var token = $("#confirmToken").val();
+        var email = $("#resetEmail").val();
+
+
+        if (password == "" || password == null) {
+            swal({
+                text: "Bạn chưa nhập mật khẩu mới !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (confirmNewPassword == "" || confirmNewPassword == null) {
+            swal({
+                text: "Bạn chưa nhập xác nhận mật khẩu mới !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (token == "" || token == null) {
+            swal({
+                text: "Bạn chưa nhập mã xác thực !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (password != confirmNewPassword) {
+            swal({
+                text: "Xác nhận mật khẩu không đúng !!!",
+                icon: "error",
+                button: "OK!",
+            });
+            return;
+        }
+
 
         var inputData = {
             Password: $("#newPass").val(),
@@ -324,6 +430,93 @@
     }
 
     function signUp() {
+
+     var Username = $("#user-name").val();
+     var Email = $("#user-email").val();
+     var Password = $("#user-pass").val();
+     var tenKh = $("#txtTenKH").val();
+     var sdt = $("#txtSDT").val();
+     var diaChi = $("#txtDiaChi").val();
+
+        var Password_regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/;
+        var Email_regex = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        var sdt_regex = /((09|03|07|08|05)+([0-9]{8})\b)/g;
+
+        if (Username == "" || Username == null) {
+            swal({
+                text: "Bạn chưa nhập tên đăng nhập !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (Email == "" || Email == null) {
+            swal({
+                text: "Bạn chưa nhập email !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (Password == "" || Password == null) {
+            swal({
+                text: "Bạn chưa nhập mật khẩu !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (tenKh == "" || tenKh == null) {
+            swal({
+                text: "Bạn chưa nhập họ tên !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (sdt == "" || sdt == null) {
+            swal({
+                text: "Bạn chưa nhập số điện thoại !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (diaChi == "" || diaChi == null) {
+            swal({
+                text: "Bạn chưa nhập địa chỉ !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (Password_regex.test(Password) == false) {
+            swal({
+                text: "Mật khẩu ít nhất 8 kí tự, bao gồm chữ thường, chữ in hoa, kí tự đặc biệt !!!",
+                icon: "error",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (Email_regex.test(Email) == false) {
+            swal({
+                text: "Email không hợp lệ !!!",
+                icon: "error",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (sdt_regex.test(sdt) == false) {
+            swal({
+                text: "Số điện thoại không đủ 10 số hoặc không hợp lệ !!!",
+                icon: "error",
+                button: "OK!",
+            });
+            return;
+        }
 
         var inputData = {
             Username: $("#user-name").val(),

@@ -61,7 +61,12 @@
                 </div>
                 <div class="row">
                     <div class="col-12 col-sm-12 font-weight-normal">
-                        => Xem thêm các sản phẩm : <a href="/ThuongHieu/Detail?MaTH=@Model.maThNavigation.maTh">@Model.maThNavigation.tenTh</a> tại ZAY SHOP
+                        <i class="fa fa-arrow-right"></i> Xem thêm các sản phẩm : <a href="/ThuongHieu/Detail?MaTH=@Model.maThNavigation.maTh">@Model.maThNavigation.tenTh</a> tại ZAY SHOP
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-12 font-weight-normal">
+                        <i class="fa fa-arrow-right"></i> Hướng dẫn mua hàng : <a href="/Blog/HuongDan">Xem</a>
                     </div>
                 </div>
                 <br />
@@ -87,10 +92,10 @@
                 </div>
                 <div class="row">
                     <div class="col-6 col-sm-6">
-                        <p><button type="button" class="btn btn-block btn-success font-weight-bold" data-productid="@Model.maSp" data-productname="@Model.tenSp" data-price="@Model.donGia" data-image="@Model.seoImage" onclick="AddItemToCart2(this)">Thêm vào giỏ hàng</button></p>
+                        <p><button type="button" class="btn btn-block btn-success font-weight-bold" data-productid="@Model.maSp" data-productname="@Model.tenSp" data-price="@Model.donGia" data-image="@Model.seoImage" onclick="AddItemToCart2(this)"><i class="fa fa-cart-plus"></i> Thêm vào giỏ hàng</button></p>
                     </div>
                     <div class="col-6 col-sm-6">
-                        <p><button type="button" class="btn btn-block btn-success font-weight-bold" data-productid="@Model.maSp" data-productname="@Model.tenSp" data-price="@Model.donGia" data-image="@Model.seoImage" onclick="BuyNow(this)">Mua ngay</button></p>
+                        <p><button type="button" class="btn btn-block btn-success font-weight-bold" data-productid="@Model.maSp" data-productname="@Model.tenSp" data-price="@Model.donGia" data-image="@Model.seoImage" onclick="BuyNow(this)"><i class="fa fa-sign-in"></i> Mua ngay</button></p>
                     </div>
                 </div>
             </div>

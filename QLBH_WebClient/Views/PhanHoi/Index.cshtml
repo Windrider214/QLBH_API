@@ -106,6 +106,54 @@
         var tieude = $("#txtTieuDe").val();
         var noidung = $("#txtNoiDung").val();
         var ngaygui = moment().format('YYYY-MM-DD HH:mm:ss');
+        var tenkh = $("#txtTenKH").val();
+        var email = $("#txtEmail").val();
+
+        var Email_regex = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+
+
+        if (tenkh == "" || tenkh == null) {
+            swal({
+                text: "Bạn chưa nhập họ tên !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (email == "" || email == null) {
+            swal({
+                text: "Bạn chưa nhập email !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (tieude == "" || tieude == null) {
+            swal({
+                text: "Bạn chưa nhập tiêu đề câu hỏi !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+        if (noidung == "" || noidung == null) {
+            swal({
+                text: "Bạn chưa nhập nội dung !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (Email_regex.test(email) == false) {
+            swal({
+                text: "Email không hợp lệ !!!",
+                icon: "error",
+                button: "OK!",
+            });
+            return;
+        }
 
         var inputData = {
             tieuDe: tieude,

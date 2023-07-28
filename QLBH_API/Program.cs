@@ -33,6 +33,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>( opt => {
     opt.SignIn.RequireConfirmedEmail = true;
     
 }).
+AddUserManager<UserManager<ApplicationUser>>().
+AddSignInManager<SignInManager<ApplicationUser>>().
 AddEntityFrameworkStores<ApplicationDbContext>().
 AddDefaultTokenProviders();
 builder.Services.Configure<IdentityOptions>(
@@ -80,6 +82,7 @@ var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfig
 builder.Services.AddSingleton(emailConfig);
 
 builder.Services.AddScoped<IEmailService, EmailService>();
+
 
 
 // Add services to the container.
