@@ -21,7 +21,8 @@ namespace QLBH_WebManage.DTO
         public int giamGia { get; set; }
         public int soLuong { get; set; }
         public bool tinhTrang { get; set; }
-        public DateTime? ngayThem { get; set; }  
+        public DateTime? ngayThem { get; set; }
+        public string attr { get; set; }
 
         public LOAISP maLoaiNavigation { get; set; }
         public THUONGHIEU maThNavigation { get; set; }

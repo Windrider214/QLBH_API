@@ -25,6 +25,7 @@ namespace QLBH_DataAccess.Models
         public int? SoLuong { get; set; }
         public bool? TinhTrang { get; set; }
         public DateTime? NgayThem { get; set; }
+        public string? Attr { get; set; }
 
         public virtual Loaisp? MaLoaiNavigation { get; set; }
         public virtual Thuonghieu? MaThNavigation { get; set; }

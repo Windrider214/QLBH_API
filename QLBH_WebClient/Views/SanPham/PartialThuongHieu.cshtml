@@ -8,7 +8,7 @@
 
 <div class="mb-4">
     <h3 class="mb-3 h6 text-uppercase text-black d-block">THƯƠNG HIỆU</h3>
-    @{
+    @*@{
         if (Model != null && Model.Count > 0)
         {
             foreach (var item in Model)
@@ -19,7 +19,22 @@
                 </a>
             }
         }
-    }
+    }*@
+
+    <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
+        @{
+            if (Model != null && Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                <a class="nav-link font-weight-normal" style="cursor: pointer" onclick="getDsSanPhamByBrand('@item.maTh')" data-toggle="pill" role="tab" aria-selected="true">
+                                    <img src="@media@item.anhTh" style="width: 50px;height: 50px" class="rounded" /> &nbsp;&nbsp;&nbsp;  <span class="text-end">@item.tenTh</span>
+
+                                </a>
+                }
+            }
+        }
+    </div>
 
 </div>
 

@@ -122,6 +122,10 @@
                 <label for="txtSDT" class="form-label">Tình trạng : <input type="checkbox" id="chkTrangThai"></label>
             </div>
             <div class="mb-3">
+                <label for="txtAttr" class="form-label">Size: <textarea id="txtAttr" class="form-control">@Html.DisplayFor(modelItem => Model.attr)</textarea></label>
+                <script>CKEDITOR.replace("txtAttr");</script>
+            </div>
+            <div class="mb-3">
                 <label for="txtImage" class="form-label">Hình ảnh SEO : </label>
                 <img src="@media_seo@Model.seoImage" id="txtImage" style="width:200px;height:200px" />
             </div>
@@ -393,7 +397,9 @@
         var mota = $("#txtMoTa").val();
         var sl = $("#txtSL").val();
         var motact = CKEDITOR.instances['txtMoTaCT'].getData();
+        var attr = CKEDITOR.instances['txtAttr'].getData();
         var ngaythem = $("#txtNgayThem").val();
+        var soluotxem = $("#txtSLX").val();
 
         var trangthai = true;
         if ($("#chkTrangThai").is(":checked")) {
@@ -453,8 +459,9 @@
             seoImage: imageBase64Seo,
             image: lstImageSrc,
             moTa: mota,
+            attr: attr,
             chiTietSp: motact,
-            soLanXem: motact,
+            soLanXem: soluotxem,
             giamGia: km,
             soLuong: sl,
             tinhTrang: trangthai,
@@ -503,8 +510,10 @@
             var mota = $("#txtMoTa").val();
             var sl = $("#txtSL").val();
             var motact = CKEDITOR.instances['txtMoTaCT'].getData();
+            var attr = CKEDITOR.instances['txtAttr'].getData();
             var delImage = imgName;
             var ngaythem = $("#txtNgayThem").val();
+            var soluotxem = $("#txtSLX").val();
 
 
             var trangthai = true;
@@ -529,8 +538,9 @@
             seoImage: '@Model.seoImage',
             image: '@Model.image',
             moTa: mota,
+            attr: attr,
             chiTietSp: motact,
-            soLanXem: motact,
+            soLanXem: soluotxem,
             giamGia: km,
             soLuong: sl,
             tinhTrang: trangthai,
@@ -581,7 +591,9 @@
             var mota = $("#txtMoTa").val();
             var sl = $("#txtSL").val();
             var motact = CKEDITOR.instances['txtMoTaCT'].getData();
+            var attr = CKEDITOR.instances['txtAttr'].getData();
             var ngaythem = $("#txtNgayThem").val();
+            var soluotxem = $("#txtSLX").val();
 
 
             var trangthai = true;
@@ -606,8 +618,9 @@
                 seoImage: '@Model.seoImage',
                 image: lstImagePos,
                 moTa: mota,
+                attr: attr,
                 chiTietSp: motact,
-                soLanXem: motact,
+                soLanXem: soluotxem,
                 giamGia: km,
                 soLuong: sl,
                 tinhTrang: trangthai,

@@ -67,12 +67,13 @@
             <div class="mb-3">
                 <label for="txtTongTien" class="form-label">Tổng tiền đơn hàng</label>
                 <input type="text" class="form-control" id="txtTongTien" value="@Model.tongTien">
+
             </div>
         </div>
         <div class="col-3">
             <div class="mb-3">
                 <label for="txtGhiChu" class="form-label">Ghi chú đơn hàng</label>
-                <input type="text" class="form-control" id="txtGhiChu" value="@Model.ghiChu">
+                <textarea class="form-control" id="txtGhiChu" disabled> @Html.DisplayFor(modelItem => Model.ghiChu)</textarea>
             </div>
             <div class="mb-3">
                 <label class="form-label">Xác nhận đơn hàng : <input type="checkbox" id="chkTrangThai"></label>

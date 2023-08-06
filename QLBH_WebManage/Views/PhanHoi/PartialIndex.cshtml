@@ -27,7 +27,19 @@
 
                     <tr>
                         <td>@item.tieuDe</td>
-                        <td>@item.maKhNavigation.tenKh</td>
+                        
+                        <td>
+                            @{ if (item.maKhNavigation.tenKh == "admin1")
+                                {
+                                    <div>Khách vãng lai</div>
+                                }
+                                else
+                                {
+                                    <div class="text-primary">@item.maKhNavigation.tenKh</div>
+                                }
+                            }
+
+                        </td>
                         <td>@item.tenKh</td>
                         <td>@item.email</td>
                         <td>@item.NgayGui</td>

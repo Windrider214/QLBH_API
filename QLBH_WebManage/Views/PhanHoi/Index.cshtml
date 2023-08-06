@@ -10,17 +10,6 @@
 
     <div class="row">
         <div class="col-6">
-            <div class="row">
-                <div class="col-5">
-                    <p><strong>Từ ngày:</strong> <input type="text" id="datepicker1"></p>
-                </div>
-                <div class="col-5">
-                    <p><strong>Đến ngày:</strong> <input type="text" id="datepicker2"></p>
-                </div>
-                <div class="col-2">
-
-                </div>
-            </div>
         </div>
 
         <div class="col-6 text-end">
@@ -43,23 +32,6 @@
 
 <script>
     jQuery(document).ready(function ($) {
-
-        $(function () {
-            $("#datepicker1").datepicker({
-                changeMonth: true,
-                changeYear: true
-            });
-        });
-
-        $(function () {
-            $("#datepicker2").datepicker({
-                changeMonth: true,
-                changeYear: true,
-                onSelect: function () {
-                    getTotalByDate();
-                }
-            });
-        });
 
         getDsPhanHoi();
     })

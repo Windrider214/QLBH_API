@@ -75,10 +75,13 @@
                         <div class="mb-3">
                             <label class="form-label">Tình trạng : <input type="checkbox" id="chkTrangThai"></label>
                         </div>
-
                         <div class="mb-3">
                             <label for="txtMoTa" class="form-label">Mô tả</label>
                             <input type="text" class="form-control" id="txtMoTa">
+                        </div>
+                        <div class="mb-3">
+                            <label for="txtAttr" class="form-label">Size: <textarea id="txtAttr" class="form-control"></textarea></label>
+                            <script>CKEDITOR.replace("txtAttr");</script>
                         </div>
                         <div class="mb-3">
                             <label for="txtMoTaCT" class="form-label">Chi tiết SP: <textarea id="txtMoTaCT" class="form-control"></textarea></label>
@@ -383,6 +386,7 @@
         var mota = $("#txtMoTa").val();
         var sl = $("#txtSL").val();
         var motact = CKEDITOR.instances['txtMoTaCT'].getData();
+        var attr = CKEDITOR.instances['txtAttr'].getData();
 
         var trangthai = true;
         if ($("#chkTrangThai").is(":checked")) {
@@ -439,8 +443,9 @@
             seoImage: imageBase64Seo,
             image: lstImageSrc,
             moTa: mota,
+            attr: attr,
             chiTietSp: motact,
-            soLanXem: motact,
+            soLanXem: "",
             giamGia: km,
             soLuong: sl,
             tinhTrang: trangthai,
