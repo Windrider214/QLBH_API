@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using QLBH_DataAccess;
 using QLBH_DataAccess.GenericRepository;
 using QLBH_DataAccess.Models;
+using QLBH_Services.Helper;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
@@ -34,6 +35,26 @@ namespace QLBH_Services.SANPHAM
                 Where( x => x.TenSp.Contains(tenSp.Trim())).
                 ToList();
         }
+
+        List<ProcSuggest> ISanPhamRepository.SearchSuggest(string tenSp)
+        {
+            List<ProcSuggest> sgtList = new List<ProcSuggest>();
+            tenSp = Encoding.UTF8.GetString(Encoding.Default.GetBytes(tenSp));
+            List<Sanpham> lst = _context.Sanphams.
+                Include(x => x.MaLoaiNavigation).
+                Include(z => z.MaThNavigation).
+                Where(x => x.TenSp.Contains(tenSp)).
+                ToList();
+            foreach(var item in lst)
+            {
+                ProcSuggest s = new ProcSuggest();
+                s.TenSp = item.TenSp;
+                s.MaSp = item.MaSp;
+                sgtList.Add(s);
+            }
+            return sgtList;
+        }
+
 
         int ISanPhamRepository.GetTotalRec()
         {

@@ -1,5 +1,6 @@
 ﻿using QLBH_DataAccess.GenericRepository;
 using QLBH_DataAccess.Models;
+using QLBH_Services.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,9 @@ namespace QLBH_Services.SANPHAM
 
         List<Sanpham> GetListPagingByBrand(int page, int pageSize, string math);
         int GetTotalRecByBrand(string math);
+
+        List<ProcSuggest> SearchSuggest(string tenSp);
+
 
         #region oldRepos
         //List<Sanpham> SANPHAM_GetAll();

@@ -167,6 +167,14 @@ namespace QLBH_API.Controllers
             return Ok(lst);
         }
 
+        [HttpGet("SuggestSanPham")]
+        [AllowAnonymous]
+        public async Task<ActionResult> SuggestSanPham(string TenSP)
+        {
+            await Task.Yield();
+            var lst = _unitWork.SanPhamRepository.SearchSuggest(TenSP);
+            return Ok(lst);
+        }
 
         [HttpGet("SearchSanPham")]
         [AllowAnonymous]

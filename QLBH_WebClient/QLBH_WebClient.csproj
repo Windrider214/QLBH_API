@@ -215,6 +215,7 @@
     <Compile Include="Models\JwtCookie.cs" />
     <Compile Include="Models\Login2FA.cs" />
     <Compile Include="Models\OrderEditModel.cs" />
+    <Compile Include="Models\ProcSuggest.cs" />
     <Compile Include="Models\ProducFilter.cs" />
     <Compile Include="Models\ReturnData.cs" />
     <Compile Include="Models\SignUp.cs" />

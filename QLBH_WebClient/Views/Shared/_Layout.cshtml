@@ -48,8 +48,8 @@
                                 <span class="icon icon-search2"></span>
                                 <input type="text" id="txtProductSearch" class="form-control border-0" placeholder="Tìm sản phẩm ...">
                             </div>
-                            <div id="search-suggest" style="display:none;background-color:white;position: relative;z-index: 99999">
-                                <ul id="suggest-item" class="list-group list-group-flush" style="background-color:white;">
+                            <div id="search-suggest" style="background-color:white;position: fixed;z-index: 99999" class="font-weight-normal">
+                                <ul id="suggest-item" class="list-group list-group-flush" style="background-color: mediumorchid;">
                                 </ul>
                             </div>
                         </div>
@@ -214,17 +214,17 @@
                     $("#search-suggest").show();
                     SuggestProduct();
                 }
-            }, 500));
+            }, 200));
 
-            //$('#txtProductSearch').keypress(delay(function (e) {
-            //    if (e.which === 13) {
-            //        //
-            //    }
-            //    else {
-            //        $("#search-suggest").show();
-            //        SuggestProduct();
-            //    }
-            //}, 500));
+            $('#txtProductSearch').keypress(delay(function (e) {
+                if (e.which === 13) {
+                    //
+                }
+                else {
+                    $("#search-suggest").show();
+                    SuggestProduct();
+                }
+            }, 200));
 
         });
 

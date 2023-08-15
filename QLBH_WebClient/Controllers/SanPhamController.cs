@@ -168,12 +168,12 @@ namespace QLBH_WebClient.Controllers
         {
             try
             {
-                List<SANPHAM> sp = new List<SANPHAM>();
-                var request_url = "/api/SanPham/SearchSanPham";
+                List<ProcSuggest> sp = new List<ProcSuggest>();
+                var request_url = "/api/SanPham/SuggestSanPham";
                 var result = API_Interact.SearchDataByName(url_api, request_url, TenSp, "TenSp", "");
                 if (result.IsSuccessStatusCode)
                 {
-                    sp = JsonConvert.DeserializeObject<List<SANPHAM>>(result.Content);
+                    sp = JsonConvert.DeserializeObject<List<ProcSuggest>>(result.Content);
                 }
                 return Json(result.Content, JsonRequestBehavior.AllowGet);
             }
