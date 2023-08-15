@@ -57,7 +57,7 @@
                         </td>
                         <td><a href="/PhanHoi/Detail?MaPH=@item.maPh" class="btn btn-info"><i class="fa fa-pencil"></i></a></td>
                         <td>
-                            <input type="button" onclick="deleteThuongHieu('@item.maPh')" id="btnDelete" value="Xóa" class="btn btn-danger" />
+                            <input type="button" onclick="deletePhanHoi('@item.maPh')" id="btnDelete" value="Xóa" class="btn btn-danger" />
                         </td>
                     </tr>
                 }
@@ -74,4 +74,44 @@
 
     });
     var cookieToken = JSON.parse(Common.getCookie("ManagerShop_Cookies"));
+
+    function deletePhanHoi(maph) {
+        var result = confirm("Bạn có chắc chắn muốn xóa");
+
+        if (result) {
+            var deleteData = {
+                maph: maph
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "/PhanHoi/Delete",
+                data: deleteData,
+                success: function (data) {
+                    var code = data.ResponseCode;
+                    if (code > 0) {
+                        swal({
+                            text: data.Description,
+                            icon: "success",
+                            button: "OK!",
+                        });
+                        getDsPhanHoi();
+                    }
+                    else {
+                        swal({
+                            text: data.Description,
+                            icon: "warning",
+                            button: "OK!",
+                        });
+                        getDs();
+                        $(".modal-backdrop").remove();
+                    }
+                },
+                error: function (data) {
+                    console.log("error:" + JSON.stringify(data));
+                }
+            });
+        }
+
+    }
 </script>

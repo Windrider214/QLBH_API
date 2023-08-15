@@ -264,6 +264,7 @@
     <Content Include="Content\logo.jpg" />
     <Content Include="Content\logoSaleNoti.png" />
     <Content Include="Content\ProductImgSlider.css" />
+    <Content Include="Content\Screenshot_4.jpg" />
     <Content Include="Content\Screenshot_6.jpg" />
     <Content Include="Content\Screenshot_9.jpg" />
     <Content Include="Content\scss\.DS_Store" />

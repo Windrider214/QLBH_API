@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="bg-light py-3 container" data-aos="fade-right">
+<div class="bg-light py-3 container" data-aos="fade-right" id="first">
         <div class="row">
             <div class="col-md-12 mb-0"><a href="/TrangChu/Index" class="font-weight-normal">Trang Chủ</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Bài Viết</strong></div>
         </div>
@@ -97,6 +97,12 @@
             onPageClick: function (event, page) {
                 pageIndex = page;
                 setTimeout(callback, 200);
+       $("html").animate(
+                    {
+                         scrollTop: $("#first").offset().top
+                    },
+                    800 //speed
+                );
             }
         });
     }

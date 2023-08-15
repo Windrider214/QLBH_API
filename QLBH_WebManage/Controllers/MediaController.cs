@@ -178,6 +178,41 @@ namespace QLBH_WebManage.Controllers
             }
         }
 
+        public ActionResult LockMedia(LockMedia lckMedia)
+        {
+            var returnData = new ReturnData();
 
+            try
+            {
+                JwtCookie jwtCookie = new JwtCookie();
+                var cookie = Request.Cookies["ManagerShop_Cookies"] != null ? Request.Cookies["ManagerShop_Cookies"].Value : string.Empty;
+                if (cookie != null && !string.IsNullOrEmpty(cookie))
+                {
+                    jwtCookie = JsonConvert.DeserializeObject<JwtCookie>(cookie);
+                    var request_url = "/api/Media/SetActive";
+                    var jsonData = JsonConvert.SerializeObject(lckMedia);
+                    var result = API_Interact.PullData(url_api, request_url, jsonData, jwtCookie.token);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        returnData.ResponseCode = 900;
+                        returnData.Description = "Thay đổi thành công !!!";
+                        return Json(returnData, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        returnData.ResponseCode = -600;
+                        returnData.Description = "Thay đổi thất bại !!!";
+                        return Json(returnData, JsonRequestBehavior.AllowGet);
+                    }
+
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

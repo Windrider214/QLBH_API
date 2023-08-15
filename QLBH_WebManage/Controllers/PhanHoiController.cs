@@ -161,5 +161,41 @@ namespace QLBH_WebManage.Controllers
                 throw;
             }
         }
+
+        public ActionResult Delete(string MaPH)
+        {
+            var returnData = new ReturnData();
+            try
+            {
+                if (MaPH == "")
+                {
+                    returnData.ResponseCode = -600;
+                    returnData.Description = "Không tìm thấy mã ph !!!";
+                    return Json(returnData, JsonRequestBehavior.AllowGet);
+                }
+                var request_url = "/api/PhanHoi/DeleteFeedback";
+                var result = API_Interact.DeleteData(url_api, request_url, MaPH, "MaPH", accessToken);
+
+                if (result.IsSuccessStatusCode)
+                {
+                    returnData.ResponseCode = 600;
+                    returnData.Description = "Xóa thành công";
+                    return Json(returnData, JsonRequestBehavior.AllowGet);
+
+                }
+                else
+                {
+                    returnData.ResponseCode = -900;
+                    returnData.Description = "Xóa thất bại";
+                    return Json(returnData, JsonRequestBehavior.AllowGet);
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

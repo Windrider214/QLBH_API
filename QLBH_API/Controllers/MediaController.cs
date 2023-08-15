@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QLBH_API.Auth;
+using QLBH_API.Helper;
 using QLBH_DataAccess.Models;
 using QLBH_Services.UnitOfWork;
 
@@ -70,7 +71,27 @@ namespace QLBH_API.Controllers
             return Ok(lst);
         }
 
-
+        [HttpPost("SetActive")]
+        public async Task<ActionResult> SetActive(LockMedia lckMed)
+        {
+            await Task.Yield();
+            var entity = _unitWork.MediaRepository.GetById(lckMed.MediaId);
+            if (entity != null)
+            {
+               if(lckMed.isActive == true)
+                {
+                    entity.IsActive = true;
+                    _unitWork.MediaRepository.Update(entity);
+                }
+                else
+                {
+                    entity.IsActive = false;
+                    _unitWork.MediaRepository.Update(entity);
+                }
+            }
+            var lst = _unitWork.Save();
+            return Ok();
+        }
 
         [HttpGet("GetMediaType")]
         public async Task<ActionResult> MediaType_GetAll()

@@ -208,6 +208,41 @@
             imageBase64 = imageBase64.split(',')[1];
         }
 
+        if (tieude == '' || tieude == null) {
+            swal({
+                text: "Bạn chưa nhập tiêu đề tin tức !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (mota == '' || mota == null) {
+            swal({
+                text: "Bạn chưa nhập mô tả tin tức !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (maloai == '' || maloai == null || maloai <= 0) {
+            swal({
+                text: "Vui lòng chọn loại tin tức !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
+
+        if (noidung == '' || noidung == null) {
+            swal({
+                text: "Bạn chưa nhập nội dung tin tức !!!",
+                icon: "warning",
+                button: "OK!",
+            });
+            return;
+        }
 
         var inputData = {
             maTinTuc: mablog,

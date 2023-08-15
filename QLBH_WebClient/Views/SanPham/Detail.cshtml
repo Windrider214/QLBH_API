@@ -52,7 +52,7 @@
                 <h1 class="font-weight-bold"><a href="#">@Model.tenSp</a></h1>
                 <div class="row">
                     <div class="col-6 col-sm-6">
-                        <div class="font-weight-bold">@Model.maLoaiNavigation.tenLoaiSp</div>
+                        <strong><a href="/SanPham/LoaiSP?MaLoai=@Model.maLoaiNavigation.maLoai" class="text-dark">@Model.maLoaiNavigation.tenLoaiSp</a></strong>
                     </div>
                     <div class="col-6 col-sm-6 text-right">
                         <div class="font-weight-normal">Lượt xem: @Model.soLanXem</div>
@@ -77,24 +77,24 @@
                         <i class="fa fa-arrow-right"></i> Hướng dẫn mua hàng : <a href="/Blog/HuongDan">Xem</a>
                     </div>
                 </div>
+
                 <hr />
                 <div class="row">
                     <div class="col-2 col-sm-2 font-weight-bold">
                         <h3>Size :</h3>
                     </div>
                     <div class="col-6 col-sm-6 font-weight-normal text-left text-warning">
-                         @Html.Raw(Model.attr)
+                        @Html.Raw(Model.attr)
                     </div>
                     <div class="col-4 col-sm-4 font-weight-normal text-right">
                         <a href="~/Content/bang-size-so-mi-min.png"><i class="fa fa-calculator"> Hướng dẫn chọn size</i></a>
                     </div>
                 </div>
-                <br />
-                <br />
+
                 <h4 class="font-weight-bold"> Giá : <strong class="text-primary h2">@string.Format("{0:c0}", Model.donGia)</strong></h4>
                 <br />
                 <div class="row">
-                    <div class="col-12 col-sm-12">
+                    <div class="col-4 col-sm-4">
                         <div class="input-group" style="max-width: 120px;">
                             <div class="input-group mb-3 text-center" style="max-width: 120px;">
                                 <div class="input-group-prepend">
@@ -107,7 +107,9 @@
                             </div>
                         </div>
                     </div>
-
+                    <div class="col-8 col-sm-8 text-left">
+                        <div class="font-weight-normal fs0"> Còn lại : @Model.soLuong sản phẩm</div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-7 col-sm-7">
@@ -115,6 +117,11 @@
                     </div>
                     <div class="col-5 col-sm-5">
                         <p><button type="button" class="btn btn-block btn-success font-weight-bold" data-productid="@Model.maSp" data-productname="@Model.tenSp" data-price="@Model.donGia" data-image="@Model.seoImage" onclick="BuyNow(this)"><i class="fa fa-sign-in"></i> Mua ngay</button></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-12 font-weight-normal">
+                        <img class="img-fluid" src="~/Content/Screenshot_4.jpg" />
                     </div>
                 </div>
             </div>

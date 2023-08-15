@@ -41,5 +41,7 @@ namespace QLBH_Services.MEDIA
                     Where(x => (x.MediaTypeId == 1) && (x.IsActive == true)).
                     FirstOrDefault();
         }
+
+     
     }
 }

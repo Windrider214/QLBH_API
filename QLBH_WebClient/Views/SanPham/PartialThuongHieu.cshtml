@@ -111,6 +111,12 @@
             onPageClick: function (event, page) {
                 pageIndex = page;
                 setTimeout(callback, 200);
+                $("html").animate(
+                    {
+                        scrollTop: $("#first").offset().top
+                    },
+                    800 //speed
+                );
             }
         });
     }

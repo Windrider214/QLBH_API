@@ -27,7 +27,7 @@ namespace QLBH_Services.SANPHAM
 
         List<Sanpham> ISanPhamRepository.SearchSP(string tenSp)
         {
-
+            tenSp = Encoding.UTF8.GetString(Encoding.Default.GetBytes(tenSp));
             return _context.Sanphams.
                 Include(x => x.MaLoaiNavigation).
                 Include(z => z.MaThNavigation).

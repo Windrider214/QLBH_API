@@ -48,10 +48,21 @@
                             }
                         </td>
 
-                        <td><a href="/Media/Detail?MediaId=@item.mediaId" class="btn btn-info">Chi tiết</a></td>
+                        <td>
+                            @{
+                                if (item.isActive == false)
+                                {
+                                    <button class="btn btn-success" onclick="lockMedia('@item.mediaId', true)"><i class="fa fa-unlock"></i></button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-danger" onclick="lockMedia('@item.mediaId', false)"><i class="fa fa-lock"></i></button>
+                                }
+                            }
+                        </td>
 
                         <td>
-                            <input type="button" onclick="deleteMedia('@item.mediaId')" id="btnDelete" value="Xóa" class="btn btn-danger" />
+                            <input type="button" onclick="deleteMedia('@item.mediaId')" id="btnDelete" value="Xóa" class="btn btn-warning" />
                         </td>
                     </tr>
                 }
@@ -107,6 +118,44 @@
                 }
             });
         }
+
+    }
+
+    function lockMedia(id, isLock) {
+
+        var inputData = {
+            MediaId: id,
+            isActive: isLock
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: "/Media/LockMedia",
+            data: inputData,
+            success: function (data) {
+
+                var code = data.ResponseCode;
+                if (code > 0) {
+                    swal({
+                        text: data.Description,
+                        icon: "success",
+                        button: "OK!",
+                    });
+                    getDsMedia();
+                }
+                else {
+                    swal({
+                        text: data.Description,
+                        icon: "error",
+                        button: "OK!",
+                    });
+                    getDsMedia();
+                }
+            },
+            error: function (data) {
+                console.log("error:" + JSON.stringify(data));
+            }
+        });
 
     }
 

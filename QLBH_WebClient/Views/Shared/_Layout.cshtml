@@ -10,6 +10,7 @@
     @*<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700">*@
     <link href="~/Content/fonts/icomoon/style.css" rel="stylesheet" />
 
+    <link rel="stylesheet" type="text/css" href="http://mysite/style.css?id=1234" />
     <link href="~/Content/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/Content/css/magnific-popup.css" rel="stylesheet" />
     <link href="~/Content/css/jquery-ui.css" rel="stylesheet" />
@@ -41,14 +42,14 @@
         <header class="site-navbar" role="banner">
             <div class="site-navbar-top">
                 <div class="container">
-                    <div class="row align-items-center">
+                    <div class="row align-items-center">                      
                         <div class="col-6 col-md-4 order-2 order-md-1 site-search-icon text-left">
                             <div class="site-block-top-search">
                                 <span class="icon icon-search2"></span>
                                 <input type="text" id="txtProductSearch" class="form-control border-0" placeholder="Tìm sản phẩm ...">
                             </div>
-                            <div id="search-suggest" style="display:none;background-color:white">
-                                <ul id="suggest-item" class="list-group list-group-flush" style="background-color:white;z-index: 9999999">
+                            <div id="search-suggest" style="display:none;background-color:white;position: relative;z-index: 99999">
+                                <ul id="suggest-item" class="list-group list-group-flush" style="background-color:white;">
                                 </ul>
                             </div>
                         </div>
@@ -111,7 +112,7 @@
                                 <br />
                                 <h3 class="footer-heading mb-4 font-weight-bold">Về Chúng Tôi</h3>
                                 <p><img src="~/Content/logo.jpg" style="width: 200px;height: 50px" /></p>
-                                <p>CHÚNG TÔI CUNG CẤP SẢN PHẨM CHẤT LƯỢNG TỪ CÁC THƯƠNG HIỆU HÀNG ĐẦU</p>
+                                <p class="font-weight-bold">CHÚNG TÔI CUNG CẤP SẢN PHẨM CHẤT LƯỢNG TỪ CÁC THƯƠNG HIỆU HÀNG ĐẦU</p>
                                 <div class="row font-weight-normal">
                                     <div class="col-6 mb-4">
                                         <p><img src="~/Content/logo-giao-hang-nhanh-1.png" class="img-fluid" /></p>
@@ -132,22 +133,22 @@
                                 <h3 class="footer-heading mb-4 font-weight-bold">Liên Hệ</h3>
                                 <div class="font-weight-normal">
                                     <p>
-                                        <b>Địa chỉ:</b> Số 6 ngõ Bảo Khánh - P.Hàng Trống -
+                                        <b><i class="fa fa-home"></i> Địa chỉ:</b> Số 6 ngõ Bảo Khánh - P.Hàng Trống -
                                     </p>
                                     <p>
                                         Q.Hoàn Kiếm - Hà Nội
                                     </p>
                                     <p>
-                                        <b>Hotline:</b> 097.559.2299
+                                        <b><i class="fa fa-phone"></i> Hotline:</b> 039.9999.365
                                     </p>
                                     <p>
-                                        <b>Website:</b> zayshop.com
+                                        <b><i class="fa fa-globe"></i> Website:</b> zayshop.com
                                     </p>
                                     <p>
-                                        <b>Email:</b> zayshop@gmail.com
+                                        <b<i class="fa fa-envelope"></i> Email:</b> zayshop@gmail.com
                                     </p>
                                     <P>
-                                        <b>Giờ mở cửa:</b> 9h00- 19h30
+                                        <b><i class="fa fa-clock-o"></i> Giờ mở cửa:</b> 9h00- 19h30
                                     </P>
                                     <P>
                                         <b></b>Tất cả các ngày trong tuần
@@ -166,7 +167,7 @@
                             <div class="col-md-12">
                                 <br />
                                 <h3 class="footer-heading mb-4 font-weight-bold">Bản Đồ</h3>
-                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d232.75328183663456!2d105.85031063338032!3d21.03058487127158!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab9562c94d41%3A0x505be35282309a84!2zU-G7kSA2IE5nLiBCw6FvIEtow6FuaCwgSMOgbmcgVHLhu5FuZywgSG_DoG4gS2nhur9tLCBIw6AgTuG7mWksIFZpZXRuYW0!5e0!3m2!1sen!2s!4v1678004621083!5m2!1sen!2s" width="100%" height="400" frameborder="0" style="border:0" allowfullscreen></iframe>
+                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d232.75328183663456!2d105.85031063338032!3d21.03058487127158!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab9562c94d41%3A0x505be35282309a84!2zU-G7kSA2IE5nLiBCw6FvIEtow6FuaCwgSMOgbmcgVHLhu5FuZywgSG_DoG4gS2nhur9tLCBIw6AgTuG7mWksIFZpZXRuYW0!5e0!3m2!1sen!2s!4v1678004621083!5m2!1sen!2s" width="100%" height="340" frameborder="0" style="border:0" allowfullscreen></iframe>
                             </div>
                         </div>
                     </div>
@@ -194,17 +195,18 @@
             getUserPanel();
             getSLH();
 
-            $('#txtProductSearch').on('keypress', function (e) {
-                if (e.which === 13) {
-                    //
-                }
-                else {
-                    $("#search-suggest").show();
-                    SuggestProduct();
-                }
-            });
+            function delay(callback, ms) {
+                var timer = 0;
+                return function () {
+                    var context = this, args = arguments;
+                    clearTimeout(timer);
+                    timer = setTimeout(function () {
+                        callback.apply(context, args);
+                    }, ms || 0);
+                };
+            }
 
-            $('#txtProductSearch').on('keyup', function (e) {
+            $('#txtProductSearch').keyup(delay(function (e) {
                 if (e.which === 13) {
                     //
                 }
@@ -212,17 +214,17 @@
                     $("#search-suggest").show();
                     SuggestProduct();
                 }
-            });
+            }, 500));
 
-            $('#txtProductSearch').on('keydown', function (e) {
-                if (e.which === 13) {
-                    //
-                }
-                else {
-                    $("#search-suggest").show();
-                    SuggestProduct();
-                }
-            });
+            //$('#txtProductSearch').keypress(delay(function (e) {
+            //    if (e.which === 13) {
+            //        //
+            //    }
+            //    else {
+            //        $("#search-suggest").show();
+            //        SuggestProduct();
+            //    }
+            //}, 500));
 
         });
 
@@ -244,11 +246,20 @@
                     var result = jsonRespone.$values;
                     if (result != null) {
                         var html = "";
+                        result.forEach(function (e, index) {
+                            if (e.tenSp === undefined) {
+                                result.splice(index, 1);
+                            }
+                        })
+
                         $.each(result, function (index, item) {
+
                             html += "<li style=\"padding-bottom: 5px; padding-top: 5px; border-bottom: 1px solid gray; width: 100 %;\" class='list-group-item'><a style=\"padding: 3px;\" href=\"/SanPham/Detail?MaSP=" + item.maSp + "\"b>" + item.tenSp + "</a></li>";
                         });
 
                         $("#suggest-item").append(html);
+
+
                     }
                 },
                 error: function (data) {

@@ -208,6 +208,7 @@
     <Compile Include="Models\ClientConfirmEmail.cs" />
     <Compile Include="Models\DateRange.cs" />
     <Compile Include="Models\JwtCookie.cs" />
+    <Compile Include="Models\LockMedia.cs" />
     <Compile Include="Models\OrderByDate.cs" />
     <Compile Include="Models\ReturnData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

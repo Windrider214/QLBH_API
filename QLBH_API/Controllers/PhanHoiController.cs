@@ -62,7 +62,7 @@ namespace QLBH_API.Controllers
 
 
         [HttpDelete("DeleteFeedback")]
-        public async Task<ActionResult> InsertFeedback(string MaPH)
+        public async Task<ActionResult> DeleteFeedback(string MaPH)
         {
             await Task.Yield();
             var entity = _unitWork.PhanHoiRepository.GetById(MaPH);

@@ -8,10 +8,10 @@
 }
 <div class="row">
     <div class="col-md-12 mb-5">
-        <div class="float-md-left mb-4"><h2 class="text-black h5 font-weight-bold">Tất cả sản phẩm ( @Model.Count )</h2></div>
+        <div class="float-md-left mb-4"><h2 class="text-black h5 font-weight-bold"></h2></div>
     </div>
 </div>
-<div class="row mb-5">
+<div class="row mb-4">
 
     @{
         if (Model != null && Model.Count > 0)
@@ -20,11 +20,11 @@
             {
                 <div class="col-sm-6 col-lg-4 mb-4">
                     <div class="block-4 text-center border">
-                        <figure class="block-4-image">
-                            <a href="shop-single.html"><img src="@media_seo@item.seoImage" alt="Image placeholder" class="img-fluid" style="width: 200px;height: 200px "></a>
+                        <figure class="block-5-image">
+                            <a href="shop-single.html"><img src="@media_seo@item.seoImage" alt="Image placeholder" class="img-fluid" style="width: 250px;height: 300px "></a>
                         </figure>
                         <div class="block-4-text p-4">
-                            <h3><a href="/SanPham/Detail?MaSP=@item.maSp">@item.tenSp</a></h3>
+                            <h5><a href="/SanPham/Detail?MaSP=@item.maSp">@item.tenSp</a></h5>
                             <p class="mb-0 font-weight-normal">Thương hiệu : @item.maThNavigation.tenTh</p>
                             <p class="text-primary font-weight-bold">@string.Format("{0:c0}", item.donGia)</p>
                             @*<p><button type="button" class="buy-now btn btn-sm btn-primary" onclick="addtoCart('@item.maSp')"><i class="fa fa-shopping-cart"></i></button></p>*@
